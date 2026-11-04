@@ -130,18 +130,112 @@
   }
   #errbar { display: none; position: fixed; left: 0; right: 0; bottom: 0; background: #ffe3e3; color: #c92a2a; font-size: 13px; padding: 4px 10px; z-index: 30; }
 
-  /* 夜間模式 */
-  body.night { background: #0d1117; color: #b8c0c8; }
-  body.night #top, body.night .card, body.night #ovBox { background: #161b22; border-color: #2a3038; }
-  body.night .tbtn, body.night .x, body.night .cat, body.night .key div { background: #2a3038; color: #b8c0c8; }
-  body.night .starbar { background: #2b2116; }
-  body.night .item { background: #3a3216; color: #d8c88a; }
-  body.night .item.ok { background: #1c3322; color: #7bbf8a; }
-  body.night .bar { background: #2a3038; }
-  body.night .task, body.night .rec, body.night .rw { border-color: #222830; }
-  body.night .pbtn, body.night .mbtn, body.night .okbtn, body.night .rbtn { opacity: 0.75; }
-  body.night #bal { color: #69a978; }
-  body.night .per b { background: #1d3550; }
+  /* 夜間模式：整個畫面蓋一層半透明黑，任何主題都適用 */
+  #dim { display: none; position: fixed; left: 0; top: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); pointer-events: none; z-index: 40; }
+  body.night #dim { display: block; }
+
+  /* 可愛字型（檔案放在 fonts 資料夾） */
+  body.f-kid, body.f-kid .x, body.f-kid .tbtn { font-family: "KidFont", -apple-system, "PingFang TC", "Heiti TC", sans-serif; }
+
+  /* 卡片角落貼紙 */
+  .card { position: relative; }
+  .card::after { position: absolute; top: 4px; right: 8px; font-size: 26px; line-height: 1; pointer-events: none; }
+
+  /* ===== 主題：糖果樂園 ===== */
+  body.th-candy { background-color: #fff0f6; background-image: radial-gradient(#ffd6e7 18%, transparent 20%); background-size: 30px 30px; }
+  body.th-candy #top { background: #ffdeeb; border-bottom: 4px dashed #f783ac; }
+  body.th-candy .card { border: 4px dashed #f783ac; border-radius: 26px; background: #fffafc; }
+  body.th-candy .card h2 { display: inline-block; align-self: flex-start; background: #ffdeeb; color: #c2255c; padding: 2px 16px; border-radius: 16px; }
+  body.th-candy .tbtn { background: #fff; color: #c2255c; border-radius: 16px; }
+  body.th-candy .pbtn, body.th-candy .okbtn { background: #f06595; border-radius: 22px; }
+  body.th-candy .pbtn.rest { background: #74c0fc; }
+  body.th-candy .mbtn, body.th-candy .rbtn { border-radius: 22px; }
+  body.th-candy .pbar i { background: #f06595; }
+  body.th-candy .per b { background: #ffdeeb; color: #c2255c; }
+  body.th-candy #ovBox { border: 5px dashed #f783ac; border-radius: 26px; }
+  body.th-candy #cTasks::after { content: "🍬"; }
+  body.th-candy #cPomo::after { content: "🍓"; }
+  body.th-candy #cSched::after { content: "🎀"; }
+  body.th-candy #cMoney::after { content: "🍭"; }
+
+  /* ===== 主題：森林探險 ===== */
+  body.th-forest { background-color: #eef7e4; background-image: linear-gradient(45deg, #e2f0d3 25%, transparent 25%, transparent 75%, #e2f0d3 75%); background-size: 36px 36px; }
+  body.th-forest #top { background: #dcedc8; border-bottom: 5px solid #8bc34a; }
+  body.th-forest .card { border: 5px solid #8bc34a; border-top-width: 12px; border-radius: 20px; background: #fdfdf6; }
+  body.th-forest .card h2 { color: #33691e; border-bottom: 3px dotted #aed581; padding-bottom: 3px; }
+  body.th-forest .tbtn { background: #fff; color: #33691e; }
+  body.th-forest .pbtn, body.th-forest .okbtn { background: #7cb342; }
+  body.th-forest .pbtn.rest { background: #ffb300; }
+  body.th-forest .pbar i { background: #7cb342; }
+  body.th-forest .per b { background: #dcedc8; color: #33691e; }
+  body.th-forest .item { background: #fff8e1; border: 2px solid #ffe082; }
+  body.th-forest #ovBox { border: 6px solid #8bc34a; border-top-width: 14px; border-radius: 20px; }
+  body.th-forest #cTasks::after { content: "🌼"; }
+  body.th-forest #cPomo::after { content: "🐌"; }
+  body.th-forest #cSched::after { content: "🌳"; }
+  body.th-forest #cMoney::after { content: "🐰"; }
+
+  /* ===== 主題：海洋世界 ===== */
+  body.th-ocean { background-color: #e3f2fd; background-image: radial-gradient(circle, #cfe8fc 10px, transparent 11px), radial-gradient(circle, #d6ecfd 5px, transparent 6px); background-size: 90px 90px, 50px 50px; background-position: 0 0, 25px 35px; }
+  body.th-ocean #top { background: #b3e5fc; border-bottom: 4px solid #4fc3f7; }
+  body.th-ocean .card {
+    border: 4px solid #4fc3f7; border-radius: 30px; background-color: #fff;
+    background-image: radial-gradient(circle at 16px 22px, #e1f5fe 15px, transparent 16px);
+    background-size: 32px 18px; background-repeat: repeat-x; background-position: left bottom;
+  }
+  body.th-ocean .card h2 { color: #0277bd; }
+  body.th-ocean .tbtn { background: #fff; color: #0277bd; border-radius: 16px; }
+  body.th-ocean .pbtn, body.th-ocean .okbtn { background: #29b6f6; border-radius: 22px; }
+  body.th-ocean .pbtn.rest { background: #26a69a; }
+  body.th-ocean .mbtn, body.th-ocean .rbtn { border-radius: 22px; }
+  body.th-ocean .pbar i { background: #29b6f6; }
+  body.th-ocean .per b { background: #b3e5fc; color: #01579b; }
+  body.th-ocean .item { background: #e0f7fa; }
+  body.th-ocean #ovBox { border: 5px solid #4fc3f7; border-radius: 30px; }
+  body.th-ocean #cTasks::after { content: "🐠"; }
+  body.th-ocean #cPomo::after { content: "🐢"; }
+  body.th-ocean #cSched::after { content: "🐚"; }
+  body.th-ocean #cMoney::after { content: "🐳"; }
+
+  /* ===== 主題：太空冒險 ===== */
+  body.th-space { background-color: #1b1446; color: #f3f0ff; background-image: radial-gradient(#fff 1px, transparent 2px), radial-gradient(#ffe066 1px, transparent 2px); background-size: 70px 70px, 110px 110px; background-position: 0 0, 40px 60px; }
+  body.th-space #top { background: #2b2170; border-bottom: 3px dotted #ffd43b; }
+  body.th-space #date, body.th-space #syncInfo, body.th-space .pmsg, body.th-space .sbgoal, body.th-space .goal, body.th-space .card h3 { color: #c5bdf5; }
+  body.th-space .card { border: 3px dotted #ffd43b; border-radius: 18px; background: #2a2266; }
+  body.th-space .card h2 { color: #ffd43b; }
+  body.th-space .tbtn, body.th-space .x, body.th-space .cat, body.th-space .key div { background: #3d3290; color: #f3f0ff; }
+  body.th-space .cat.sel { background: #ffd43b; color: #1b1446; }
+  body.th-space .starbar { background: #3d3290; }
+  body.th-space .bar { background: #3d3290; }
+  body.th-space .task, body.th-space .rec, body.th-space .rw { border-color: #3d3290; }
+  body.th-space .box { border-color: #9c8fe0; }
+  body.th-space .task.done .tname { color: #8a80c8; }
+  body.th-space .pbtn, body.th-space .okbtn { background: #7950f2; }
+  body.th-space .pbtn.rest { background: #12b886; }
+  body.th-space .pbar i { background: #ffd43b; }
+  body.th-space .per b { background: #3d3290; color: #ffd43b; }
+  body.th-space .item { background: #3d3290; color: #ffe066; }
+  body.th-space .item.ok { background: #1f4d3a; color: #8ce99a; }
+  body.th-space #bal { color: #8ce99a; }
+  body.th-space .after { color: #b197fc; }
+  body.th-space .note { color: #faa2c1; }
+  body.th-space #ovBox { background: #2a2266; color: #f3f0ff; border: 4px dotted #ffd43b; }
+  body.th-space #cTasks::after { content: "🚀"; }
+  body.th-space #cPomo::after { content: "🌙"; }
+  body.th-space #cSched::after { content: "🌍"; }
+  body.th-space #cMoney::after { content: "👽"; }
+
+  /* 主題選擇視窗 */
+  .thgrid { display: flex; flex-wrap: wrap; margin: 0 -4px 6px; }
+  .thc { width: 50%; padding: 4px; }
+  .thc div { border-radius: 16px; padding: 14px 10px; text-align: center; font-size: 19px; border: 4px solid #e4e7eb; color: #1f2933; }
+  .thc.sel div { border-color: #1971c2 !important; }
+  .thc .em { display: block; font-size: 30px; margin-bottom: 2px; }
+  .fnt { display: flex; align-items: center; padding: 10px 12px; margin: 5px 0; border-radius: 12px; border: 3px solid #e4e7eb; font-size: 19px; color: #1f2933; background: #fff; }
+  .fnt.sel { border-color: #1971c2; }
+  .fnt span { flex: 1; }
+  .fnt small { color: #7b8794; font-size: 14px; }
+  .ovsub { font-size: 16px; font-weight: bold; margin: 8px 0 2px; }
 </style>
 </head>
 <body>
@@ -151,6 +245,7 @@
     <div id="exam"></div>
     <span id="syncInfo"></span>
     <span class="tbtn" data-act="sync">同步</span>
+    <span class="tbtn" data-act="theme">🎨 主題</span>
     <span class="tbtn" data-act="night" id="nightBtn">夜間：自動</span>
     <span class="tbtn" data-act="reload">重整</span>
   </div>
@@ -167,6 +262,7 @@
 </div>
 <div id="ov"><div id="ovBox"></div></div>
 <div id="toast"></div>
+<div id="dim"></div>
 <div id="errbar"></div>
 
 <script>
@@ -180,6 +276,36 @@ var API_KEY = 'change-me-1234';
 var WD = '日一二三四五六';
 var SPEND_CATS = ['零食', '文具', '玩具', '捐款', '其他'];
 var INCOME_CATS = ['零用錢', '紅包', '獎勵', '其他'];
+
+/* 主題：icons 依序是 任務、蕃茄鐘、課表、零用錢 的標題圖示 */
+var THEMES = [
+  { id: 'candy', name: '糖果樂園', em: '🍭', bg: '#fff0f6', bd: '#f783ac', icons: ['⭐', '🍅', '🎒', '🐷'] },
+  { id: 'forest', name: '森林探險', em: '🌳', bg: '#eef7e4', bd: '#8bc34a', icons: ['🐞', '🍄', '🎒', '🐻'] },
+  { id: 'ocean', name: '海洋世界', em: '🐳', bg: '#e3f2fd', bd: '#4fc3f7', icons: ['⭐', '🐙', '🎒', '🐷'] },
+  { id: 'space', name: '太空冒險', em: '🚀', bg: '#2a2266', bd: '#ffd43b', icons: ['⭐', '⏰', '🎒', '💰'], dark: true },
+  { id: 'simple', name: '簡約', em: '📋', bg: '#ffffff', bd: '#cbd2d9', icons: ['', '', '', ''] }
+];
+var FONTS = [
+  { id: 'huninn', name: '粉圓體', desc: '圓圓胖胖，最可愛', file: 'fonts/huninn.woff' },
+  { id: 'iansui', name: '芫荽體', desc: '像小朋友的手寫字', file: 'fonts/iansui.woff' },
+  { id: 'wenkai', name: '文楷體', desc: '像鉛筆寫的字', file: 'fonts/wenkai.woff' },
+  { id: 'system', name: '系統字體', desc: '最清楚、載入最快', file: '' }
+];
+function findById(list, id) {
+  for (var i = 0; i < list.length; i++) if (list[i].id === id) return list[i];
+  return list[0];
+}
+function theme() { return findById(THEMES, S.theme); }
+function ic(i) { var e = theme().icons[i]; return e ? e + ' ' : ''; }
+var loadedFont = '';
+function applyFont() {
+  var f = findById(FONTS, S.font);
+  if (!f.file || loadedFont === f.id) return;
+  var st = document.getElementById('fontStyle');
+  if (!st) { st = document.createElement('style'); st.id = 'fontStyle'; document.head.appendChild(st); }
+  st.textContent = '@font-face{font-family:"KidFont";src:url("' + f.file + '") format("woff");}';
+  loadedFont = f.id;
+}
 
 /* ---------- 錯誤顯示 ---------- */
 var errTimer = null;
@@ -235,6 +361,8 @@ var S = lsGet('pp_state', {});                  // 本機狀態
   for (var k in DEF_CONFIG) if (C.config[k] === undefined) C.config[k] = DEF_CONFIG[k];
   if (!C.taskNet) C.taskNet = {};
   if (!S.night) S.night = 'auto';
+  if (!S.theme) S.theme = 'candy';
+  if (!S.font) S.font = 'huninn';
   if (!S.bag) S.bag = {};
 })();
 function saveOut() { lsSet('pp_outbox', OUT); }
@@ -361,7 +489,8 @@ function renderTop() {
     el.textContent = bestDays === 0 ? '今天' + best.name + '，加油！' : best.name + ' 還有 ' + bestDays + ' 天';
   }
   $('nightBtn').textContent = '夜間：' + ({ auto: '自動', on: '開', off: '關' })[S.night];
-  document.body.className = isNight() ? 'night' : '';
+  applyFont();
+  document.body.className = 'th-' + theme().id + (S.font !== 'system' ? ' f-kid' : '') + (isNight() ? ' night' : '');
 }
 
 function pinnedReward() {
@@ -371,7 +500,7 @@ function pinnedReward() {
 
 function renderTasks() {
   var list = todayTasks(), total = starTotal(), rw = pinnedReward();
-  var h = '<h2>今日任務</h2>';
+  var h = '<h2>' + ic(0) + '今日任務</h2>';
   h += '<div class="starbar" data-act="rewards"><div class="sbtop"><span class="sbnum">★ ' + total + '</span>';
   h += '<span class="sbgoal">' + (rw ? '目標：' + esc(rw.name) + '（' + rw.stars + '★）　點我兌換' : '點我看獎勵') + '</span></div>';
   if (rw) h += '<div class="bar"><i style="width:' + pct(total, rw.stars) + '%"></i></div>';
@@ -388,7 +517,7 @@ function renderTasks() {
 }
 
 function renderPomo() {
-  var p = S.pomo, h = '<h2>專注蕃茄鐘</h2>';
+  var p = S.pomo, h = '<h2>' + ic(1) + '專注蕃茄鐘</h2>';
   h += '<div class="pmsg">' + (p ? (p.kind === 'focus' ? '專注中…完成可得 ' + C.config.pomoStars + '★' : '休息一下，喝口水')
     : '選一個時間開始吧') + '</div>';
   h += '<div id="pomoTime">' + (p ? '' : '00:00') + '</div><div class="bar pbar"><i id="pomoBar"></i></div><div class="prow">';
@@ -407,7 +536,7 @@ function renderPomo() {
 function renderSched() {
   var d = schedTarget(), diff = dayDiff(new Date(), d);
   var label = diff === 0 ? '今天' : (diff === 1 ? '明天' : (d.getMonth() + 1) + '/' + d.getDate());
-  var h = '<h2>' + label + '（週' + WD.charAt(d.getDay()) + '）課表</h2><div class="periods">';
+  var h = '<h2>' + ic(2) + label + '（週' + WD.charAt(d.getDay()) + '）課表</h2><div class="periods">';
   var subs = subjectsOf(d), after = [], n = 0;
   for (var i = 0; i < subs.length; i++) {
     if (subs[i].period.indexOf('放學') >= 0) { after.push(subs[i].subj); continue; }
@@ -432,7 +561,7 @@ function renderSched() {
 
 function renderMoney() {
   var bal = balance(), cfg = C.config;
-  var h = '<h2>零用錢金庫</h2><div class="mtop"><div id="bal">$' + money(bal) + '</div>';
+  var h = '<h2>' + ic(3) + '零用錢金庫</h2><div class="mtop"><div id="bal">$' + money(bal) + '</div>';
   if (cfg.goalAmount > 0) {
     var p = pct(bal, cfg.goalAmount);
     h += '<div class="goal">' + esc(cfg.goalName || '存錢目標') + '：$' + money(cfg.goalAmount) + '（' + p + '%）' +
@@ -518,6 +647,26 @@ function openRewards() {
         (ok ? '兌換' : '還差 ' + (r.stars - total)) + '</span></div>';
     }
     return h;
+  });
+}
+
+/* 主題與字型選擇 */
+function openTheme() {
+  openOv(function () {
+    var h = ovHead('換個主題吧！') + '<div class="ovsub">外框主題</div><div class="thgrid">';
+    for (var i = 0; i < THEMES.length; i++) {
+      var t = THEMES[i];
+      h += '<div class="thc' + (t.id === theme().id ? ' sel' : '') + '" data-act="setTheme" data-arg="' + t.id + '">' +
+        '<div style="background:' + t.bg + ';border-color:' + t.bd + ';' + (t.dark ? 'color:#ffd43b;' : '') + '">' +
+        '<span class="em">' + t.em + '</span>' + t.name + '</div></div>';
+    }
+    h += '</div><div class="ovsub">字型</div>';
+    for (i = 0; i < FONTS.length; i++) {
+      var f = FONTS[i];
+      h += '<div class="fnt' + (f.id === S.font ? ' sel' : '') + '" data-act="setFont" data-arg="' + f.id + '">' +
+        '<span>' + f.name + '</span><small>' + f.desc + '</small></div>';
+    }
+    return h + '<div class="pend" style="margin-top:6px">第一次換字型需要幾秒鐘下載</div>';
   });
 }
 
@@ -755,7 +904,10 @@ var ACTS = {
     saveS();
     renderTop();
   },
-  reload: function () { location.reload(); }
+  reload: function () { location.reload(); },
+  theme: function () { openTheme(); },
+  setTheme: function (id) { S.theme = id; saveS(); renderAll(); refreshOv(); },
+  setFont: function (id) { S.font = id; saveS(); renderTop(); refreshOv(); }
 };
 
 function onTap(ev) {
