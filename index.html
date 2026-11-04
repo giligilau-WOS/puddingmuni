@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="學習面板">
+<title>學習面板</title>
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; height: 100%; overflow: hidden; }
+  body {
+    font-family: -apple-system, "PingFang TC", "Heiti TC", sans-serif;
+    background: #eef1f5; color: #1f2933; font-size: 17px;
+    -webkit-user-select: none; -webkit-touch-callout: none;
+    -webkit-tap-highlight-color: rgba(0,0,0,0); -webkit-text-size-adjust: 100%;
+  }
+  [data-act] { cursor: pointer; touch-action: manipulation; }
+
+  #app { display: flex; flex-direction: column; height: 100%; }
+  #top {
+    height: 60px; flex-shrink: 0; display: flex; align-items: center;
+    padding: 0 12px; background: #fff; border-bottom: 1px solid #d9dee5;
+  }
+  #time { font-size: 38px; font-weight: bold; margin-right: 10px; }
+  #date { font-size: 17px; color: #52606d; }
+  #exam { flex: 1; text-align: center; font-size: 20px; font-weight: bold; }
+  .e-green { color: #2b8a3e; } .e-orange { color: #e8590c; } .e-red { color: #c92a2a; }
+  #syncInfo { font-size: 13px; color: #7b8794; margin-right: 4px; }
+  .tbtn { padding: 8px 11px; margin-left: 6px; border-radius: 8px; background: #e4e7eb; font-size: 16px; }
+
+  #main { flex: 1; display: flex; min-height: 0; padding: 3px; }
+  .col { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+  .card {
+    flex: 1; min-height: 0; margin: 4px; background: #fff; border-radius: 12px;
+    padding: 9px 12px; display: flex; flex-direction: column; overflow: hidden; border: 1px solid #d9dee5;
+  }
+  .card h2 { margin: 0 0 6px; font-size: 19px; flex-shrink: 0; }
+  .card h3 { margin: 8px 0 4px; font-size: 16px; color: #52606d; flex-shrink: 0; }
+  .empty { color: #9aa5b1; padding: 10px 0; }
+  .bar { height: 12px; background: #e4e7eb; border-radius: 6px; overflow: hidden; }
+  .bar i { display: block; height: 100%; width: 0; background: #f59f00; }
+
+  /* 任務 */
+  .starbar { background: #fff4e6; border-radius: 10px; padding: 6px 10px; margin-bottom: 4px; flex-shrink: 0; }
+  .sbtop { display: flex; align-items: baseline; margin-bottom: 4px; }
+  .sbnum { font-size: 24px; font-weight: bold; color: #e8590c; margin-right: 10px; }
+  .sbgoal { font-size: 15px; color: #7b8794; }
+  .list { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+  .task { display: flex; align-items: center; padding: 9px 4px; border-bottom: 1px solid #eef1f5; font-size: 20px; }
+  .box {
+    width: 30px; height: 30px; flex-shrink: 0; border: 3px solid #9aa5b1; border-radius: 7px;
+    margin-right: 12px; text-align: center; line-height: 24px; font-size: 20px; color: #fff;
+  }
+  .task.done .box { background: #2f9e44; border-color: #2f9e44; }
+  .task.done .tname { color: #9aa5b1; text-decoration: line-through; }
+  .tname { flex: 1; }
+  .tstar { color: #e8590c; font-size: 16px; margin-left: 8px; }
+
+  /* 蕃茄鐘 */
+  .pmsg { text-align: center; color: #52606d; flex-shrink: 0; }
+  #pomoTime { font-size: 64px; font-weight: bold; text-align: center; line-height: 1.15; flex: 1; display: flex; align-items: center; justify-content: center; }
+  .pbar { margin: 4px 6px 8px; flex-shrink: 0; }
+  .pbar i { background: #1971c2; }
+  .prow { display: flex; flex-shrink: 0; }
+  .pbtn { flex: 1; margin: 0 4px; padding: 14px 0; text-align: center; border-radius: 10px; background: #1971c2; color: #fff; font-size: 18px; }
+  .pbtn.rest { background: #2f9e44; }
+  .pbtn.stop { background: #c92a2a; }
+
+  /* 課表 */
+  .periods { display: flex; flex-wrap: wrap; flex-shrink: 0; }
+  .per { width: 33.33%; padding: 3px 2px; font-size: 18px; white-space: nowrap; overflow: hidden; }
+  .per b {
+    display: inline-block; min-width: 24px; height: 24px; border-radius: 12px; background: #d0ebff;
+    text-align: center; line-height: 24px; font-size: 13px; margin-right: 5px; padding: 0 4px;
+  }
+  .after { margin-top: 4px; color: #5f3dc4; font-size: 16px; flex-shrink: 0; }
+  .bag { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+  .item { display: inline-block; margin: 3px; padding: 7px 12px; border-radius: 16px; background: #fff3bf; font-size: 17px; }
+  .item.ok { background: #d3f9d8; color: #2b8a3e; text-decoration: line-through; }
+  .note { color: #c2255c; font-size: 16px; margin: 4px 3px; }
+
+  /* 零用錢 */
+  .mtop { display: flex; align-items: center; flex-shrink: 0; }
+  #bal { font-size: 42px; font-weight: bold; color: #2b8a3e; margin-right: 14px; }
+  .goal { flex: 1; font-size: 15px; color: #52606d; }
+  .goal .bar { margin-top: 4px; }
+  .goal .bar i { background: #2f9e44; }
+  .recent { flex: 1; overflow: hidden; margin: 6px 0; }
+  .rec { display: flex; font-size: 16px; padding: 4px 0; border-bottom: 1px solid #eef1f5; }
+  .rec .rd { width: 52px; color: #9aa5b1; }
+  .rec .rt { flex: 1; overflow: hidden; white-space: nowrap; }
+  .rec .ra { width: 80px; text-align: right; font-weight: bold; }
+  .plus { color: #2b8a3e; } .minus { color: #c92a2a; }
+  .pend { font-size: 12px; color: #9aa5b1; }
+  .mrow { display: flex; flex-shrink: 0; }
+  .mbtn { flex: 1; margin: 0 4px; padding: 13px 0; text-align: center; border-radius: 10px; color: #fff; font-size: 18px; }
+  .mbtn.out { background: #e8590c; } .mbtn.in { background: #2f9e44; }
+
+  /* 彈出視窗 */
+  #ov { display: none; position: fixed; left: 0; top: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.45); z-index: 10; }
+  #ovBox {
+    position: absolute; left: 50%; top: 50%; width: 500px; margin-left: -250px;
+    -webkit-transform: translateY(-50%); transform: translateY(-50%);
+    background: #fff; border-radius: 14px; padding: 16px; max-height: 96%; overflow-y: auto; -webkit-overflow-scrolling: touch;
+  }
+  .ovh { display: flex; align-items: center; margin-bottom: 10px; }
+  .ovh h2 { flex: 1; margin: 0; font-size: 21px; }
+  .x { padding: 6px 14px; border-radius: 8px; background: #e4e7eb; font-size: 17px; }
+  .amt { font-size: 44px; font-weight: bold; text-align: center; margin: 4px 0 8px; }
+  .cats { display: flex; flex-wrap: wrap; margin-bottom: 8px; }
+  .cat { margin: 3px; padding: 9px 14px; border-radius: 18px; background: #e4e7eb; font-size: 17px; }
+  .cat.sel { background: #1971c2; color: #fff; }
+  .keys { display: flex; flex-wrap: wrap; }
+  .key { width: 33.33%; padding: 4px; }
+  .key div { background: #e4e7eb; border-radius: 10px; padding: 13px 0; text-align: center; font-size: 26px; }
+  .okbtn { margin: 10px 4px 0; padding: 14px 0; text-align: center; border-radius: 10px; background: #1971c2; color: #fff; font-size: 20px; }
+  .dots { text-align: center; font-size: 34px; letter-spacing: 12px; margin: 6px 0; }
+  .pinmsg { text-align: center; color: #c92a2a; height: 22px; }
+  .rw { display: flex; align-items: center; padding: 10px 4px; border-bottom: 1px solid #eef1f5; font-size: 18px; }
+  .rw .rn { flex: 1; }
+  .rw .rs { color: #e8590c; margin-right: 10px; }
+  .rbtn { padding: 8px 14px; border-radius: 8px; background: #e8590c; color: #fff; }
+  .rbtn.no { background: #cbd2d9; }
+
+  #toast {
+    display: none; position: fixed; left: 50%; bottom: 40px; width: 420px; margin-left: -210px; z-index: 20;
+    background: rgba(31,41,51,0.92); color: #fff; text-align: center; font-size: 22px; padding: 14px; border-radius: 12px;
+  }
+  #errbar { display: none; position: fixed; left: 0; right: 0; bottom: 0; background: #ffe3e3; color: #c92a2a; font-size: 13px; padding: 4px 10px; z-index: 30; }
+
+  /* 夜間模式 */
+  body.night { background: #0d1117; color: #b8c0c8; }
+  body.night #top, body.night .card, body.night #ovBox { background: #161b22; border-color: #2a3038; }
+  body.night .tbtn, body.night .x, body.night .cat, body.night .key div { background: #2a3038; color: #b8c0c8; }
+  body.night .starbar { background: #2b2116; }
+  body.night .item { background: #3a3216; color: #d8c88a; }
+  body.night .item.ok { background: #1c3322; color: #7bbf8a; }
+  body.night .bar { background: #2a3038; }
+  body.night .task, body.night .rec, body.night .rw { border-color: #222830; }
+  body.night .pbtn, body.night .mbtn, body.night .okbtn, body.night .rbtn { opacity: 0.75; }
+  body.night #bal { color: #69a978; }
+  body.night .per b { background: #1d3550; }
+</style>
+</head>
+<body>
+<div id="app">
+  <div id="top">
+    <span id="time">--:--</span><span id="date"></span>
+    <div id="exam"></div>
+    <span id="syncInfo"></span>
+    <span class="tbtn" data-act="sync">同步</span>
+    <span class="tbtn" data-act="night" id="nightBtn">夜間：自動</span>
+    <span class="tbtn" data-act="reload">重整</span>
+  </div>
+  <div id="main">
+    <div class="col">
+      <div class="card" id="cTasks"></div>
+      <div class="card" id="cPomo"></div>
+    </div>
+    <div class="col">
+      <div class="card" id="cSched"></div>
+      <div class="card" id="cMoney"></div>
+    </div>
+  </div>
+</div>
+<div id="ov"><div id="ovBox"></div></div>
+<div id="toast"></div>
+<div id="errbar"></div>
+
+<script>
+(function () {
+
+/* ================= 設定 ================= */
+var API_URL = 'https://script.google.com/macros/s/AKfycbxY-7ZoZfDN-pRjV-p0rnsqRYWrbYpzthbUI_H90c94Zwzg8FIIP0QR-Nq9uzkYH_U2eA/exec';
+var API_KEY = 'change-me-1234';
+/* ======================================== */
+
+var WD = '日一二三四五六';
+var SPEND_CATS = ['零食', '文具', '玩具', '捐款', '其他'];
+var INCOME_CATS = ['零用錢', '紅包', '獎勵', '其他'];
+
+/* ---------- 錯誤顯示 ---------- */
+var errTimer = null;
+window.onerror = function (msg, src, line) {
+  var b = document.getElementById('errbar');
+  if (!b) return false;
+  b.textContent = '錯誤：' + msg + '（' + line + '）';
+  b.style.display = 'block';
+  clearTimeout(errTimer);
+  errTimer = setTimeout(function () { b.style.display = 'none'; }, 10000);
+  return false;
+};
+
+/* ---------- 小工具 ---------- */
+function $(id) { return document.getElementById(id); }
+function now() { return new Date().getTime(); }
+function pad(n) { return n < 10 ? '0' + n : '' + n; }
+function ymd(d) { return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()); }
+function hm(d) { return pad(d.getHours()) + ':' + pad(d.getMinutes()); }
+function parseYmd(s) {
+  var m = /^(\d{4})-(\d{1,2})-(\d{1,2})/.exec(String(s || ''));
+  return m ? new Date(+m[1], +m[2] - 1, +m[3]) : null;
+}
+function midnight(d) { return new Date(d.getFullYear(), d.getMonth(), d.getDate()); }
+function dayDiff(a, b) { return Math.round((midnight(b) - midnight(a)) / 86400000); }
+function esc(s) {
+  return String(s === null || s === undefined ? '' : s)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+function money(n) {
+  n = Math.round(Number(n) || 0);
+  var neg = n < 0, s = String(Math.abs(n));
+  while (/\d{4}/.test(s)) s = s.replace(/(\d)(\d{3})(?!\d)/, '$1,$2');
+  return (neg ? '-' : '') + s;
+}
+function pct(a, b) { return b > 0 ? Math.max(0, Math.min(100, Math.round(a / b * 100))) : 0; }
+function uid() { return now().toString(36) + Math.random().toString(36).slice(2, 7); }
+
+function lsGet(k, def) {
+  try { var v = localStorage.getItem(k); return v ? JSON.parse(v) : def; } catch (e) { return def; }
+}
+function lsSet(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+
+/* ---------- 資料 ---------- */
+var DEF_CONFIG = { exams: [], holidays: [], goalName: '', goalAmount: 0, pin: '0000', pomoStars: 1, nightStart: 21, nightEnd: 6 };
+var C = lsGet('pp_cache', null) || {};          // 最後一次從試算表讀到的資料
+var OUT = lsGet('pp_outbox', []);               // 還沒上傳的紀錄
+var S = lsGet('pp_state', {});                  // 本機狀態
+(function fixData() {
+  var keys = ['tasks', 'schedule', 'reminders', 'rewards', 'ledgerRecent'];
+  for (var i = 0; i < keys.length; i++) if (!C[keys[i]]) C[keys[i]] = [];
+  if (!C.config) C.config = {};
+  for (var k in DEF_CONFIG) if (C.config[k] === undefined) C.config[k] = DEF_CONFIG[k];
+  if (!C.taskNet) C.taskNet = {};
+  if (!S.night) S.night = 'auto';
+  if (!S.bag) S.bag = {};
+})();
+function saveOut() { lsSet('pp_outbox', OUT); }
+function saveS() { lsSet('pp_state', S); }
+
+function starTotal() {
+  var t = Number(C.starTotal) || 0;
+  for (var i = 0; i < OUT.length; i++) if (OUT[i].kind === 'star') t += Number(OUT[i].n) || 0;
+  return t;
+}
+function balance() {
+  var t = Number(C.ledgerBalance) || 0;
+  for (var i = 0; i < OUT.length; i++) {
+    var e = OUT[i];
+    if (e.kind === 'ledger') t += e.type === '支出' ? -e.amt : e.amt;
+  }
+  return t;
+}
+function taskDone(name) {
+  var today = ymd(new Date());
+  var n = C.date === today ? (C.taskNet[name] || 0) : 0;
+  var ref = today + '|' + name;
+  for (var i = 0; i < OUT.length; i++) {
+    var e = OUT[i];
+    if (e.kind === 'star' && e.ref === ref) n += e.type === 'task' ? 1 : -1;
+  }
+  return n > 0;
+}
+function addEvent(e) {
+  e.id = e.id || uid();
+  OUT.push(e);
+  saveOut();
+  renderAll();
+  syncSoon();
+}
+function starEvent(n, why, type, ref, id) {
+  addEvent({ kind: 'star', id: id, time: ymd(new Date()) + ' ' + hm(new Date()), n: n, why: why, type: type, ref: ref || '' });
+}
+function ledgerEvent(type, desc, amt, src, id) {
+  addEvent({ kind: 'ledger', id: id, date: ymd(new Date()), type: type, desc: desc, amt: amt, src: src || 'iPad' });
+}
+
+/* ---------- 日期規則 ---------- */
+function dayOk(spec, wd) {
+  spec = String(spec || '').replace(/\s/g, '');
+  if (!spec || spec === '每天') return true;
+  if (spec === '平日') return wd >= 1 && wd <= 5;
+  if (spec === '週末' || spec === '假日') return wd === 0 || wd === 6;
+  return spec.indexOf(WD.charAt(wd)) >= 0 || (wd === 0 && spec.indexOf('天') >= 0);
+}
+function isHoliday(d) {
+  var s = ymd(d), h = C.config.holidays;
+  for (var i = 0; i < h.length; i++) if (String(h[i]).slice(0, 10) === s) return true;
+  return false;
+}
+function isSchool(d) { var w = d.getDay(); return w >= 1 && w <= 5 && !isHoliday(d); }
+function schedTarget() {
+  var n = new Date(), d = midnight(n);
+  if (n.getHours() >= 17) d.setDate(d.getDate() + 1);
+  for (var i = 0; i < 30 && !isSchool(d); i++) d.setDate(d.getDate() + 1);
+  return d;
+}
+function todayTasks() {
+  var wd = new Date().getDay(), r = [];
+  for (var i = 0; i < C.tasks.length; i++) if (dayOk(C.tasks[i].days, wd)) r.push(C.tasks[i]);
+  return r;
+}
+function isNight() {
+  if (S.night === 'on') return true;
+  if (S.night === 'off') return false;
+  var h = new Date().getHours(), a = Number(C.config.nightStart), b = Number(C.config.nightEnd);
+  if (isNaN(a)) a = 21;
+  if (isNaN(b)) b = 6;
+  return a > b ? (h >= a || h < b) : (h >= a && h < b);
+}
+
+/* ---------- 書包清單 ---------- */
+function splitItems(s) {
+  var p = String(s || '').split(/[、,，;；\/]+/), r = [];
+  for (var i = 0; i < p.length; i++) { var t = p[i].replace(/^\s+|\s+$/g, ''); if (t) r.push(t); }
+  return r;
+}
+function subjectsOf(d) {
+  var wd = d.getDay(), r = [];
+  if (wd < 1 || wd > 5) return r;
+  for (var i = 0; i < C.schedule.length; i++) {
+    var s = C.schedule[i].d[wd - 1];
+    if (s) r.push({ period: String(C.schedule[i].period), time: C.schedule[i].time, subj: String(s) });
+  }
+  return r;
+}
+function bagFor(d) {
+  var subs = subjectsOf(d), ds = ymd(d), items = [], clothes = [], seen = {};
+  function add(list, arr) {
+    for (var i = 0; i < list.length; i++) if (!seen[list[i]]) { seen[list[i]] = 1; arr.push(list[i]); }
+  }
+  for (var i = 0; i < C.reminders.length; i++) {
+    var r = C.reminders[i], hit = false, kw = String(r.kw || '');
+    if (r.date) hit = String(r.date).slice(0, 10) === ds;
+    else if (kw === '每天') hit = true;
+    else if (kw) {
+      for (var j = 0; j < subs.length; j++) if (subs[j].subj.indexOf(kw) >= 0) { hit = true; break; }
+    }
+    if (hit) { add(splitItems(r.items), items); add(splitItems(r.clothes), clothes); }
+  }
+  return { items: items, clothes: clothes };
+}
+
+/* ================= 畫面 ================= */
+function renderTop() {
+  var d = new Date();
+  $('date').textContent = (d.getMonth() + 1) + '月' + d.getDate() + '日 週' + WD.charAt(d.getDay());
+  var best = null, bestDays = 9999;
+  for (var i = 0; i < C.config.exams.length; i++) {
+    var ex = C.config.exams[i], ed = parseYmd(ex.date);
+    if (!ed) continue;
+    var n = dayDiff(d, ed);
+    if (n >= 0 && n < bestDays) { best = ex; bestDays = n; }
+  }
+  var el = $('exam');
+  if (!best) { el.textContent = ''; }
+  else {
+    el.className = bestDays <= 7 ? 'e-red' : (bestDays <= 14 ? 'e-orange' : 'e-green');
+    el.textContent = bestDays === 0 ? '今天' + best.name + '，加油！' : best.name + ' 還有 ' + bestDays + ' 天';
+  }
+  $('nightBtn').textContent = '夜間：' + ({ auto: '自動', on: '開', off: '關' })[S.night];
+  document.body.className = isNight() ? 'night' : '';
+}
+
+function pinnedReward() {
+  for (var i = 0; i < C.rewards.length; i++) if (C.rewards[i].top) return C.rewards[i];
+  return C.rewards[0] || null;
+}
+
+function renderTasks() {
+  var list = todayTasks(), total = starTotal(), rw = pinnedReward();
+  var h = '<h2>今日任務</h2>';
+  h += '<div class="starbar" data-act="rewards"><div class="sbtop"><span class="sbnum">★ ' + total + '</span>';
+  h += '<span class="sbgoal">' + (rw ? '目標：' + esc(rw.name) + '（' + rw.stars + '★）　點我兌換' : '點我看獎勵') + '</span></div>';
+  if (rw) h += '<div class="bar"><i style="width:' + pct(total, rw.stars) + '%"></i></div>';
+  h += '</div><div class="list">';
+  if (!list.length) h += '<div class="empty">' + (C.tasks.length ? '今天沒有任務，好好休息！' : '尚未同步任務資料') + '</div>';
+  for (var i = 0; i < list.length; i++) {
+    var done = taskDone(list[i].name);
+    h += '<div class="task' + (done ? ' done' : '') + '" data-act="task" data-arg="' + i + '">' +
+      '<span class="box">' + (done ? '✓' : '') + '</span><span class="tname">' + esc(list[i].name) + '</span>' +
+      '<span class="tstar">+' + list[i].stars + '★</span></div>';
+  }
+  h += '</div>';
+  $('cTasks').innerHTML = h;
+}
+
+function renderPomo() {
+  var p = S.pomo, h = '<h2>專注蕃茄鐘</h2>';
+  h += '<div class="pmsg">' + (p ? (p.kind === 'focus' ? '專注中…完成可得 ' + C.config.pomoStars + '★' : '休息一下，喝口水')
+    : '選一個時間開始吧') + '</div>';
+  h += '<div id="pomoTime">' + (p ? '' : '00:00') + '</div><div class="bar pbar"><i id="pomoBar"></i></div><div class="prow">';
+  if (p) h += '<div class="pbtn stop" data-act="pstop">停止</div>';
+  else {
+    h += '<div class="pbtn" data-act="pomo" data-arg="f15">專注 15</div>' +
+      '<div class="pbtn" data-act="pomo" data-arg="f25">專注 25</div>' +
+      '<div class="pbtn" data-act="pomo" data-arg="f30">專注 30</div>' +
+      '<div class="pbtn rest" data-act="pomo" data-arg="r5">休息 5</div>';
+  }
+  h += '</div>';
+  $('cPomo').innerHTML = h;
+  tickPomo();
+}
+
+function renderSched() {
+  var d = schedTarget(), diff = dayDiff(new Date(), d);
+  var label = diff === 0 ? '今天' : (diff === 1 ? '明天' : (d.getMonth() + 1) + '/' + d.getDate());
+  var h = '<h2>' + label + '（週' + WD.charAt(d.getDay()) + '）課表</h2><div class="periods">';
+  var subs = subjectsOf(d), after = [], n = 0;
+  for (var i = 0; i < subs.length; i++) {
+    if (subs[i].period.indexOf('放學') >= 0) { after.push(subs[i].subj); continue; }
+    n++;
+    h += '<div class="per"><b>' + esc(subs[i].period) + '</b>' + esc(subs[i].subj) + '</div>';
+  }
+  if (!n) h += '<div class="empty">' + (C.schedule.length ? '沒有課' : '尚未同步課表') + '</div>';
+  h += '</div>';
+  if (after.length) h += '<div class="after">放學後：' + esc(after.join('、')) + '</div>';
+
+  var bag = bagFor(d), key = ymd(d);
+  if (S.bag.date !== key) { S.bag = { date: key, ok: {} }; saveS(); }
+  h += '<h3>' + label + '要帶（點一下表示放好了）</h3><div class="bag">';
+  for (i = 0; i < bag.items.length; i++) {
+    h += '<span class="item' + (S.bag.ok[bag.items[i]] ? ' ok' : '') + '" data-act="bag" data-arg="' + i + '">' + esc(bag.items[i]) + '</span>';
+  }
+  if (!bag.items.length) h += '<div class="empty">沒有特別要帶的東西</div>';
+  for (i = 0; i < bag.clothes.length; i++) h += '<div class="note">👕 ' + esc(bag.clothes[i]) + '</div>';
+  h += '</div>';
+  $('cSched').innerHTML = h;
+}
+
+function renderMoney() {
+  var bal = balance(), cfg = C.config;
+  var h = '<h2>零用錢金庫</h2><div class="mtop"><div id="bal">$' + money(bal) + '</div>';
+  if (cfg.goalAmount > 0) {
+    var p = pct(bal, cfg.goalAmount);
+    h += '<div class="goal">' + esc(cfg.goalName || '存錢目標') + '：$' + money(cfg.goalAmount) + '（' + p + '%）' +
+      '<div class="bar"><i style="width:' + p + '%"></i></div></div>';
+  }
+  h += '</div><div class="recent">';
+  var rows = [];
+  for (var i = OUT.length - 1; i >= 0; i--) if (OUT[i].kind === 'ledger') rows.push({ e: OUT[i], pend: true });
+  for (i = 0; i < C.ledgerRecent.length; i++) rows.push({ e: C.ledgerRecent[i], pend: false });
+  if (!rows.length) h += '<div class="empty">還沒有紀錄</div>';
+  for (i = 0; i < rows.length && i < 4; i++) {
+    var e = rows[i].e, dd = parseYmd(e.date), isOut = e.type === '支出';
+    h += '<div class="rec"><span class="rd">' + (dd ? (dd.getMonth() + 1) + '/' + dd.getDate() : '') + '</span>' +
+      '<span class="rt">' + esc(e.desc) + (rows[i].pend ? ' <span class="pend">待上傳</span>' : '') + '</span>' +
+      '<span class="ra ' + (isOut ? 'minus' : 'plus') + '">' + (isOut ? '-' : '+') + money(e.amt) + '</span></div>';
+  }
+  h += '</div><div class="mrow"><div class="mbtn out" data-act="spend">記支出</div><div class="mbtn in" data-act="income">記收入 🔒</div></div>';
+  $('cMoney').innerHTML = h;
+}
+
+function renderAll() { renderTop(); renderTasks(); renderPomo(); renderSched(); renderMoney(); renderSync(); }
+
+/* ---------- 提示 ---------- */
+var toastTimer = null;
+function toast(msg) {
+  var t = $('toast');
+  t.textContent = msg;
+  t.style.display = 'block';
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function () { t.style.display = 'none'; }, 2500);
+}
+
+/* ---------- 彈出視窗 ---------- */
+var ovRender = null;
+function openOv(fn) { ovRender = fn; $('ov').style.display = 'block'; refreshOv(); }
+function refreshOv() { if (ovRender) $('ovBox').innerHTML = ovRender(); }
+function closeOv() { ovRender = null; $('ov').style.display = 'none'; $('ovBox').innerHTML = ''; }
+function ovHead(title) { return '<div class="ovh"><h2>' + title + '</h2><span class="x" data-act="close">關閉</span></div>'; }
+function keypad(prefix) {
+  var k = ['1', '2', '3', '4', '5', '6', '7', '8', '9', 'C', '0', '⌫'], h = '<div class="keys">';
+  for (var i = 0; i < k.length; i++) h += '<div class="key" data-act="' + prefix + '" data-arg="' + k[i] + '"><div>' + k[i] + '</div></div>';
+  return h + '</div>';
+}
+function typeKey(buf, k, max) {
+  if (k === 'C') return '';
+  if (k === '⌫') return buf.slice(0, -1);
+  return buf.length < max ? buf + k : buf;
+}
+
+/* 家長密碼 */
+var PIN = { buf: '', msg: '', cb: null, title: '' };
+function askPin(title, cb) {
+  PIN = { buf: '', msg: '', cb: cb, title: title };
+  openOv(function () {
+    var dots = '';
+    for (var i = 0; i < 4; i++) dots += i < PIN.buf.length ? '●' : '○';
+    return ovHead('家長密碼：' + esc(PIN.title)) + '<div class="dots">' + dots + '</div>' +
+      '<div class="pinmsg">' + esc(PIN.msg) + '</div>' + keypad('pin');
+  });
+}
+
+/* 記帳 */
+var KP = { type: '支出', amt: '', cat: '' };
+function openKeypad(type) {
+  KP = { type: type, amt: '', cat: '' };
+  openOv(function () {
+    var cats = KP.type === '支出' ? SPEND_CATS : INCOME_CATS, h = ovHead('記' + KP.type);
+    h += '<div class="amt ' + (KP.type === '支出' ? 'minus' : 'plus') + '">$' + (KP.amt || '0') + '</div><div class="cats">';
+    for (var i = 0; i < cats.length; i++) h += '<span class="cat' + (KP.cat === cats[i] ? ' sel' : '') + '" data-act="cat" data-arg="' + cats[i] + '">' + cats[i] + '</span>';
+    return h + '</div>' + keypad('kp') + '<div class="okbtn" data-act="kpok">確定記帳</div>';
+  });
+}
+
+/* 獎勵兌換所 */
+function openRewards() {
+  openOv(function () {
+    var total = starTotal(), h = ovHead('星星兌換所（目前 ★ ' + total + '）');
+    if (!C.rewards.length) h += '<div class="empty">還沒有設定獎勵</div>';
+    for (var i = 0; i < C.rewards.length; i++) {
+      var r = C.rewards[i], ok = total >= r.stars;
+      h += '<div class="rw"><span class="rn">' + esc(r.name) + (r.money ? '<br><span class="pend">兌換後自動存入 $' + r.money + '</span>' : '') + '</span>' +
+        '<span class="rs">' + r.stars + '★</span><span class="rbtn' + (ok ? '' : ' no') + '" data-act="redeem" data-arg="' + i + '">' +
+        (ok ? '兌換' : '還差 ' + (r.stars - total)) + '</span></div>';
+    }
+    return h;
+  });
+}
+
+/* ================= 蕃茄鐘 ================= */
+var actx = null;
+function unlockAudio() {
+  try {
+    var A = window.AudioContext || window.webkitAudioContext;
+    if (!actx && A) actx = new A();
+    if (actx) beep(1, 0.01);
+  } catch (e) {}
+}
+function beep(times, len) {
+  if (!actx) return;
+  try {
+    var t = actx.currentTime;
+    for (var i = 0; i < times; i++) {
+      var o = actx.createOscillator(), g = actx.createGain();
+      o.frequency.value = 880;
+      g.gain.value = 0.3;
+      o.connect(g);
+      g.connect(actx.destination);
+      o.start(t + i * 0.45);
+      o.stop(t + i * 0.45 + (len || 0.25));
+    }
+  } catch (e) {}
+}
+function tickPomo() {
+  var tEl = $('pomoTime'), bEl = $('pomoBar'), p = S.pomo;
+  if (!tEl || !p) return;
+  var left = p.end - now();
+  if (left <= 0) { finishPomo(); return; }
+  var sec = Math.ceil(left / 1000);
+  tEl.textContent = pad(Math.floor(sec / 60)) + ':' + pad(sec % 60);
+  bEl.style.width = pct(p.dur - left, p.dur) + '%';
+}
+function finishPomo() {
+  var p = S.pomo;
+  S.pomo = null;
+  saveS();
+  beep(3);
+  if (p.kind === 'focus') {
+    var n = Number(C.config.pomoStars) || 0;
+    if (n) starEvent(n, '蕃茄鐘 ' + p.min + ' 分鐘', 'pomo');
+    else renderAll();
+    toast('專注完成！' + (n ? '+' + n + '★' : ''));
+  } else {
+    renderPomo();
+    toast('休息結束，繼續加油！');
+  }
+}
+
+/* ================= 同步 ================= */
+var seq = 0;
+function buildUrl(params) {
+  var q = ['key=' + encodeURIComponent(API_KEY), '_=' + now()];
+  for (var k in params) if (params.hasOwnProperty(k)) q.push(encodeURIComponent(k) + '=' + encodeURIComponent(params[k]));
+  return API_URL + '?' + q.join('&');
+}
+function copy(o) { var r = {}; for (var k in o) if (o.hasOwnProperty(k)) r[k] = o[k]; return r; }
+
+function viaJsonp(params, cb) {
+  var name = '__cb' + (++seq) + '_' + now(), s = document.createElement('script'), done = false, t;
+  function finish(err, d) {
+    if (done) return;
+    done = true;
+    clearTimeout(t);
+    window[name] = function () {};
+    if (s.parentNode) s.parentNode.removeChild(s);
+    cb(err, d);
+  }
+  t = setTimeout(function () { finish('逾時'); }, 20000);
+  window[name] = function (d) { finish(null, d); };
+  s.onerror = function () { finish('載入失敗'); };
+  params = copy(params);
+  params.callback = name;
+  s.src = buildUrl(params);
+  document.body.appendChild(s);
+}
+function viaFrame(params, cb) {
+  var n = 'f' + (++seq) + '_' + now(), f = document.createElement('iframe'), done = false, t;
+  f.style.display = 'none';
+  function onMsg(ev) {
+    var d = null;
+    try { d = typeof ev.data === 'string' ? JSON.parse(ev.data) : ev.data; } catch (e) { return; }
+    if (d && d.n === n) finish(null, d);
+  }
+  function finish(err, d) {
+    if (done) return;
+    done = true;
+    clearTimeout(t);
+    window.removeEventListener('message', onMsg, false);
+    if (f.parentNode) f.parentNode.removeChild(f);
+    cb(err, d);
+  }
+  t = setTimeout(function () { finish('逾時'); }, 25000);
+  window.addEventListener('message', onMsg, false);
+  params = copy(params);
+  params.mode = 'frame';
+  params.n = n;
+  f.src = buildUrl(params);
+  document.body.appendChild(f);
+}
+var useFrame = false;
+function call(params, cb) {
+  function check(err, d) {
+    if (!err && (!d || d.app !== 'ipad-panel')) err = '回應不正確';
+    if (!err && !d.ok) err = d.error || '後端錯誤';
+    return err;
+  }
+  (useFrame ? viaFrame : viaJsonp)(params, function (err, d) {
+    err = check(err, d);
+    if (!err || useFrame) { cb(err, d); return; }
+    viaFrame(params, function (err2, d2) {          // JSONP 失敗就改用 iframe
+      err2 = check(err2, d2);
+      if (!err2) useFrame = true;
+      cb(err2, d2);
+    });
+  });
+}
+
+var syncing = false, syncTimer = null, syncMsg = '';
+function renderSync() {
+  var t = syncMsg;
+  if (!t) t = S.lastSync ? '上次同步 ' + hm(new Date(S.lastSync)) : '尚未同步';
+  if (OUT.length) t += '・' + OUT.length + ' 筆待上傳';
+  $('syncInfo').textContent = t;
+}
+function syncSoon() { clearTimeout(syncTimer); syncTimer = setTimeout(sync, 1500); }
+function pushAll(cb) {
+  if (!OUT.length) { cb(true); return; }
+  var batch = OUT.slice(0, 6);
+  call({ action: 'push', ev: JSON.stringify(batch) }, function (err, d) {
+    if (err) { cb(false); return; }
+    var acked = {}, n = 0;
+    for (var i = 0; i < d.acked.length; i++) { acked[d.acked[i]] = 1; n++; }
+    var keep = [];
+    for (i = 0; i < OUT.length; i++) if (!acked[OUT[i].id]) keep.push(OUT[i]);
+    OUT = keep;
+    saveOut();
+    if (!n) { cb(false); return; }
+    pushAll(cb);
+  });
+}
+function sync() {
+  if (syncing) return;
+  syncing = true;
+  syncMsg = '同步中…';
+  renderSync();
+  pushAll(function (ok) {
+    if (!ok) { syncing = false; syncMsg = '離線中'; renderSync(); return; }
+    var date = ymd(new Date());
+    call({ action: 'load', date: date }, function (err, d) {
+      syncing = false;
+      if (err) { syncMsg = '讀取失敗'; renderSync(); return; }
+      C = d;
+      lsSet('pp_cache', C);
+      S.lastSync = now();
+      saveS();
+      syncMsg = '';
+      if (ovRender) refreshOv();
+      renderAll();
+    });
+  });
+}
+
+/* ================= 點擊動作 ================= */
+var ACTS = {
+  task: function (i) {
+    var t = todayTasks()[+i];
+    if (!t) return;
+    var done = taskDone(t.name), n = Number(t.stars) || 0, ref = ymd(new Date()) + '|' + t.name;
+    if (done) starEvent(-n, '取消：' + t.name, 'untask', ref);
+    else { starEvent(n, '完成：' + t.name, 'task', ref); toast('太棒了！+' + n + '★'); }
+  },
+  rewards: function () { openRewards(); },
+  redeem: function (i) {
+    var r = C.rewards[+i];
+    if (!r) return;
+    if (starTotal() < r.stars) { toast('星星還不夠喔，再加油！'); return; }
+    askPin('兌換「' + r.name + '」', function () {
+      var id = uid();
+      starEvent(-r.stars, '兌換：' + r.name, 'redeem', '', id);
+      if (r.money > 0) ledgerEvent('收入', '星星兌換：' + r.name, r.money, '星星兌換', id + 'L');
+      toast('兌換成功：' + r.name);
+    });
+  },
+  pomo: function (a) {
+    unlockAudio();
+    var min = parseInt(a.slice(1), 10);
+    S.pomo = { kind: a.charAt(0) === 'f' ? 'focus' : 'rest', min: min, dur: min * 60000, end: now() + min * 60000 };
+    saveS();
+    renderPomo();
+  },
+  pstop: function () {
+    if (!confirm('確定要停止嗎？（不會得到星星）')) return;
+    S.pomo = null;
+    saveS();
+    renderPomo();
+  },
+  bag: function (i) {
+    var item = bagFor(schedTarget()).items[+i];
+    if (!item) return;
+    if (S.bag.ok[item]) delete S.bag.ok[item]; else S.bag.ok[item] = 1;
+    saveS();
+    renderSched();
+  },
+  spend: function () { openKeypad('支出'); },
+  income: function () { askPin('記收入', function () { openKeypad('收入'); }); },
+  kp: function (k) { KP.amt = typeKey(KP.amt, k, 5).replace(/^0+/, ''); refreshOv(); },
+  cat: function (c) { KP.cat = c; refreshOv(); },
+  kpok: function () {
+    var amt = parseInt(KP.amt, 10) || 0;
+    if (!amt) { toast('請輸入金額'); return; }
+    if (!KP.cat) { toast('請選一個項目'); return; }
+    if (KP.type === '支出' && amt > balance()) { toast('餘額不夠喔'); return; }
+    closeOv();
+    ledgerEvent(KP.type, KP.cat, amt);
+    toast('已記' + KP.type + ' $' + amt);
+  },
+  pin: function (k) {
+    PIN.buf = typeKey(PIN.buf, k, 4);
+    PIN.msg = '';
+    if (PIN.buf.length === 4) {
+      if (PIN.buf === String(C.config.pin)) { var cb = PIN.cb; closeOv(); cb(); return; }
+      PIN.buf = '';
+      PIN.msg = '密碼錯誤';
+    }
+    refreshOv();
+  },
+  close: function () { closeOv(); },
+  sync: function () { sync(); },
+  night: function () {
+    S.night = ({ auto: 'on', on: 'off', off: 'auto' })[S.night];
+    saveS();
+    renderTop();
+  },
+  reload: function () { location.reload(); }
+};
+
+function onTap(ev) {
+  var el = ev.target;
+  while (el && el.getAttribute && !el.getAttribute('data-act')) el = el.parentNode;
+  if (!el || !el.getAttribute) return;
+  var f = ACTS[el.getAttribute('data-act')];
+  if (f) f(el.getAttribute('data-arg'));
+}
+
+/* ================= 啟動 ================= */
+function fit() { $('app').style.height = window.innerHeight + 'px'; }
+var lastMin = -1, lastDay = ymd(new Date());
+function tick() {
+  var d = new Date();
+  $('time').textContent = hm(d);
+  tickPomo();
+  if (d.getMinutes() !== lastMin) {
+    lastMin = d.getMinutes();
+    if (ymd(d) !== lastDay) { lastDay = ymd(d); sync(); }
+    if (!ovRender) renderAll();
+    if (now() - (S.lastSync || 0) > 5 * 60000) sync();
+  }
+}
+
+$('app').addEventListener('click', onTap, false);
+$('ov').addEventListener('click', onTap, false);
+window.addEventListener('resize', function () { setTimeout(fit, 300); }, false);
+window.addEventListener('orientationchange', function () { setTimeout(fit, 300); }, false);
+window.addEventListener('pageshow', function () { tick(); sync(); }, false);
+fit();
+renderAll();
+tick();
+setInterval(tick, 1000);
+sync();
+
+})();
+</script>
+</body>
+</html>
