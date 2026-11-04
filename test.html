@@ -4,314 +4,251 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black">
-<meta name="apple-mobile-web-app-title" content="相容性測試">
-<title>iPad 相容性測試</title>
+<title>一鍵連線測試</title>
 <style>
   html, body { margin: 0; padding: 0; }
   body {
-    padding: 10px 14px;
+    padding: 14px 18px; font-size: 17px; color: #222; background: #f2f2f2;
     font-family: -apple-system, "PingFang TC", "Heiti TC", sans-serif;
-    font-size: 16px; color: #222; background: #f2f2f2;
     -webkit-text-size-adjust: 100%;
   }
-  h1 { font-size: 20px; margin: 0 0 8px; }
-  .row {
-    display: -webkit-flex; display: flex;
-    -webkit-align-items: center; align-items: center;
-    background: #fff; border: 1px solid #ddd;
-    margin-bottom: 5px; padding: 7px 10px;
+  h1 { font-size: 22px; margin: 0 0 10px; }
+  #go {
+    display: block; width: 100%; font-size: 26px; padding: 18px 0; margin: 10px 0 14px;
+    border: 0; border-radius: 10px; background: #1565c0; color: #fff; touch-action: manipulation;
   }
-  .name { width: 190px; font-weight: bold; -webkit-flex-shrink: 0; flex-shrink: 0; }
-  .res { -webkit-flex: 1; flex: 1; word-break: break-all; }
+  #go:active { background: #0d47a1; }
+  #go[disabled] { background: #90a4ae; }
+  #summary { font-size: 22px; font-weight: bold; padding: 14px; border-radius: 10px; margin-bottom: 12px; display: none; }
+  .s-ok { background: #e8f5e9; color: #1b5e20; }
+  .s-fail { background: #ffebee; color: #b71c1c; }
+  .row { background: #fff; border: 1px solid #ddd; margin-bottom: 5px; padding: 8px 10px; word-break: break-all; }
+  .name { font-weight: bold; }
   .ok { color: #1a7f37; }
   .fail { color: #c62828; }
   .info { color: #555; }
-  .bar { margin: 8px 0; }
-  button {
-    font-size: 17px; padding: 10px 14px; margin: 0 6px 6px 0;
-    border: 0; border-radius: 6px; background: #1565c0; color: #fff;
-    touch-action: manipulation;
-  }
-  button:active { background: #0d47a1; }
-  input { font-size: 15px; width: 70%; padding: 8px; border: 1px solid #aaa; }
-  #timer { font-size: 28px; font-weight: bold; margin-left: 8px; }
-  #err { background: #ffebee; color: #b71c1c; padding: 6px 10px; display: none; font-size: 14px; }
+  .small { font-size: 13px; color: #666; }
 </style>
 </head>
 <body>
-<h1>iPad 相容性測試 <span class="info" style="font-size:14px">v4</span></h1>
+<h1>一鍵連線測試 <span class="small">v5</span></h1>
+<div class="small" id="urlInfo"></div>
 
-<div class="bar">
-  <input id="api" placeholder="貼上 Apps Script 網址（.../exec）">
-  <button onclick="run('儲存網址', saveApi)">儲存網址</button>
-</div>
-
-<div class="row"><div class="name">1. 裝置資訊</div><div class="res" id="r-env"></div></div>
-<div class="row"><div class="name">2. 本地儲存</div><div class="res" id="r-ls"></div></div>
-<div class="row"><div class="name">3. 日期解析</div><div class="res" id="r-date"></div></div>
-<div class="row"><div class="name">4. 連線（讀取）</div><div class="res" id="r-ping">尚未測試</div></div>
-<div class="row"><div class="name">5. 寫入與去重</div><div class="res" id="r-write">尚未測試</div></div>
-<div class="row"><div class="name">6. 背景計時</div><div class="res" id="r-timer">按「開始 60 秒」後鎖定螢幕 30 秒再回來</div></div>
-<div class="row"><div class="name">7. 提示音</div><div class="res" id="r-audio">尚未測試（側邊靜音鍵要關閉）</div></div>
-
-<div class="bar">
-  <button onclick="run('測試連線', testPing)">測試連線</button>
-  <button onclick="run('測試寫入', testWrite)">測試寫入</button>
-  <button onclick="run('計時', startTimer)">開始 60 秒</button><span id="timer">--</span>
-</div>
-<div class="bar">
-  <button onclick="run('聲音', unlockAudio)">啟用並試播聲音</button>
-  <button onclick="location.reload()">重新整理</button>
-  <button onclick="run('原始回應', openRaw)">開啟原始回應</button>
-  <button onclick="run('內嵌', showFrame)">內嵌顯示回應</button>
-</div>
-<div class="row"><div class="name">診斷：伺服器實際回應</div><div class="res" id="r-diag">連線失敗時會自動顯示</div></div>
-
-<div class="row"><div class="name">流程記錄</div><div class="res info" id="r-trace">—</div></div>
-<div id="err"></div>
-<iframe id="frame" style="display:none;width:100%;height:90px;border:2px solid #1565c0;background:#fff"></iframe>
+<button id="go">開始測試</button>
+<div id="summary"></div>
+<div id="log"></div>
 
 <script>
-/* ===== 設定（也可以直接在上方輸入框貼網址） ===== */
-var API_URL = '';
-var API_KEY = 'change-me-1234';   // 要和 Code.gs 的 SECRET 一樣
+/* ================= 只需要改這兩行 ================= */
+var API_URL = 'https://script.google.com/macros/s/AKfycbxY-7ZoZfDN-pRjV-p0rnsqRYWrbYpzthbUI_H90c94Zwzg8FIIP0QR-Nq9uzkYH_U2eA/exec';
+var API_KEY = 'change-me-1234';
+/* ================================================== */
 
-/* ===== 錯誤顯示 ===== */
-window.onerror = function (msg, src, line, col) {
-  var box = document.getElementById('err');
-  box.style.display = 'block';
-  box.appendChild(document.createTextNode('錯誤：' + msg + ' (第 ' + line + ' 行)｜來源：' + (src ? String(src).slice(0, 80) : '無')));
-  box.appendChild(document.createElement('br'));
+var errors = [];
+window.onerror = function (msg, src, line) {
+  errors.push(msg + (src ? '｜' + String(src).slice(0, 60) : ''));
   return false;
 };
 
-function report(where, e) {
-  var box = document.getElementById('err');
-  box.style.display = 'block';
-  var t = '[' + where + '] ' + ((e && e.message) || String(e));
-  if (e && e.line) t += '（第 ' + e.line + ' 行）';
-  if (e && e.stack) t += '｜' + String(e.stack).replace(/\s+/g, ' ').slice(0, 400);
-  box.appendChild(document.createTextNode(t));
-  box.appendChild(document.createElement('br'));
-}
-function run(where, fn) { try { fn(); } catch (e) { report(where, e); } }
-function trace(msg) {
-  var el = document.getElementById('r-trace');
-  var d = new Date();
-  el.textContent = (el.textContent === '—' ? '' : el.textContent + ' → ') +
-    d.getMinutes() + ':' + d.getSeconds() + ' ' + msg;
-}
-
 function $(id) { return document.getElementById(id); }
-function show(id, cls, text) { var el = $(id); el.className = 'res ' + cls; el.textContent = text; }
-function pad(n) { return n < 10 ? '0' + n : '' + n; }
+function now() { return new Date().getTime(); }
+function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;'); }
+function addRow(name, cls, text) {
+  var d = document.createElement('div');
+  d.className = 'row';
+  d.innerHTML = '<span class="name">' + esc(name) + '</span>　<span class="' + cls + '">' + esc(text) + '</span>';
+  $('log').appendChild(d);
+}
 
-/* ===== localStorage（私密瀏覽模式下會丟出例外） ===== */
-function lsGet(k) { try { return window.localStorage.getItem(k); } catch (e) { return null; } }
-function lsSet(k, v) { try { window.localStorage.setItem(k, v); return true; } catch (e) { return false; } }
-
+/* 網址只保留到 /exec，多貼的參數會自動去掉 */
 function cleanApi(u) {
-  u = String(u || '').replace(/^\s+|\s+$/g, '');
+  u = String(u || '').replace(/\s+/g, '');
   var i = u.indexOf('/exec');
-  if (i >= 0) u = u.slice(0, i + 5);         // 去掉 /exec 後面多貼的參數
-  return u;
+  return i >= 0 ? u.slice(0, i + 5) : u;
 }
-function getApi() { return cleanApi(lsGet('test_api') || API_URL); }
-function saveApi() {
-  var v = cleanApi($('api').value);
-  $('api').value = v;
-  if (lsSet('test_api', v)) { alert('已儲存：' + v); } else { alert('無法儲存（是否開了私密瀏覽？）'); }
-}
+var API = cleanApi(API_URL);
 
-/* ===== JSONP ===== */
-var jsonpSeq = 0;
-function jsonp(params, cb, timeoutMs) {
-  var api = getApi();
-  if (!api) { cb(new Error('尚未設定網址'), null); return; }
-  var name = '__cb' + (++jsonpSeq) + '_' + new Date().getTime();
-  var script = document.createElement('script');
-  var done = false;
-  var timer = setTimeout(function () { finish(new Error('逾時（15 秒無回應）'), null); }, timeoutMs || 15000);
-
-  function finish(err, data) {
-    if (done) return;
-    done = true;
-    clearTimeout(timer);
-    window[name] = function () {};          // 晚到的回應不會報錯
-    if (script.parentNode) script.parentNode.removeChild(script);
-    cb(err, data);
-  }
-  window[name] = function (data) {
-    trace('收到回應');
-    try { finish(null, data); trace('處理完成'); } catch (e) { report('處理回應', e); }
-  };
-  script.onerror = function () { finish(new Error('載入失敗（可能是憑證、網址或網路問題）'), null); };
-
-  trace('送出 ' + (params.action || ''));
-  script.src = buildUrl(params, name);
-  document.body.appendChild(script);
-}
-
-/* 如果回應呼叫的不是我們指定的函式，這裡會抓到 */
-window.test = function (d) { trace('回應呼叫了 test()'); show('r-diag', 'fail', '回應的函式名稱是 test，代表網址裡多了 callback 參數：' + JSON.stringify(d)); };
-window.callback = function (d) { trace('回應呼叫了 callback()'); show('r-diag', 'fail', '回應的函式名稱是 callback：' + JSON.stringify(d)); };
-
-/* ===== 內嵌顯示：直接把回應文字顯示在頁面上 ===== */
-function showFrame() {
-  if (!getApi()) { alert('尚未設定網址'); return; }
-  var f = $('frame');
-  f.style.display = 'block';
-  f.src = buildUrl({ action: 'ping' }, 'test');
-  trace('內嵌載入');
-}
-
-/* ===== 診斷：用 XHR 讀出伺服器實際回了什麼 ===== */
-function buildUrl(params, cbName) {
-  var api = getApi();
-  var q = ['callback=' + cbName, 'key=' + encodeURIComponent(API_KEY), '_=' + new Date().getTime()];
+var seq = 0;
+function buildUrl(params) {
+  var q = ['key=' + encodeURIComponent(API_KEY), '_=' + now()];
   for (var k in params) {
     if (params.hasOwnProperty(k)) q.push(encodeURIComponent(k) + '=' + encodeURIComponent(params[k]));
   }
-  return api + (api.indexOf('?') >= 0 ? '&' : '?') + q.join('&');
+  return API + '?' + q.join('&');
 }
-function diagnose(params) {
-  if (!getApi()) return;
-  show('r-diag', 'info', '讀取中…');
+
+/* 檢查回應是不是新版後端 */
+function checkReply(d) {
+  if (!d || typeof d !== 'object') return '回應格式不對';
+  if (d.app !== 'ipad-panel') return '回應不是新版後端（可能還在跑舊程式）';
+  if (!d.ok) return '後端回報：' + d.error;
+  return '';
+}
+
+/* ---------- 方法 A：JSONP ---------- */
+function viaJsonp(params, cb) {
+  var name = '__cb' + (++seq) + '_' + now();
+  var s = document.createElement('script');
+  var done = false;
+  var errCount = errors.length;
+  var t;
+  function finish(err, data) {
+    if (done) return;
+    done = true;
+    clearTimeout(t);
+    window[name] = function () {};
+    if (s.parentNode) s.parentNode.removeChild(s);
+    cb(err, data);
+  }
+  t = setTimeout(function () {
+    var extra = errors.length > errCount ? '（頁面錯誤：' + errors[errors.length - 1] + '）' : '';
+    finish('逾時' + extra);
+  }, 15000);
+  window[name] = function (d) { finish(null, d); };
+  s.onerror = function () { finish('載入失敗'); };
+  params.callback = name;
+  params.mode = 'jsonp';
+  s.src = buildUrl(params);
+  document.body.appendChild(s);
+}
+
+/* ---------- 方法 B：XHR ---------- */
+function viaXhr(params, cb) {
   var x = new XMLHttpRequest();
-  x.open('GET', buildUrl(params, 'diag'), true);
-  x.timeout = 15000;
+  var done = false;
+  function finish(err, data) { if (!done) { done = true; cb(err, data); } }
+  params.mode = 'text';
+  x.open('GET', buildUrl(params), true);
   x.onload = function () {
-    var t = String(x.responseText || '').replace(/\s+/g, ' ').slice(0, 300);
-    show('r-diag', 'info', '狀態碼 ' + x.status + '｜內容：' + t);
+    var d = null;
+    try { d = JSON.parse(x.responseText); } catch (e) {}
+    if (d) finish(null, d);
+    else finish('狀態 ' + x.status + '，內容：' + String(x.responseText).replace(/\s+/g, ' ').slice(0, 120));
   };
-  x.onerror = function () { show('r-diag', 'fail', '無法讀取內容（請改按「開啟原始回應」並拍照）'); };
-  x.ontimeout = function () { show('r-diag', 'fail', '讀取逾時'); };
+  x.onerror = function () { finish('被瀏覽器擋下（狀態 ' + x.status + '）'); };
+  setTimeout(function () { finish('逾時'); }, 15000);
   x.send();
 }
-function openRaw() {
-  if (!getApi()) { alert('尚未設定網址'); return; }
-  window.open(buildUrl({ action: 'ping' }, 'test'), '_blank');
+
+/* ---------- 方法 C：iframe + postMessage ---------- */
+function viaFrame(params, cb) {
+  var n = 'f' + (++seq) + '_' + now();
+  var f = document.createElement('iframe');
+  var done = false;
+  var t;
+  f.style.display = 'none';
+  function onMsg(ev) {
+    var d = null;
+    try { d = typeof ev.data === 'string' ? JSON.parse(ev.data) : ev.data; } catch (e) { return; }
+    if (d && d.n === n) finish(null, d);
+  }
+  function finish(err, data) {
+    if (done) return;
+    done = true;
+    clearTimeout(t);
+    window.removeEventListener('message', onMsg, false);
+    if (f.parentNode) f.parentNode.removeChild(f);
+    cb(err, data);
+  }
+  t = setTimeout(function () { finish('逾時'); }, 20000);
+  window.addEventListener('message', onMsg, false);
+  params.mode = 'frame';
+  params.n = n;
+  f.src = buildUrl(params);
+  document.body.appendChild(f);
 }
 
-/* ===== 1. 裝置資訊 ===== */
-function testEnv() {
-  var standalone = window.navigator.standalone ? '是（主畫面全螢幕）' : '否（在 Safari 內）';
-  show('r-env', 'info',
-    '可用畫面 ' + window.innerWidth + '×' + window.innerHeight +
-    '｜螢幕 ' + screen.width + '×' + screen.height +
-    '｜全螢幕模式：' + standalone +
-    '｜' + navigator.userAgent);
-}
+var METHODS = [
+  { key: 'A', name: 'A. JSONP', fn: viaJsonp },
+  { key: 'B', name: 'B. XHR', fn: viaXhr },
+  { key: 'C', name: 'C. iframe', fn: viaFrame }
+];
 
-/* ===== 2. 本地儲存 ===== */
-function testStorage() {
-  var token = 'x' + Math.random();
-  if (!lsSet('test_probe', token) || lsGet('test_probe') !== token) {
-    show('r-ls', 'fail', '失敗：localStorage 無法使用（請關閉私密瀏覽）');
+/* ---------- 主流程 ---------- */
+function runAll() {
+  $('go').disabled = true;
+  $('go').textContent = '測試中，請稍候（最多約 1 分鐘）…';
+  $('log').innerHTML = '';
+  $('summary').style.display = 'none';
+  errors = [];
+
+  addRow('裝置', 'info', navigator.userAgent.replace(/.*CPU OS ([\d_]+).*/, 'iOS $1').replace(/_/g, '.') +
+    '｜畫面 ' + window.innerWidth + '×' + window.innerHeight);
+
+  var lsOk = false;
+  try { localStorage.setItem('probe', '1'); lsOk = localStorage.getItem('probe') === '1'; } catch (e) {}
+  addRow('本地儲存', lsOk ? 'ok' : 'fail', lsOk ? '正常' : '無法使用（請關閉私密瀏覽）');
+
+  if (API.indexOf('https://script.google.com/') !== 0 || API.slice(-5) !== '/exec') {
+    addRow('網址', 'fail', '檔案裡的 API_URL 還沒填好：' + API);
+    done('fail', '❌ 網址沒有設定好（代碼 URL）');
     return;
   }
-  var n = parseInt(lsGet('test_visits') || '0', 10) + 1;
-  lsSet('test_visits', String(n));
-  show('r-ls', 'ok', '正常。這是第 ' + n + ' 次開啟此頁（重新整理後數字應該增加）');
+
+  var working = [];
+  var i = 0;
+  (function next() {
+    if (i >= METHODS.length) { afterRead(working); return; }
+    var m = METHODS[i++];
+    var t0 = now();
+    m.fn({ action: 'ping' }, function (err, d) {
+      var bad = err || checkReply(d);
+      if (bad) {
+        addRow(m.name + ' 讀取', 'fail', '失敗：' + bad);
+      } else {
+        working.push(m);
+        addRow(m.name + ' 讀取', 'ok', '成功（' + (now() - t0) + 'ms，伺服器時間 ' + d.serverTime + '）');
+      }
+      next();
+    });
+  })();
 }
 
-/* ===== 3. 日期解析 ===== */
-function parseLocal(s) {               // "2026-11-04 08:30" → 本地時間 Date
-  var m = /^(\d{4})-(\d{1,2})-(\d{1,2})(?:[ T](\d{1,2}):(\d{2}))?/.exec(s);
-  if (!m) return null;
-  return new Date(+m[1], +m[2] - 1, +m[3], +(m[4] || 0), +(m[5] || 0));
-}
-function testDate() {
-  var native = new Date('2026-11-04 08:30');
-  var mine = parseLocal('2026-11-04 08:30');
-  var ok = mine && mine.getHours() === 8 && mine.getMinutes() === 30;
-  show('r-date', ok ? 'ok' : 'fail',
-    '瀏覽器內建解析：' + (isNaN(native.getTime()) ? '無效（預期中，所以要自己解析）' : '可用') +
-    '｜自訂解析：' + (ok ? '正確' : '錯誤'));
-}
-
-/* ===== 4. 連線 ===== */
-function testPing() {
-  show('r-ping', 'info', '連線中…');
-  var t0 = new Date().getTime();
-  jsonp({ action: 'ping' }, function (err, data) {
-    var ms = new Date().getTime() - t0;
-    if (err) { show('r-ping', 'fail', '失敗：' + err.message); diagnose({ action: 'ping' }); return; }
-    if (!data.ok) { show('r-ping', 'fail', '伺服器回應錯誤：' + data.error); return; }
-    var diff = Math.round((new Date().getTime() - ms / 2 - data.serverMs) / 1000);
-    show('r-ping', Math.abs(diff) > 60 ? 'fail' : 'ok',
-      '成功，耗時 ' + ms + 'ms｜伺服器時間 ' + data.serverTime +
-      '｜iPad 時鐘誤差約 ' + diff + ' 秒' + (Math.abs(diff) > 60 ? '（請到設定開啟自動設定時間）' : ''));
-  });
-}
-
-/* ===== 5. 寫入與去重：同一個 id 送兩次，第二次應被判定為重複 ===== */
-function testWrite() {
-  show('r-write', 'info', '寫入中…');
-  var id = 'T' + new Date().getTime() + Math.floor(Math.random() * 1000);
-  jsonp({ action: 'write', id: id, msg: '來自 iPad 的測試' }, function (err, d1) {
-    if (err) { show('r-write', 'fail', '第一次寫入失敗：' + err.message); diagnose({ action: 'ping' }); return; }
-    if (!d1.ok) { show('r-write', 'fail', '伺服器錯誤：' + d1.error); return; }
-    jsonp({ action: 'write', id: id, msg: '重送' }, function (err2, d2) {
-      if (err2) { show('r-write', 'fail', '第二次寫入失敗：' + err2.message); return; }
-      var pass = d1.duplicate === false && d2.duplicate === true;
-      show('r-write', pass ? 'ok' : 'fail',
-        pass ? '成功：試算表 Test 分頁應只多一列（id ' + id + '）' : '去重異常：' + JSON.stringify([d1, d2]));
+function afterRead(working) {
+  if (!working.length) { imgWriteOnly(); return; }
+  var m = working[0];
+  var id = 'T' + now() + Math.floor(Math.random() * 1000);
+  m.fn({ action: 'write', id: id, msg: 'iPad 一鍵測試' }, function (err, d1) {
+    var bad = err || checkReply(d1);
+    if (bad) {
+      addRow('寫入', 'fail', '失敗：' + bad);
+      done('fail', '⚠️ 可以讀取，但寫入失敗（代碼 ' + m.key + '-W）');
+      return;
+    }
+    m.fn({ action: 'write', id: id, msg: '重送' }, function (err2, d2) {
+      var dupOk = !err2 && d2 && d2.duplicate === true && d1.duplicate === false;
+      addRow('寫入', dupOk ? 'ok' : 'fail', dupOk ? '成功，重複送出也只會記一筆' : '去重異常');
+      var names = [];
+      for (var j = 0; j < working.length; j++) names.push(working[j].key);
+      done(dupOk ? 'ok' : 'fail', (dupOk ? '✅ 連網正常！' : '⚠️ 部分正常，') +
+        '可用方法：' + names.join('、') + '（代碼 OK-' + names.join('') + '）');
     });
   });
 }
 
-/* ===== 6. 用「結束時間」計時，鎖屏/重新整理都不會跑掉 ===== */
-function startTimer() {
-  lsSet('test_timerEnd', String(new Date().getTime() + 60000));
-  lsSet('test_timerReported', '');
-  show('r-timer', 'info', '計時中… 現在可以鎖定螢幕或切到別的 App，30 秒後再回來');
-}
-function tickTimer() {
-  var end = parseInt(lsGet('test_timerEnd') || '0', 10);
-  if (!end) return;
-  var left = Math.ceil((end - new Date().getTime()) / 1000);
-  if (left > 0) {
-    $('timer').textContent = pad(Math.floor(left / 60)) + ':' + pad(left % 60);
-  } else {
-    $('timer').textContent = '00:00';
-    if (lsGet('test_timerReported') !== '1') {
-      lsSet('test_timerReported', '1');
-      show('r-timer', 'ok', '時間到。若你鎖屏回來時剩餘秒數是對的，代表計時方式可行');
-      if (actx) beep(0.6);
-    }
-  }
+/* 讀取全部失敗時：用圖片請求試試看能不能「只寫入」 */
+function imgWriteOnly() {
+  var id = 'IMG' + now();
+  var img = new Image();
+  img.onload = img.onerror = function () {
+    addRow('D. 圖片寫入', 'info', '已送出。請打開試算表的 Test 分頁，看有沒有 ' + id + ' 這一列');
+    var tail = errors.length ? '｜頁面錯誤：' + errors[errors.length - 1] : '';
+    done('fail', '❌ 三種讀取方法都失敗（代碼 FAIL）' + tail);
+  };
+  img.src = buildUrl({ action: 'write', id: id, msg: '圖片寫入', mode: 'img' });
 }
 
-/* ===== 7. 聲音：必須由點擊觸發一次才能解鎖 ===== */
-var actx = null;
-function beep(sec) {
-  var o = actx.createOscillator();
-  var g = actx.createGain();
-  o.frequency.value = 880;
-  g.gain.value = 0.3;
-  o.connect(g);
-  g.connect(actx.destination);
-  o.start(0);
-  o.stop(actx.currentTime + sec);
-}
-function unlockAudio() {
-  var C = window.AudioContext || window.webkitAudioContext;
-  if (!C) { show('r-audio', 'fail', '此瀏覽器不支援 Web Audio'); return; }
-  if (!actx) actx = new C();
-  beep(0.3);
-  show('r-audio', 'info', '有聽到「嗶」一聲嗎？有的話，計時結束時也會響');
+function done(cls, text) {
+  var s = $('summary');
+  s.className = cls === 'ok' ? 's-ok' : 's-fail';
+  s.textContent = text;
+  s.style.display = 'block';
+  $('go').disabled = false;
+  $('go').textContent = '再測一次';
 }
 
-/* ===== 啟動 ===== */
-$('api').value = getApi();
-testEnv();
-testStorage();
-testDate();
-setInterval(tickTimer, 250);
-tickTimer();
-if (getApi()) testPing();
+$('urlInfo').textContent = '目前使用的網址：' + (API.length > 70 ? API.slice(0, 55) + '…' + API.slice(-15) : API);
+$('go').onclick = runAll;
 </script>
 </body>
 </html>
