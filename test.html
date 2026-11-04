@@ -40,7 +40,7 @@
 </style>
 </head>
 <body>
-<h1>iPad 相容性測試 <span class="info" style="font-size:14px">v3</span></h1>
+<h1>iPad 相容性測試 <span class="info" style="font-size:14px">v4</span></h1>
 
 <div class="bar">
   <input id="api" placeholder="貼上 Apps Script 網址（.../exec）">
@@ -64,11 +64,13 @@
   <button onclick="run('聲音', unlockAudio)">啟用並試播聲音</button>
   <button onclick="location.reload()">重新整理</button>
   <button onclick="run('原始回應', openRaw)">開啟原始回應</button>
+  <button onclick="run('內嵌', showFrame)">內嵌顯示回應</button>
 </div>
 <div class="row"><div class="name">診斷：伺服器實際回應</div><div class="res" id="r-diag">連線失敗時會自動顯示</div></div>
 
 <div class="row"><div class="name">流程記錄</div><div class="res info" id="r-trace">—</div></div>
 <div id="err"></div>
+<iframe id="frame" style="display:none;width:100%;height:90px;border:2px solid #1565c0;background:#fff"></iframe>
 
 <script>
 /* ===== 設定（也可以直接在上方輸入框貼網址） ===== */
@@ -79,7 +81,7 @@ var API_KEY = 'change-me-1234';   // 要和 Code.gs 的 SECRET 一樣
 window.onerror = function (msg, src, line, col) {
   var box = document.getElementById('err');
   box.style.display = 'block';
-  box.appendChild(document.createTextNode('錯誤：' + msg + ' (第 ' + line + ' 行)'));
+  box.appendChild(document.createTextNode('錯誤：' + msg + ' (第 ' + line + ' 行)｜來源：' + (src ? String(src).slice(0, 80) : '無')));
   box.appendChild(document.createElement('br'));
   return false;
 };
@@ -109,10 +111,17 @@ function pad(n) { return n < 10 ? '0' + n : '' + n; }
 function lsGet(k) { try { return window.localStorage.getItem(k); } catch (e) { return null; } }
 function lsSet(k, v) { try { window.localStorage.setItem(k, v); return true; } catch (e) { return false; } }
 
-function getApi() { return lsGet('test_api') || API_URL; }
+function cleanApi(u) {
+  u = String(u || '').replace(/^\s+|\s+$/g, '');
+  var i = u.indexOf('/exec');
+  if (i >= 0) u = u.slice(0, i + 5);         // 去掉 /exec 後面多貼的參數
+  return u;
+}
+function getApi() { return cleanApi(lsGet('test_api') || API_URL); }
 function saveApi() {
-  var v = $('api').value.replace(/^\s+|\s+$/g, '');
-  if (lsSet('test_api', v)) { alert('已儲存'); } else { alert('無法儲存（是否開了私密瀏覽？）'); }
+  var v = cleanApi($('api').value);
+  $('api').value = v;
+  if (lsSet('test_api', v)) { alert('已儲存：' + v); } else { alert('無法儲存（是否開了私密瀏覽？）'); }
 }
 
 /* ===== JSONP ===== */
@@ -142,6 +151,19 @@ function jsonp(params, cb, timeoutMs) {
   trace('送出 ' + (params.action || ''));
   script.src = buildUrl(params, name);
   document.body.appendChild(script);
+}
+
+/* 如果回應呼叫的不是我們指定的函式，這裡會抓到 */
+window.test = function (d) { trace('回應呼叫了 test()'); show('r-diag', 'fail', '回應的函式名稱是 test，代表網址裡多了 callback 參數：' + JSON.stringify(d)); };
+window.callback = function (d) { trace('回應呼叫了 callback()'); show('r-diag', 'fail', '回應的函式名稱是 callback：' + JSON.stringify(d)); };
+
+/* ===== 內嵌顯示：直接把回應文字顯示在頁面上 ===== */
+function showFrame() {
+  if (!getApi()) { alert('尚未設定網址'); return; }
+  var f = $('frame');
+  f.style.display = 'block';
+  f.src = buildUrl({ action: 'ping' }, 'test');
+  trace('內嵌載入');
 }
 
 /* ===== 診斷：用 XHR 讀出伺服器實際回了什麼 ===== */
