@@ -415,6 +415,7 @@ var API_URL = 'https://script.google.com/macros/s/AKfycbxY-7ZoZfDN-pRjV-p0rnsqRY
 var API_KEY = 'change-me-1234';
 /* ======================================== */
 
+var APP_VERSION = '1104-icon4';   // 每次更新都改這個，用來確認 iPad 載入的是新版
 var WD = '日一二三四五六';
 var SPEND_CATS = ['零食', '文具', '玩具', '捐款', '其他'];
 var INCOME_CATS = ['零用錢', '紅包', '獎勵', '其他'];
@@ -949,7 +950,7 @@ function openTheme() {
       h += '<div class="fnt' + (ps.id === S.pomoStyle ? ' sel' : '') + '" data-act="setPomoStyle" data-arg="' + ps.id + '">' +
         '<span>' + ps.name + '</span><small>' + ps.desc + '</small></div>';
     }
-    return h;
+    return h + '<div class="pend" style="margin-top:8px;text-align:right">版本 ' + APP_VERSION + '</div>';
   });
 }
 
