@@ -40,11 +40,11 @@
 </style>
 </head>
 <body>
-<h1>iPad 相容性測試 <span class="info" style="font-size:14px">v2</span></h1>
+<h1>iPad 相容性測試 <span class="info" style="font-size:14px">v3</span></h1>
 
 <div class="bar">
   <input id="api" placeholder="貼上 Apps Script 網址（.../exec）">
-  <button onclick="saveApi()">儲存網址</button>
+  <button onclick="run('儲存網址', saveApi)">儲存網址</button>
 </div>
 
 <div class="row"><div class="name">1. 裝置資訊</div><div class="res" id="r-env"></div></div>
@@ -56,17 +56,18 @@
 <div class="row"><div class="name">7. 提示音</div><div class="res" id="r-audio">尚未測試（側邊靜音鍵要關閉）</div></div>
 
 <div class="bar">
-  <button onclick="testPing()">測試連線</button>
-  <button onclick="testWrite()">測試寫入</button>
-  <button onclick="startTimer()">開始 60 秒</button><span id="timer">--</span>
+  <button onclick="run('測試連線', testPing)">測試連線</button>
+  <button onclick="run('測試寫入', testWrite)">測試寫入</button>
+  <button onclick="run('計時', startTimer)">開始 60 秒</button><span id="timer">--</span>
 </div>
 <div class="bar">
-  <button onclick="unlockAudio()">啟用並試播聲音</button>
+  <button onclick="run('聲音', unlockAudio)">啟用並試播聲音</button>
   <button onclick="location.reload()">重新整理</button>
-  <button onclick="openRaw()">開啟原始回應</button>
+  <button onclick="run('原始回應', openRaw)">開啟原始回應</button>
 </div>
 <div class="row"><div class="name">診斷：伺服器實際回應</div><div class="res" id="r-diag">連線失敗時會自動顯示</div></div>
 
+<div class="row"><div class="name">流程記錄</div><div class="res info" id="r-trace">—</div></div>
 <div id="err"></div>
 
 <script>
@@ -82,6 +83,23 @@ window.onerror = function (msg, src, line, col) {
   box.appendChild(document.createElement('br'));
   return false;
 };
+
+function report(where, e) {
+  var box = document.getElementById('err');
+  box.style.display = 'block';
+  var t = '[' + where + '] ' + ((e && e.message) || String(e));
+  if (e && e.line) t += '（第 ' + e.line + ' 行）';
+  if (e && e.stack) t += '｜' + String(e.stack).replace(/\s+/g, ' ').slice(0, 400);
+  box.appendChild(document.createTextNode(t));
+  box.appendChild(document.createElement('br'));
+}
+function run(where, fn) { try { fn(); } catch (e) { report(where, e); } }
+function trace(msg) {
+  var el = document.getElementById('r-trace');
+  var d = new Date();
+  el.textContent = (el.textContent === '—' ? '' : el.textContent + ' → ') +
+    d.getMinutes() + ':' + d.getSeconds() + ' ' + msg;
+}
 
 function $(id) { return document.getElementById(id); }
 function show(id, cls, text) { var el = $(id); el.className = 'res ' + cls; el.textContent = text; }
@@ -115,9 +133,13 @@ function jsonp(params, cb, timeoutMs) {
     if (script.parentNode) script.parentNode.removeChild(script);
     cb(err, data);
   }
-  window[name] = function (data) { finish(null, data); };
+  window[name] = function (data) {
+    trace('收到回應');
+    try { finish(null, data); trace('處理完成'); } catch (e) { report('處理回應', e); }
+  };
   script.onerror = function () { finish(new Error('載入失敗（可能是憑證、網址或網路問題）'), null); };
 
+  trace('送出 ' + (params.action || ''));
   script.src = buildUrl(params, name);
   document.body.appendChild(script);
 }
