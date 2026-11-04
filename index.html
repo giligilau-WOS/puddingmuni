@@ -332,6 +332,45 @@
   body.th-space #cSched::after { content: "🌍"; }
   body.th-space #cMoney::after { content: "👽"; }
 
+  /* ===== 主題：怪盜月夜（夜空 + 撲克牌卡片） ===== */
+  body.th-kid {
+    background-color: #0b1d51; color: #14286e;
+    background-image: radial-gradient(#ffffff 1px, transparent 2px), radial-gradient(#c5d3ff 1px, transparent 2px);
+    background-size: 80px 80px, 130px 130px; background-position: 0 0, 40px 65px;
+  }
+  body.th-kid #top { background: #14286e; border-bottom: 3px solid #ffffff; }
+  body.th-kid #time, body.th-kid #date { color: #ffffff; }
+  body.th-kid #syncInfo { color: #c5d3ff; }
+  body.th-kid #exam.e-green { color: #8ce99a; } body.th-kid #exam.e-orange { color: #ffd43b; } body.th-kid #exam.e-red { color: #ff8787; }
+  body.th-kid .tbtn { background: #ffffff; color: #14286e; border-radius: 19px; }
+  body.th-kid .card { background: #ffffff; border: 3px solid #1c3d8f; border-radius: 14px; outline: 2px solid #c5d3ff; outline-offset: -9px; }
+  body.th-kid .card h2 { color: #14286e; }
+  body.th-kid #cTasks::after { content: "♠\FE0E"; color: #1c3d8f; font-family: "Apple Symbols", "Arial Unicode MS", sans-serif; }
+  body.th-kid #cPomo::after { content: "♥\FE0E"; color: #e03131; font-family: "Apple Symbols", "Arial Unicode MS", sans-serif; }
+  body.th-kid #cSched::after { content: "♣\FE0E"; color: #1c3d8f; font-family: "Apple Symbols", "Arial Unicode MS", sans-serif; }
+  body.th-kid #cMoney::after { content: "♦\FE0E"; color: #e03131; font-family: "Apple Symbols", "Arial Unicode MS", sans-serif; }
+  body.th-kid .card::after { font-size: 28px; top: 6px; right: 12px; }
+  body.th-kid .starbar { background: #edf2ff; }
+  body.th-kid .sbnum { color: #1c3d8f; }
+  body.th-kid .pbtn, body.th-kid .okbtn { background: #1c3d8f; border-radius: 22px; }
+  body.th-kid .pbtn.rest { background: #4dabf7; }
+  body.th-kid .pbtn.stop { background: #e03131; }
+  body.th-kid .mbtn, body.th-kid .rbtn { border-radius: 22px; }
+  body.th-kid .mbtn.out { background: #e03131; } body.th-kid .mbtn.in { background: #1c3d8f; }
+  body.th-kid .bar i, body.th-kid .pbar i { background: #1c3d8f; }
+  body.th-kid .goal .bar i { background: #4dabf7; }
+  body.th-kid .per { background: #edf2ff; }
+  body.th-kid .per b { background: #1c3d8f; color: #ffffff; }
+  body.th-kid .item { background: #ffffff; border: 2px dashed #91a7ff; color: #14286e; }
+  body.th-kid .item.ok { background: #e7f5ff; border-style: solid; color: #1971c2; }
+  body.th-kid .after { color: #1c3d8f; }
+  body.th-kid .pie-fill { fill: #1c3d8f; } body.th-kid .ring-fg { stroke: #1c3d8f; }
+  body.th-kid .dial-bg { fill: #edf2ff; stroke: #c5d3ff; }
+  body.th-kid .pie-fill.rest { fill: #4dabf7; } body.th-kid .ring-fg.rest { stroke: #4dabf7; }
+  body.th-kid .hg-sand { fill: #4dabf7; } body.th-kid .hg-stream { stroke: #4dabf7; }
+  body.th-kid #ovBox { border: 6px double #1c3d8f; border-radius: 16px; }
+  body.th-kid #bal { color: #1c3d8f; }
+
   /* 主題選擇視窗 */
   .thgrid { display: flex; flex-wrap: wrap; margin: 0 -4px 6px; }
   .thc { width: 50%; padding: 4px; }
@@ -390,9 +429,11 @@ var THEMES = [
   { id: 'forest', name: '森林探險', em: '🌳', bg: '#eef7e4', bd: '#8bc34a', icons: ['🐞', '🍄', '🎒', '🐻'] },
   { id: 'ocean', name: '海洋世界', em: '🐳', bg: '#e3f2fd', bd: '#4fc3f7', icons: ['⭐', '🐙', '🎒', '🐷'] },
   { id: 'space', name: '太空冒險', em: '🚀', bg: '#2a2266', bd: '#ffd43b', icons: ['⭐', '⏰', '🎒', '💰'], dark: true },
+  { id: 'kid', name: '怪盜月夜', em: '🎩', bg: '#14286e', bd: '#ffffff', icons: ['🎩', '🌙', '🃏', '💎'], dark: true },
   { id: 'simple', name: '簡約', em: '📋', bg: '#ffffff', bd: '#cbd2d9', icons: ['', '', '', ''] }
 ];
 var FONTS = [
+  { id: 'naikai', name: '內海體', desc: '俏皮手寫風（怪盜主題推薦）', file: 'fonts/naikai.woff' },
   { id: 'huninn', name: '粉圓體', desc: '圓圓胖胖，最可愛', file: 'fonts/huninn.woff' },
   { id: 'iansui', name: '芫荽體', desc: '像小朋友的手寫字', file: 'fonts/iansui.woff' },
   { id: 'wenkai', name: '文楷體', desc: '像鉛筆寫的字', file: 'fonts/wenkai.woff' },
@@ -1180,7 +1221,13 @@ var ACTS = {
     saveS();
     renderPomo();
   },
-  setTheme: function (id) { S.theme = id; saveS(); renderAll(); refreshOv(); },
+  setTheme: function (id) {
+    S.theme = id;
+    if (id === 'kid' && S.font !== 'system') S.font = 'naikai';   // 怪盜主題自動搭配俏皮手寫字
+    saveS();
+    renderAll();
+    refreshOv();
+  },
   setFont: function (id) { S.font = id; saveS(); renderTop(); refreshOv(); }
 };
 
