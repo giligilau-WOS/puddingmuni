@@ -40,7 +40,7 @@
 </style>
 </head>
 <body>
-<h1>iPad 相容性測試 <span class="info" style="font-size:14px">v1</span></h1>
+<h1>iPad 相容性測試 <span class="info" style="font-size:14px">v2</span></h1>
 
 <div class="bar">
   <input id="api" placeholder="貼上 Apps Script 網址（.../exec）">
@@ -63,14 +63,16 @@
 <div class="bar">
   <button onclick="unlockAudio()">啟用並試播聲音</button>
   <button onclick="location.reload()">重新整理</button>
+  <button onclick="openRaw()">開啟原始回應</button>
 </div>
+<div class="row"><div class="name">診斷：伺服器實際回應</div><div class="res" id="r-diag">連線失敗時會自動顯示</div></div>
 
 <div id="err"></div>
 
 <script>
 /* ===== 設定（也可以直接在上方輸入框貼網址） ===== */
 var API_URL = '';
-var API_KEY = '7327997';   // 要和 Code.gs 的 SECRET 一樣
+var API_KEY = 'change-me-1234';   // 要和 Code.gs 的 SECRET 一樣
 
 /* ===== 錯誤顯示 ===== */
 window.onerror = function (msg, src, line, col) {
@@ -116,12 +118,36 @@ function jsonp(params, cb, timeoutMs) {
   window[name] = function (data) { finish(null, data); };
   script.onerror = function () { finish(new Error('載入失敗（可能是憑證、網址或網路問題）'), null); };
 
-  var q = ['callback=' + name, 'key=' + encodeURIComponent(API_KEY), '_=' + new Date().getTime()];
+  script.src = buildUrl(params, name);
+  document.body.appendChild(script);
+}
+
+/* ===== 診斷：用 XHR 讀出伺服器實際回了什麼 ===== */
+function buildUrl(params, cbName) {
+  var api = getApi();
+  var q = ['callback=' + cbName, 'key=' + encodeURIComponent(API_KEY), '_=' + new Date().getTime()];
   for (var k in params) {
     if (params.hasOwnProperty(k)) q.push(encodeURIComponent(k) + '=' + encodeURIComponent(params[k]));
   }
-  script.src = api + (api.indexOf('?') >= 0 ? '&' : '?') + q.join('&');
-  document.body.appendChild(script);
+  return api + (api.indexOf('?') >= 0 ? '&' : '?') + q.join('&');
+}
+function diagnose(params) {
+  if (!getApi()) return;
+  show('r-diag', 'info', '讀取中…');
+  var x = new XMLHttpRequest();
+  x.open('GET', buildUrl(params, 'diag'), true);
+  x.timeout = 15000;
+  x.onload = function () {
+    var t = String(x.responseText || '').replace(/\s+/g, ' ').slice(0, 300);
+    show('r-diag', 'info', '狀態碼 ' + x.status + '｜內容：' + t);
+  };
+  x.onerror = function () { show('r-diag', 'fail', '無法讀取內容（請改按「開啟原始回應」並拍照）'); };
+  x.ontimeout = function () { show('r-diag', 'fail', '讀取逾時'); };
+  x.send();
+}
+function openRaw() {
+  if (!getApi()) { alert('尚未設定網址'); return; }
+  window.open(buildUrl({ action: 'ping' }, 'test'), '_blank');
 }
 
 /* ===== 1. 裝置資訊 ===== */
@@ -167,7 +193,7 @@ function testPing() {
   var t0 = new Date().getTime();
   jsonp({ action: 'ping' }, function (err, data) {
     var ms = new Date().getTime() - t0;
-    if (err) { show('r-ping', 'fail', '失敗：' + err.message); return; }
+    if (err) { show('r-ping', 'fail', '失敗：' + err.message); diagnose({ action: 'ping' }); return; }
     if (!data.ok) { show('r-ping', 'fail', '伺服器回應錯誤：' + data.error); return; }
     var diff = Math.round((new Date().getTime() - ms / 2 - data.serverMs) / 1000);
     show('r-ping', Math.abs(diff) > 60 ? 'fail' : 'ok',
@@ -181,7 +207,7 @@ function testWrite() {
   show('r-write', 'info', '寫入中…');
   var id = 'T' + new Date().getTime() + Math.floor(Math.random() * 1000);
   jsonp({ action: 'write', id: id, msg: '來自 iPad 的測試' }, function (err, d1) {
-    if (err) { show('r-write', 'fail', '第一次寫入失敗：' + err.message); return; }
+    if (err) { show('r-write', 'fail', '第一次寫入失敗：' + err.message); diagnose({ action: 'ping' }); return; }
     if (!d1.ok) { show('r-write', 'fail', '伺服器錯誤：' + d1.error); return; }
     jsonp({ action: 'write', id: id, msg: '重送' }, function (err2, d2) {
       if (err2) { show('r-write', 'fail', '第二次寫入失敗：' + err2.message); return; }
