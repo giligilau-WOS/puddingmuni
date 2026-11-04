@@ -27,7 +27,7 @@
   #date { font-size: 17px; color: #52606d; }
   #exam { flex: 1; text-align: center; font-size: 20px; font-weight: bold; }
   .e-green { color: #2b8a3e; } .e-orange { color: #e8590c; } .e-red { color: #c92a2a; }
-  #syncInfo { font-size: 13px; color: #7b8794; margin-right: 4px; }
+  #syncInfo { font-size: 13px; color: #7b8794; margin-right: 4px; max-width: 230px; overflow: hidden; white-space: nowrap; }
   .tbtn { padding: 8px 11px; margin-left: 6px; border-radius: 8px; background: #e4e7eb; font-size: 16px; }
 
   #main { flex: 1; display: flex; min-height: 0; padding: 3px; }
@@ -62,6 +62,27 @@
   .pmsg { text-align: center; color: #52606d; flex-shrink: 0; }
   #pomoTime { font-size: 64px; font-weight: bold; text-align: center; line-height: 1.15; flex: 1; display: flex; align-items: center; justify-content: center; }
   .pbar { margin: 4px 6px 8px; flex-shrink: 0; }
+  #pwrap { flex: 1; min-height: 0; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+  .ptime-side { font-size: 54px; font-weight: bold; margin-left: 18px; }
+  .ringbox { position: relative; }
+  .ptime-in { position: absolute; left: 0; right: 0; top: 50%; margin-top: -22px; text-align: center; font-size: 36px; font-weight: bold; line-height: 44px; }
+  .dial-bg { fill: #f1f3f5; stroke: #dee2e6; stroke-width: 2; }
+  .tick { stroke: #adb5bd; stroke-width: 3; }
+  .pie-fill { fill: #fa5252; }
+  .pie-fill.rest, .ring-fg.rest { fill: #40c057; stroke: #40c057; }
+  .ring-fg.rest { fill: none; }
+  .dial-c { fill: #495057; }
+  .ring-bg { fill: none; stroke: #e9ecef; stroke-width: 18; }
+  .ring-fg { fill: none; stroke: #fa5252; stroke-width: 18; stroke-linecap: round; }
+  body.th-space .dial-bg { fill: #3d3290; stroke: #5a4bb5; }
+  body.th-space .ring-bg { stroke: #3d3290; }
+  body.th-space .pie-fill { fill: #ffd43b; }
+  body.th-space .ring-fg { stroke: #ffd43b; }
+  body.th-candy .pie-fill { fill: #f06595; } body.th-candy .ring-fg { stroke: #f06595; }
+  body.th-ocean .pie-fill { fill: #29b6f6; } body.th-ocean .ring-fg { stroke: #29b6f6; }
+  body.th-forest .pie-fill { fill: #7cb342; } body.th-forest .ring-fg { stroke: #7cb342; }
+  body.th-candy .pie-fill.rest, body.th-ocean .pie-fill.rest, body.th-forest .pie-fill.rest, body.th-space .pie-fill.rest { fill: #40c057; }
+  body.th-candy .ring-fg.rest, body.th-ocean .ring-fg.rest, body.th-forest .ring-fg.rest, body.th-space .ring-fg.rest { stroke: #40c057; }
   .pbar i { background: #1971c2; }
   .prow { display: flex; flex-shrink: 0; }
   .pbtn { flex: 1; margin: 0 4px; padding: 14px 0; text-align: center; border-radius: 10px; background: #1971c2; color: #fff; font-size: 18px; }
@@ -70,16 +91,19 @@
 
   /* 課表 */
   .periods { display: flex; flex-wrap: wrap; flex-shrink: 0; }
-  .per { width: 33.33%; padding: 3px 2px; font-size: 18px; white-space: nowrap; overflow: hidden; }
+  .per { width: 33.33%; padding: 4px 2px; font-size: 23px; white-space: nowrap; overflow: hidden; }
+  .per.exam { color: #c92a2a; font-weight: bold; }
+  .per.exam b { background: #ffe3e3 !important; color: #c92a2a !important; }
+  .exband { background: #ffe3e3; color: #c92a2a; border-radius: 10px; padding: 4px 10px; margin-bottom: 4px; font-size: 17px; font-weight: bold; flex-shrink: 0; }
   .per b {
-    display: inline-block; min-width: 24px; height: 24px; border-radius: 12px; background: #d0ebff;
-    text-align: center; line-height: 24px; font-size: 13px; margin-right: 5px; padding: 0 4px;
+    display: inline-block; min-width: 30px; height: 30px; border-radius: 15px; background: #d0ebff;
+    text-align: center; line-height: 30px; font-size: 16px; margin-right: 6px; padding: 0 5px;
   }
-  .after { margin-top: 4px; color: #5f3dc4; font-size: 16px; flex-shrink: 0; }
+  .after { margin-top: 4px; color: #5f3dc4; font-size: 19px; flex-shrink: 0; }
   .bag { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; }
-  .item { display: inline-block; margin: 3px; padding: 7px 12px; border-radius: 16px; background: #fff3bf; font-size: 17px; }
+  .item { display: inline-block; margin: 3px; padding: 7px 12px; border-radius: 16px; background: #fff3bf; font-size: 19px; }
   .item.ok { background: #d3f9d8; color: #2b8a3e; text-decoration: line-through; }
-  .note { color: #c2255c; font-size: 16px; margin: 4px 3px; }
+  .note { color: #c2255c; font-size: 18px; margin: 4px 3px; }
 
   /* 零用錢 */
   .mtop { display: flex; align-items: center; flex-shrink: 0; }
@@ -363,6 +387,7 @@ var S = lsGet('pp_state', {});                  // 本機狀態
   if (!S.night) S.night = 'auto';
   if (!S.theme) S.theme = 'candy';
   if (!S.font) S.font = 'huninn';
+  if (!S.pomoStyle) S.pomoStyle = 'pie';
   if (!S.bag) S.bag = {};
 })();
 function saveOut() { lsSet('pp_outbox', OUT); }
@@ -445,12 +470,23 @@ function splitItems(s) {
   for (var i = 0; i < p.length; i++) { var t = p[i].replace(/^\s+|\s+$/g, ''); if (t) r.push(t); }
   return r;
 }
+function examsOn(ds) {
+  var m = {}, L = C.examSchedule || [];
+  for (var i = 0; i < L.length; i++) if (String(L[i].date).slice(0, 10) === ds) m[String(L[i].period)] = L[i];
+  return m;
+}
+/* 一般課表；如果這天有段考，考試的節次會自動換成考試科目 */
 function subjectsOf(d) {
-  var wd = d.getDay(), r = [];
-  if (wd < 1 || wd > 5) return r;
-  for (var i = 0; i < C.schedule.length; i++) {
-    var s = C.schedule[i].d[wd - 1];
-    if (s) r.push({ period: String(C.schedule[i].period), time: C.schedule[i].time, subj: String(s) });
+  var wd = d.getDay(), r = [], ex = examsOn(ymd(d)), used = {};
+  if (wd >= 1 && wd <= 5) {
+    for (var i = 0; i < C.schedule.length; i++) {
+      var per = String(C.schedule[i].period), s = C.schedule[i].d[wd - 1], e = ex[per];
+      if (e) { used[per] = 1; r.push({ period: per, time: C.schedule[i].time, subj: String(e.subj), exam: true }); }
+      else if (s) r.push({ period: per, time: C.schedule[i].time, subj: String(s) });
+    }
+  }
+  for (var k in ex) {
+    if (ex.hasOwnProperty(k) && !used[k]) r.push({ period: k, time: '', subj: String(ex[k].subj), exam: true });
   }
   return r;
 }
@@ -464,7 +500,7 @@ function bagFor(d) {
     if (r.date) hit = String(r.date).slice(0, 10) === ds;
     else if (kw === '每天') hit = true;
     else if (kw) {
-      for (var j = 0; j < subs.length; j++) if (subs[j].subj.indexOf(kw) >= 0) { hit = true; break; }
+      for (var j = 0; j < subs.length; j++) if ((subs[j].subj + (subs[j].exam ? '考試' : '')).indexOf(kw) >= 0) { hit = true; break; }
     }
     if (hit) { add(splitItems(r.items), items); add(splitItems(r.clothes), clothes); }
   }
@@ -520,7 +556,22 @@ function renderPomo() {
   var p = S.pomo, h = '<h2>' + ic(1) + '專注蕃茄鐘</h2>';
   h += '<div class="pmsg">' + (p ? (p.kind === 'focus' ? '專注中…完成可得 ' + C.config.pomoStars + '★' : '休息一下，喝口水')
     : '選一個時間開始吧') + '</div>';
-  h += '<div id="pomoTime">' + (p ? '' : '00:00') + '</div><div class="bar pbar"><i id="pomoBar"></i></div><div class="prow">';
+  var st = S.pomoStyle, rest = p && p.kind === 'rest' ? ' rest' : '';
+  if (st === 'pie') {
+    h += '<div id="pwrap" data-act="pstyle"><svg id="dial" viewBox="0 0 200 200" width="170" height="170">' +
+      '<circle class="dial-bg" cx="100" cy="100" r="96"/>' + dialTicks() +
+      '<path id="pomoPie" class="pie-fill' + rest + '" d=""/><circle class="dial-c" cx="100" cy="100" r="9"/></svg>' +
+      '<div id="pomoTime" class="ptime-side">00:00</div></div>';
+  } else if (st === 'ring') {
+    h += '<div id="pwrap" data-act="pstyle"><div class="ringbox"><svg id="dial" viewBox="0 0 200 200" width="170" height="170">' +
+      '<circle class="ring-bg" cx="100" cy="100" r="82"/>' +
+      '<circle id="pomoRing" class="ring-fg' + rest + '" cx="100" cy="100" r="82" transform="rotate(-90 100 100)" ' +
+      'stroke-dasharray="' + RING_C + '" stroke-dashoffset="' + RING_C + '"/></svg>' +
+      '<div id="pomoTime" class="ptime-in">00:00</div></div></div>';
+  } else {
+    h += '<div id="pomoTime" data-act="pstyle">00:00</div><div class="bar pbar"><i id="pomoBar"></i></div>';
+  }
+  h += '<div class="prow">';
   if (p) h += '<div class="pbtn stop" data-act="pstop">停止</div>';
   else {
     h += '<div class="pbtn" data-act="pomo" data-arg="f15">專注 15</div>' +
@@ -530,21 +581,49 @@ function renderPomo() {
   }
   h += '</div>';
   $('cPomo').innerHTML = h;
+  fitDial();
   tickPomo();
+}
+var RING_C = 515.22;   // 2 × π × 82
+function dialTicks() {
+  var t = '';
+  for (var i = 0; i < 12; i++) {
+    var a = i * Math.PI / 6, x1 = 100 + 88 * Math.sin(a), y1 = 100 - 88 * Math.cos(a);
+    var x2 = 100 + (i % 3 ? 80 : 74) * Math.sin(a), y2 = 100 - (i % 3 ? 80 : 74) * Math.cos(a);
+    t += '<line class="tick" x1="' + x1.toFixed(1) + '" y1="' + y1.toFixed(1) + '" x2="' + x2.toFixed(1) + '" y2="' + y2.toFixed(1) + '"/>';
+  }
+  return t;
+}
+/* 依卡片剩下的高度調整圓盤大小 */
+function fitDial() {
+  var w = $('pwrap'), svg = $('dial');
+  if (!w || !svg) return;
+  var sz = Math.max(110, Math.min(w.clientHeight - 6, 230));
+  svg.setAttribute('width', sz);
+  svg.setAttribute('height', sz);
+}
+function piePath(f) {
+  if (f <= 0) return '';
+  if (f >= 0.9999) return 'M100,100 m-90,0 a90,90 0 1,0 180,0 a90,90 0 1,0 -180,0';
+  var a = f * 2 * Math.PI, x = 100 + 90 * Math.sin(a), y = 100 - 90 * Math.cos(a);
+  return 'M100,100 L100,10 A90,90 0 ' + (f > 0.5 ? 1 : 0) + ',1 ' + x.toFixed(2) + ',' + y.toFixed(2) + ' Z';
 }
 
 function renderSched() {
   var d = schedTarget(), diff = dayDiff(new Date(), d);
   var label = diff === 0 ? '今天' : (diff === 1 ? '明天' : (d.getMonth() + 1) + '/' + d.getDate());
-  var h = '<h2>' + ic(2) + label + '（週' + WD.charAt(d.getDay()) + '）課表</h2><div class="periods">';
-  var subs = subjectsOf(d), after = [], n = 0;
+  var h = '<h2>' + ic(2) + label + '（週' + WD.charAt(d.getDay()) + '）課表</h2>', ph = '<div class="periods">';
+  var subs = subjectsOf(d), after = [], n = 0, hasExam = false;
   for (var i = 0; i < subs.length; i++) {
     if (subs[i].period.indexOf('放學') >= 0) { after.push(subs[i].subj); continue; }
     n++;
-    h += '<div class="per"><b>' + esc(subs[i].period) + '</b>' + esc(subs[i].subj) + '</div>';
+    if (subs[i].exam) hasExam = true;
+    ph += '<div class="per' + (subs[i].exam ? ' exam' : '') + '"><b>' + esc(subs[i].period) + '</b>' +
+      (subs[i].exam ? '📝' : '') + esc(subs[i].subj) + '</div>';
   }
-  if (!n) h += '<div class="empty">' + (C.schedule.length ? '沒有課' : '尚未同步課表') + '</div>';
-  h += '</div>';
+  if (!n) ph += '<div class="empty">' + (C.schedule.length ? '沒有課' : '尚未同步課表') + '</div>';
+  if (hasExam) h += '<div class="exband">📝 段考日！紅色的節次要考試，其他照常上課</div>';
+  h += ph + '</div>';
   if (after.length) h += '<div class="after">放學後：' + esc(after.join('、')) + '</div>';
 
   var bag = bagFor(d), key = ymd(d);
@@ -666,7 +745,13 @@ function openTheme() {
       h += '<div class="fnt' + (f.id === S.font ? ' sel' : '') + '" data-act="setFont" data-arg="' + f.id + '">' +
         '<span>' + f.name + '</span><small>' + f.desc + '</small></div>';
     }
-    return h + '<div class="pend" style="margin-top:6px">第一次換字型需要幾秒鐘下載</div>';
+    h += '<div class="pend" style="margin-top:4px">第一次換字型需要幾秒鐘下載</div><div class="ovsub">蕃茄鐘樣式（也可以直接點計時器切換）</div>';
+    for (i = 0; i < POMO_STYLES.length; i++) {
+      var ps = POMO_STYLES[i];
+      h += '<div class="fnt' + (ps.id === S.pomoStyle ? ' sel' : '') + '" data-act="setPomoStyle" data-arg="' + ps.id + '">' +
+        '<span>' + ps.name + '</span><small>' + ps.desc + '</small></div>';
+    }
+    return h;
   });
 }
 
@@ -695,14 +780,22 @@ function beep(times, len) {
   } catch (e) {}
 }
 function tickPomo() {
-  var tEl = $('pomoTime'), bEl = $('pomoBar'), p = S.pomo;
+  var tEl = $('pomoTime'), p = S.pomo;
   if (!tEl || !p) return;
   var left = p.end - now();
   if (left <= 0) { finishPomo(); return; }
-  var sec = Math.ceil(left / 1000);
+  var sec = Math.ceil(left / 1000), f = left / p.dur;
   tEl.textContent = pad(Math.floor(sec / 60)) + ':' + pad(sec % 60);
-  bEl.style.width = pct(p.dur - left, p.dur) + '%';
+  var bEl = $('pomoBar'), pie = $('pomoPie'), ring = $('pomoRing');
+  if (bEl) bEl.style.width = pct(p.dur - left, p.dur) + '%';
+  if (pie) pie.setAttribute('d', piePath(f));        // 圓餅：剩下的時間越來越小
+  if (ring) ring.setAttribute('stroke-dashoffset', (RING_C * (1 - f)).toFixed(1));
 }
+var POMO_STYLES = [
+  { id: 'pie', name: '圓餅倒數', desc: '紅色扇形越變越小' },
+  { id: 'ring', name: '圓環倒數', desc: '圓圈慢慢消失，中間顯示時間' },
+  { id: 'digit', name: '大數字', desc: '大大的數字加進度條' }
+];
 function finishPomo() {
   var p = S.pomo;
   S.pomo = null;
@@ -788,7 +881,7 @@ function call(params, cb) {
   });
 }
 
-var syncing = false, syncTimer = null, syncMsg = '';
+var syncing = false, syncTimer = null, syncMsg = '', manualSync = false;
 function renderSync() {
   var t = syncMsg;
   if (!t) t = S.lastSync ? '上次同步 ' + hm(new Date(S.lastSync)) : '尚未同步';
@@ -800,14 +893,14 @@ function pushAll(cb) {
   if (!OUT.length) { cb(true); return; }
   var batch = OUT.slice(0, 6);
   call({ action: 'push', ev: JSON.stringify(batch) }, function (err, d) {
-    if (err) { cb(false); return; }
+    if (err) { cb(false, err); return; }
     var acked = {}, n = 0;
     for (var i = 0; i < d.acked.length; i++) { acked[d.acked[i]] = 1; n++; }
     var keep = [];
     for (i = 0; i < OUT.length; i++) if (!acked[OUT[i].id]) keep.push(OUT[i]);
     OUT = keep;
     saveOut();
-    if (!n) { cb(false); return; }
+    if (!n) { cb(false, '後端沒有收下任何紀錄'); return; }
     pushAll(cb);
   });
 }
@@ -816,12 +909,14 @@ function sync() {
   syncing = true;
   syncMsg = '同步中…';
   renderSync();
-  pushAll(function (ok) {
-    if (!ok) { syncing = false; syncMsg = '離線中'; renderSync(); return; }
+  pushAll(function (ok, why) {
+    if (!ok) { syncing = false; syncMsg = '上傳失敗：' + why; renderSync(); if (manualSync) toast('上傳失敗：' + why); manualSync = false; return; }
     var date = ymd(new Date());
     call({ action: 'load', date: date }, function (err, d) {
       syncing = false;
-      if (err) { syncMsg = '讀取失敗'; renderSync(); return; }
+      if (err) { syncMsg = '讀取失敗：' + err; renderSync(); if (manualSync) toast('讀取失敗：' + err); manualSync = false; return; }
+      if (manualSync) toast('同步完成！');
+      manualSync = false;
       C = d;
       lsSet('pp_cache', C);
       S.lastSync = now();
@@ -898,7 +993,7 @@ var ACTS = {
     refreshOv();
   },
   close: function () { closeOv(); },
-  sync: function () { sync(); },
+  sync: function () { manualSync = true; sync(); },
   night: function () {
     S.night = ({ auto: 'on', on: 'off', off: 'auto' })[S.night];
     saveS();
@@ -906,6 +1001,14 @@ var ACTS = {
   },
   reload: function () { location.reload(); },
   theme: function () { openTheme(); },
+  setPomoStyle: function (id) { S.pomoStyle = id; saveS(); renderPomo(); refreshOv(); },
+  pstyle: function () {
+    var ids = ['pie', 'ring', 'digit'], i = 0;
+    for (var k = 0; k < ids.length; k++) if (ids[k] === S.pomoStyle) i = k;
+    S.pomoStyle = ids[(i + 1) % ids.length];
+    saveS();
+    renderPomo();
+  },
   setTheme: function (id) { S.theme = id; saveS(); renderAll(); refreshOv(); },
   setFont: function (id) { S.font = id; saveS(); renderTop(); refreshOv(); }
 };
