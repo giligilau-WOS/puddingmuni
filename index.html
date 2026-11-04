@@ -48,8 +48,8 @@
   /* 任務 */
   .starbar { background: #fff4e6; border-radius: 10px; padding: 6px 10px; margin-bottom: 4px; flex-shrink: 0; }
   .sbtop { display: flex; align-items: baseline; margin-bottom: 4px; }
-  .sbnum { font-size: 24px; font-weight: bold; color: #e8590c; margin-right: 10px; }
-  .sbgoal { font-size: 15px; color: #7b8794; }
+  .sbnum { font-size: 24px; font-weight: bold; color: #e8590c; margin-right: 10px; flex-shrink: 0; white-space: nowrap; }
+  .sbgoal { font-size: 15px; color: #7b8794; min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
   .list { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; }
   .task { display: flex; align-items: center; padding: 9px 4px; border-bottom: 1px solid #eef1f5; font-size: 20px; }
   .box {
@@ -66,6 +66,55 @@
   #pomoTime { font-size: 60px; font-weight: bold; text-align: center; line-height: 1; display: flex; align-items: center; justify-content: center; overflow: hidden; white-space: nowrap; }
   .pbar { margin: 4px 6px 8px; flex-shrink: 0; }
   #pwrap { display: flex; align-items: center; justify-content: center; overflow: hidden; }
+  #pwrap.stack { flex-direction: column; }
+  #pwrap.stack #pomoTime.ptime-side { margin: 4px 0 0; }
+  .tom-bg { fill: #ffe3e3; stroke: #fa5252; stroke-width: 4; }
+  .tom-fill { fill: #fa5252; }
+  .tom-fill.rest { fill: #fab005; }
+  .tom-shine { fill: #fff; opacity: 0.35; }
+  .tom-leaf { fill: #40c057; }
+  .hg-glass { fill: #f1f3f5; stroke: #adb5bd; stroke-width: 3; stroke-linejoin: round; }
+  .hg-sand { fill: #f59f00; }
+  .hg-sand.rest { fill: #40c057; }
+  .hg-stream { stroke: #f59f00; stroke-width: 3; stroke-dasharray: 4 4; }
+  .hg-stream.rest { stroke: #40c057; }
+  .hg-wood { fill: #a9784d; }
+  .bat-shell { fill: #f8f9fa; stroke: #495057; stroke-width: 5; }
+  .bat-nub { fill: #495057; }
+  .seg { fill: #e9ecef; }
+  .seg.on { fill: #40c057; }
+  .seg.on.mid { fill: #fab005; }
+  .seg.on.low { fill: #fa5252; }
+  body.th-space .tom-bg, body.th-space .hg-glass, body.th-space .bat-shell { fill: #3d3290; }
+  body.th-space .seg { fill: #2a2266; }
+  body.th-space .bat-shell, body.th-space .bat-nub { stroke: #c5bdf5; }
+  body.th-space .bat-nub { fill: #c5bdf5; }
+
+  /* ===== 直立版面（iPad 直放） ===== */
+  body.L-tall #top { height: auto; min-height: 60px; flex-wrap: wrap; padding: 6px 10px; }
+  body.L-tall #exam { -webkit-order: 9; order: 9; width: 100%; flex: none; padding: 2px 0 4px; }
+  body.L-tall #syncInfo { max-width: 120px; margin-left: 8px; }
+  body.L-tall .tbtn { padding: 0 9px; margin-left: 5px; }
+  body.L-tall .pbtn, body.L-narrow .pbtn { font-size: 15px; margin: 0 2px; }
+  body.L-tall .mbtn { font-size: 16px; }
+
+  /* ===== 小螢幕（手機）：一張一張往下排，可以捲動 ===== */
+  html.scroll, html.scroll body { height: auto; overflow: auto; }
+  body.L-narrow #app { height: auto; }
+  body.L-narrow #top { height: auto; flex-wrap: wrap; padding: 6px 8px; }
+  body.L-narrow #time { font-size: 30px; }
+  body.L-narrow #exam { -webkit-order: 9; order: 9; width: 100%; flex: none; font-size: 17px; padding: 2px 0 4px; }
+  body.L-narrow #syncInfo { display: none; }
+  body.L-narrow .tbtn { height: 34px; padding: 0 8px; margin: 3px 0 3px 5px; font-size: 14px; }
+  body.L-narrow #main { display: block; }
+  body.L-narrow .col { display: block; }
+  body.L-narrow .card { display: flex; min-height: 0; margin: 6px; }
+  body.L-narrow #cTasks, body.L-narrow #cSched { min-height: 260px; }
+  body.L-narrow #cPomo { height: 330px; }
+  body.L-narrow #cMoney { height: 300px; }
+  body.L-narrow .list, body.L-narrow .sbody { overflow: visible; }
+  body.L-narrow #ovBox { width: 94%; margin-left: -47%; }
+  body.L-narrow #toast { width: 90%; margin-left: -45%; }
   #pwrap svg { flex-shrink: 0; display: block; }
   #pomoTime.ptime-side { margin-left: 16px; }
   .ringbox { position: relative; }
@@ -99,6 +148,7 @@
   /* 課表 */
   .periods { display: flex; flex-wrap: wrap; }
   .sbody { flex: 1; min-height: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+  .ps { min-width: 0; white-space: normal; word-break: break-all; }
   /* 內容太多時自動縮小一級，讓整張課表放得下 */
   .sz1 .per { font-size: 20px; } .sz1 .item { font-size: 17px; min-height: 32px; } .sz1 .after, .sz1 .note { font-size: 17px; }
   .sz2 .per { font-size: 18px; padding-right: 10px; } .sz2 .per b { min-width: 26px; height: 26px; font-size: 14px; }
@@ -551,7 +601,7 @@ function renderTop() {
   }
   $('nightBtn').textContent = '夜間：' + ({ auto: '自動', on: '開', off: '關' })[S.night];
   applyFont();
-  document.body.className = 'th-' + theme().id + (S.font !== 'system' ? ' f-kid' : '') + (isNight() ? ' night' : '');
+  document.body.className = bodyClass();
 }
 
 function pinnedReward() {
@@ -581,20 +631,14 @@ function renderPomo() {
   var p = S.pomo, h = '<h2>' + ic(1) + '專注蕃茄鐘</h2>';
   h += '<div class="pmsg">' + (p ? (p.kind === 'focus' ? '專注中…完成可得 ' + C.config.pomoStars + '★' : '休息一下，喝口水')
     : '選一個時間開始吧') + '</div>';
-  var st = S.pomoStyle, rest = p && p.kind === 'rest' ? ' rest' : '';
-  if (st === 'pie') {
-    h += '<div id="pwrap" data-act="pstyle"><svg id="dial" viewBox="0 0 200 200" width="170" height="170">' +
-      '<circle class="dial-bg" cx="100" cy="100" r="96"/>' + dialTicks() +
-      '<path id="pomoPie" class="pie-fill' + rest + '" d=""/><circle class="dial-c" cx="100" cy="100" r="9"/></svg>' +
-      '<div id="pomoTime" class="ptime-side">00:00</div></div>';
-  } else if (st === 'ring') {
-    h += '<div id="pwrap" data-act="pstyle"><div class="ringbox"><svg id="dial" viewBox="0 0 200 200" width="170" height="170">' +
-      '<circle class="ring-bg" cx="100" cy="100" r="82"/>' +
-      '<circle id="pomoRing" class="ring-fg' + rest + '" cx="100" cy="100" r="82" transform="rotate(-90 100 100)" ' +
-      'stroke-dasharray="' + RING_C + '" stroke-dashoffset="' + RING_C + '"/></svg>' +
+  var st = pomoStyle(), rest = p && p.kind === 'rest' ? ' rest' : '';
+  if (st.id === 'digit') {
+    h += '<div id="pomoTime" data-act="pstyle">00:00</div><div class="bar pbar"><i id="pomoBar"></i></div>';
+  } else if (st.id === 'ring') {
+    h += '<div id="pwrap" data-act="pstyle"><div class="ringbox">' + graphic(st.id, rest) +
       '<div id="pomoTime" class="ptime-in">00:00</div></div></div>';
   } else {
-    h += '<div id="pomoTime" data-act="pstyle">00:00</div><div class="bar pbar"><i id="pomoBar"></i></div>';
+    h += '<div id="pwrap" data-act="pstyle">' + graphic(st.id, rest) + '<div id="pomoTime" class="ptime-side">00:00</div></div>';
   }
   h += '<div class="prow">';
   if (p) h += '<div class="pbtn stop" data-act="pstop">停止</div>';
@@ -609,7 +653,52 @@ function renderPomo() {
   fitDial();
   tickPomo();
 }
+
+/* 計時樣式；ratio = 圖形的寬 ÷ 高 */
+var POMO_STYLES = [
+  { id: 'pie', name: '圓餅倒數', desc: '扇形越變越小', ratio: 1 },
+  { id: 'ring', name: '圓環倒數', desc: '圓圈慢慢消失', ratio: 1 },
+  { id: 'tomato', name: '番茄', desc: '番茄裡的紅色慢慢變少', ratio: 1 },
+  { id: 'hourglass', name: '沙漏', desc: '沙子從上面流到下面', ratio: 0.75 },
+  { id: 'battery', name: '電池', desc: '電量一格一格用完', ratio: 2 },
+  { id: 'digit', name: '大數字', desc: '大大的數字加進度條', ratio: 0 }
+];
+function pomoStyle() { return findById(POMO_STYLES, S.pomoStyle); }
 var RING_C = 515.22;   // 2 × π × 82
+
+function graphic(id, rest) {
+  var g = '';
+  if (id === 'pie') {
+    g = '<svg id="dial" viewBox="0 0 200 200"><circle class="dial-bg" cx="100" cy="100" r="96"/>' + dialTicks() +
+      '<path id="pomoPie" class="pie-fill' + rest + '" d=""/><circle class="dial-c" cx="100" cy="100" r="9"/></svg>';
+  } else if (id === 'ring') {
+    g = '<svg id="dial" viewBox="0 0 200 200"><circle class="ring-bg" cx="100" cy="100" r="82"/>' +
+      '<circle id="pomoRing" class="ring-fg' + rest + '" cx="100" cy="100" r="82" transform="rotate(-90 100 100)" ' +
+      'stroke-dasharray="' + RING_C + '" stroke-dashoffset="' + RING_C + '"/></svg>';
+  } else if (id === 'tomato') {
+    g = '<svg id="dial" viewBox="0 0 200 200"><defs><clipPath id="tomClip"><rect id="tomLevel" x="0" y="32" width="200" height="160"/></clipPath></defs>' +
+      '<circle class="tom-bg" cx="100" cy="112" r="80"/>' +
+      '<circle class="tom-fill' + rest + '" cx="100" cy="112" r="80" clip-path="url(#tomClip)"/>' +
+      '<ellipse class="tom-shine" cx="68" cy="88" rx="14" ry="22" transform="rotate(30 68 88)"/>' +
+      '<path class="tom-leaf" d="M100,46 C88,26 66,26 56,36 C74,40 84,46 100,50 C116,46 126,40 144,36 C134,26 112,26 100,46 Z"/>' +
+      '<rect class="tom-leaf" x="95" y="14" width="10" height="30" rx="4"/></svg>';
+  } else if (id === 'hourglass') {
+    g = '<svg id="dial" viewBox="0 0 150 200"><defs>' +
+      '<clipPath id="hgTopClip"><rect id="hgTop" x="0" y="22" width="150" height="76"/></clipPath>' +
+      '<clipPath id="hgBotClip"><rect id="hgBot" x="0" y="178" width="150" height="0"/></clipPath></defs>' +
+      '<polygon class="hg-glass" points="25,18 125,18 78,100 125,182 25,182 72,100"/>' +
+      '<polygon class="hg-sand' + rest + '" points="31,22 119,22 75,98" clip-path="url(#hgTopClip)"/>' +
+      '<polygon class="hg-sand' + rest + '" points="75,104 120,178 30,178" clip-path="url(#hgBotClip)"/>' +
+      '<line id="hgStream" class="hg-stream' + rest + '" x1="75" y1="98" x2="75" y2="176"/>' +
+      '<rect class="hg-wood" x="10" y="4" width="130" height="14" rx="6"/><rect class="hg-wood" x="10" y="182" width="130" height="14" rx="6"/></svg>';
+  } else if (id === 'battery') {
+    g = '<svg id="dial" viewBox="0 0 220 110"><rect class="bat-shell" x="5" y="10" width="195" height="90" rx="14"/>' +
+      '<rect class="bat-nub" x="202" y="38" width="13" height="34" rx="4"/>';
+    for (var i = 0; i < 10; i++) g += '<rect id="seg' + i + '" class="seg" x="' + (16 + i * 18.2).toFixed(1) + '" y="21" width="14" height="68" rx="4"/>';
+    g += '</svg>';
+  }
+  return g;
+}
 function dialTicks() {
   var t = '';
   for (var i = 0; i < 12; i++) {
@@ -619,7 +708,15 @@ function dialTicks() {
   }
   return t;
 }
-/* 依照卡片實際的大小，計算圓盤與數字的尺寸，保證不會超出外框 */
+function piePath(f) {
+  if (f <= 0) return '';
+  if (f >= 0.9999) return 'M100,100 m-90,0 a90,90 0 1,0 180,0 a90,90 0 1,0 -180,0';
+  var a = f * 2 * Math.PI, x = 100 + 90 * Math.sin(a), y = 100 - 90 * Math.cos(a);
+  return 'M100,100 L100,10 A90,90 0 ' + (f > 0.5 ? 1 : 0) + ',1 ' + x.toFixed(2) + ',' + y.toFixed(2) + ' Z';
+}
+
+/* 依照卡片實際的大小，計算圖形與數字的尺寸，保證不會超出外框。
+   卡片扁長時圖形和數字左右並排，卡片瘦高（例如直立）時改成上下排。 */
 function fitDial() {
   var card = $('cPomo'), t = $('pomoTime');
   if (!card || !t) return;
@@ -630,32 +727,38 @@ function fitDial() {
     used += kids[i].offsetHeight + (parseFloat(ks.marginBottom) || 0) +
       (kids[i].className === 'prow' ? 0 : (parseFloat(ks.marginTop) || 0));   // prow 的上邊距是 auto，不能算進去
   }
-  var avail = Math.max(50, card.clientHeight - (parseFloat(cs.paddingTop) || 0) - (parseFloat(cs.paddingBottom) || 0) - used - 4);
-  var wid = card.clientWidth - (parseFloat(cs.paddingLeft) || 0) - (parseFloat(cs.paddingRight) || 0) - 6;
-  var w = $('pwrap'), svg = $('dial'), st = S.pomoStyle;
-  if (!svg) {                                    // 大數字
-    t.style.height = avail + 'px';
-    t.style.fontSize = Math.floor(Math.min(avail * 0.7, wid / 3.1)) + 'px';
+  var H = Math.max(50, card.clientHeight - (parseFloat(cs.paddingTop) || 0) - (parseFloat(cs.paddingBottom) || 0) - used - 4);
+  var W = card.clientWidth - (parseFloat(cs.paddingLeft) || 0) - (parseFloat(cs.paddingRight) || 0) - 6;
+  var st = pomoStyle(), w = $('pwrap'), svg = $('dial');
+  var CH = 3.1;                                   // 「00:00」大約是字高的 3.1 倍寬
+  if (!svg) {                                     // 大數字
+    t.style.height = H + 'px';
+    t.style.fontSize = Math.floor(Math.min(H * 0.7, W / CH)) + 'px';
     return;
   }
-  w.style.height = avail + 'px';
-  var sz = st === 'pie' ? Math.min(avail - 4, wid * 0.5, 230) : Math.min(avail - 4, wid - 10, 230);
-  sz = Math.max(50, Math.floor(sz));
-  svg.setAttribute('width', sz);
-  svg.setAttribute('height', sz);
-  if (st === 'pie') {
-    t.style.fontSize = Math.floor(Math.min(sz * 0.34, (wid - sz - 20) / 3.1)) + 'px';
+  w.style.height = H + 'px';
+  var gw, gh, fs;
+  if (st.id === 'ring') {
+    gh = Math.floor(Math.max(50, Math.min(H - 4, W - 10, 260)));
+    gw = gh;
+    w.firstChild.style.width = gw + 'px';
+    w.firstChild.style.height = gh + 'px';
+    fs = Math.floor(gh * 0.2);
   } else {
-    w.firstChild.style.width = sz + 'px';
-    w.firstChild.style.height = sz + 'px';
-    t.style.fontSize = Math.floor(sz * 0.2) + 'px';
+    var r = st.ratio;
+    // 左右並排：圖形佔寬度約一半
+    var sideH = Math.min(H - 4, (W * 0.52) / r, 260), sideF = Math.min(sideH * 0.36, (W - sideH * r - 20) / CH);
+    // 上下排：數字在圖形下方
+    var stackF = Math.min(H * 0.2, W / CH), stackH = Math.min(H - stackF * 1.25 - 6, W / r, 260);
+    var stack = Math.min(stackH, stackF * 3) > Math.min(sideH, sideF * 3) + 8;
+    w.className = stack ? 'stack' : '';
+    gh = Math.floor(Math.max(40, stack ? stackH : sideH));
+    gw = Math.floor(gh * r);
+    fs = Math.floor(Math.max(16, stack ? stackF : sideF));
   }
-}
-function piePath(f) {
-  if (f <= 0) return '';
-  if (f >= 0.9999) return 'M100,100 m-90,0 a90,90 0 1,0 180,0 a90,90 0 1,0 -180,0';
-  var a = f * 2 * Math.PI, x = 100 + 90 * Math.sin(a), y = 100 - 90 * Math.cos(a);
-  return 'M100,100 L100,10 A90,90 0 ' + (f > 0.5 ? 1 : 0) + ',1 ' + x.toFixed(2) + ',' + y.toFixed(2) + ' Z';
+  svg.setAttribute('width', gw);
+  svg.setAttribute('height', gh);
+  t.style.fontSize = fs + 'px';
 }
 
 function renderSched() {
@@ -667,8 +770,8 @@ function renderSched() {
     if (subs[i].period.indexOf('放學') >= 0) { after.push(subs[i].subj); continue; }
     n++;
     if (subs[i].exam) hasExam = true;
-    ph += '<div class="per' + (subs[i].exam ? ' exam' : '') + '"><b>' + esc(subs[i].period) + '</b>' +
-      (subs[i].exam ? '📝' : '') + esc(subs[i].subj) + '</div>';
+    ph += '<div class="per' + (subs[i].exam ? ' exam' : '') + '"><b>' + esc(subs[i].period) + '</b><span class="ps">' +
+      (subs[i].exam ? '📝' : '') + esc(subs[i].subj) + '</span></div>';
   }
   if (!n) ph += '<div class="empty">' + (C.schedule.length ? '沒有課' : '尚未同步課表') + '</div>';
   if (hasExam) h += '<div class="exband">📝 段考日！紅色的節次要考試，其他照常上課</div>';
@@ -834,18 +937,28 @@ function tickPomo() {
   if (!tEl || !p) return;
   var left = p.end - now();
   if (left <= 0) { finishPomo(); return; }
-  var sec = Math.ceil(left / 1000), f = left / p.dur;
+  var sec = Math.ceil(left / 1000), f = left / p.dur, el;
   tEl.textContent = pad(Math.floor(sec / 60)) + ':' + pad(sec % 60);
-  var bEl = $('pomoBar'), pie = $('pomoPie'), ring = $('pomoRing');
-  if (bEl) bEl.style.width = pct(p.dur - left, p.dur) + '%';
-  if (pie) pie.setAttribute('d', piePath(f));        // 圓餅：剩下的時間越來越小
-  if (ring) ring.setAttribute('stroke-dashoffset', (RING_C * (1 - f)).toFixed(1));
+  if ((el = $('pomoBar'))) el.style.width = pct(p.dur - left, p.dur) + '%';
+  if ((el = $('pomoPie'))) el.setAttribute('d', piePath(f));
+  if ((el = $('pomoRing'))) el.setAttribute('stroke-dashoffset', (RING_C * (1 - f)).toFixed(1));
+  if ((el = $('tomLevel'))) {                       // 番茄：紅色從上往下變少
+    var y = 32 + (1 - f) * 160;
+    el.setAttribute('y', y.toFixed(1));
+    el.setAttribute('height', (192 - y).toFixed(1));
+  }
+  if ((el = $('hgTop'))) {                          // 沙漏：上面變少、下面變多
+    var ty = 22 + (1 - f) * 76, by = 178 - (1 - f) * 74;
+    el.setAttribute('y', ty.toFixed(1));
+    el.setAttribute('height', Math.max(0, 98 - ty).toFixed(1));
+    $('hgBot').setAttribute('y', by.toFixed(1));
+    $('hgBot').setAttribute('height', (178 - by).toFixed(1));
+  }
+  if ($('seg0')) {                                  // 電池：一格一格用完
+    var on = Math.ceil(f * 10), cls = f > 0.5 ? 'seg on' : (f > 0.2 ? 'seg on mid' : 'seg on low');
+    for (var i = 0; i < 10; i++) $('seg' + i).setAttribute('class', i < on ? cls : 'seg');
+  }
 }
-var POMO_STYLES = [
-  { id: 'pie', name: '圓餅倒數', desc: '紅色扇形越變越小' },
-  { id: 'ring', name: '圓環倒數', desc: '圓圈慢慢消失，中間顯示時間' },
-  { id: 'digit', name: '大數字', desc: '大大的數字加進度條' }
-];
 function finishPomo() {
   var p = S.pomo;
   S.pomo = null;
@@ -1053,9 +1166,9 @@ var ACTS = {
   theme: function () { openTheme(); },
   setPomoStyle: function (id) { S.pomoStyle = id; saveS(); renderPomo(); refreshOv(); },
   pstyle: function () {
-    var ids = ['pie', 'ring', 'digit'], i = 0;
-    for (var k = 0; k < ids.length; k++) if (ids[k] === S.pomoStyle) i = k;
-    S.pomoStyle = ids[(i + 1) % ids.length];
+    var i = 0;
+    for (var k = 0; k < POMO_STYLES.length; k++) if (POMO_STYLES[k].id === S.pomoStyle) i = k;
+    S.pomoStyle = POMO_STYLES[(i + 1) % POMO_STYLES.length].id;
     saveS();
     renderPomo();
   },
@@ -1072,10 +1185,30 @@ function onTap(ev) {
 }
 
 /* ================= 啟動 ================= */
-function fit() { $('app').style.height = window.innerHeight + 'px'; fitSched(); fitDial(); tickPomo(); }
+/* 依螢幕大小與方向選版面：wide 橫放、tall 直立、narrow 手機等小螢幕（改成上下捲動） */
+var LAYOUT = 'wide';
+function layoutOf() {
+  var w = window.innerWidth, h = window.innerHeight;
+  if (w < 600 || h < 480) return 'narrow';
+  return w >= h ? 'wide' : 'tall';
+}
+function bodyClass() {
+  return 'th-' + theme().id + ' L-' + LAYOUT + (S.font !== 'system' ? ' f-kid' : '') + (isNight() ? ' night' : '');
+}
+var lastSize = '';
+function fit() {
+  var size = window.innerWidth + 'x' + window.innerHeight;
+  LAYOUT = layoutOf();
+  $('app').style.height = LAYOUT === 'narrow' ? 'auto' : window.innerHeight + 'px';
+  document.documentElement.className = LAYOUT === 'narrow' ? 'scroll' : '';
+  document.body.className = bodyClass();
+  if (size !== lastSize) { lastSize = size; window.scrollTo(0, 0); }
+  renderAll();
+}
 function fitSched() {
   var c = $('cSched'), b = c && c.querySelector('.sbody');
   if (!b) return;
+  if (LAYOUT === 'narrow') { c.className = 'card'; return; }
   for (var lv = 0; lv < 4; lv++) {
     c.className = 'card' + (lv ? ' sz' + lv : '');
     if (b.scrollHeight <= b.clientHeight + 1) return;
@@ -1096,11 +1229,16 @@ function tick() {
 
 $('app').addEventListener('click', onTap, false);
 $('ov').addEventListener('click', onTap, false);
-window.addEventListener('resize', function () { setTimeout(fit, 300); }, false);
-window.addEventListener('orientationchange', function () { setTimeout(fit, 300); }, false);
+/* 旋轉時 iOS 會晚一點才更新尺寸，所以分兩次檢查 */
+var fitTimer = null;
+function fitLater() {
+  clearTimeout(fitTimer);
+  fitTimer = setTimeout(function () { fit(); setTimeout(fit, 500); }, 150);
+}
+window.addEventListener('resize', fitLater, false);
+window.addEventListener('orientationchange', fitLater, false);
 window.addEventListener('pageshow', function () { tick(); sync(); }, false);
 fit();
-renderAll();
 tick();
 setInterval(tick, 1000);
 sync();
