@@ -98,7 +98,8 @@
   body.L-tall #exam { -webkit-order: 9; order: 9; width: 100%; flex: none; padding: 2px 0 4px; }
   body.L-tall #syncInfo { max-width: 120px; margin-left: 8px; }
   body.L-tall .tbtn { padding: 0 9px; margin-left: 5px; }
-  body.L-tall .pbtn, body.L-narrow .pbtn { font-size: 15px; margin: 0 2px; }
+  body.L-tall .pbtn, body.L-narrow .pbtn { font-size: 13px; margin: 0 2px; }
+  .pbtn { font-size: 16px; margin: 0 3px; }
   body.L-tall .mbtn { font-size: 16px; }
 
   /* ===== 小螢幕（手機）：一張一張往下排，可以捲動 ===== */
@@ -245,6 +246,27 @@
   .adv span { width: 26px; flex-shrink: 0; } .adv p { margin: 0; }
   .recd { font-size: 17px; line-height: 1.9; } .recd b { display: inline-block; width: 60px; color: #7b8794; }
   .okbtn.delbtn, body.th-kid .okbtn.delbtn, body.th-candy .okbtn.delbtn, body.th-ocean .okbtn.delbtn, body.th-forest .okbtn.delbtn, body.th-space .okbtn.delbtn { background: #e03131; }
+
+  /* 任務提示、家長設定 */
+  .tname { line-height: 1.2; }
+  .tchip { display: block; font-size: 13px; color: #1971c2; margin-top: 2px; text-decoration: none; }
+  .task.done .tchip { color: #2f9e44; }
+  .tchip.warn { color: #e8590c; font-weight: bold; } .tchip.late { color: #e03131; font-weight: bold; } .tchip.lock { color: #868e96; }
+  .task.locked { opacity: 0.6; }
+  .task .box { font-size: 14px; }
+  input, select, textarea { -webkit-user-select: text; user-select: text; }
+  .ptrow { display: flex; align-items: center; padding: 7px 0; border-bottom: 1px solid #eef1f5; font-size: 16px; }
+  .ptrow .pn { flex: 1; }
+  .badge { font-size: 12px; background: #e7f5ff; color: #1971c2; border-radius: 8px; padding: 1px 6px; margin-left: 6px; white-space: nowrap; }
+  .sw { width: 48px; height: 28px; border-radius: 14px; background: #ced4da; position: relative; flex-shrink: 0; }
+  .sw.on { background: #40c057; }
+  .sw i { position: absolute; top: 3px; left: 3px; width: 22px; height: 22px; border-radius: 11px; background: #fff; }
+  .sw.on i { left: 23px; }
+  .pform label { display: flex; align-items: center; margin: 5px 0; font-size: 16px; }
+  .pform label span { width: 76px; color: #495057; flex-shrink: 0; }
+  .pform label .pgap { width: auto; margin: 0 8px 0 12px; }
+  .pform input, .pform select { flex: 1; min-width: 0; font-size: 17px; padding: 7px 8px; border: 1px solid #ced4da; border-radius: 8px; background: #fff; color: #1f2933; }
+  .phint { font-size: 13px; color: #e8590c; margin: 0 0 2px 76px; }
 
   /* 彈出視窗 */
   #ov { display: none; position: fixed; left: 0; top: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.45); z-index: 10; }
@@ -565,7 +587,7 @@ var API_URL = 'https://script.google.com/macros/s/AKfycbxY-7ZoZfDN-pRjV-p0rnsqRY
 var API_KEY = 'change-me-1234';
 /* ======================================== */
 
-var APP_VERSION = '1105-v6';   // 每次更新都改這個，用來確認 iPad 載入的是新版
+var APP_VERSION = '1105-v7';   // 每次更新都改這個，用來確認 iPad 載入的是新版
 var WD = '日一二三四五六';
 var SPEND_CATS = ['零食', '文具', '玩具', '捐款', '其他'];
 var INCOME_CATS = ['零用錢', '紅包', '獎勵', '其他'];
@@ -653,8 +675,14 @@ var TIME_SCALE = DEMO ? 60 : 1;
 function K(k) { return (DEMO ? 'demo_' : '') + k; }
 var DEMO_DATA = {
   date: '', starTotal: 12, taskNet: {}, ledgerBalance: 380,
-  tasks: [{ name: '寫功課', days: '每天', stars: 2 }, { name: '閱讀 20 分鐘', days: '每天', stars: 1 },
-    { name: '整理書包', days: '每天', stars: 1 }, { name: '練習鋼琴', days: '每天', stars: 1, treasure: 80 }],
+  tasks: [{ name: '寫功課', days: '每天', stars: 2, type: '截止', cond: '20:00', bonus: 1 },
+    { name: '刷牙挑戰', days: '每天', stars: 1, type: '挑戰', cond: '3', bonus: 1 },
+    { name: '喝水', days: '每天', stars: 1, type: '次數', cond: '6', bonus: 0 },
+    { name: '閱讀 20 分鐘', days: '每天', stars: 1, type: '連續', cond: '7', bonus: 3 },
+    { name: '看卡通前先寫功課', days: '每天', stars: 1, type: '前置', cond: '寫功課', bonus: 0 },
+    { name: '專注 2 次', days: '每天', stars: 1, type: '專注', cond: '2', bonus: 1 },
+    { name: '整理房間', days: '每天', stars: 2, type: '家長確認', cond: '', bonus: 1 },
+    { name: '練習鋼琴', days: '每天', stars: 1, treasure: 80 }],
   schedule: [
     { period: '1', time: '08:40', d: ['國語', '數學', '國語', '英語', '數學'] },
     { period: '2', time: '09:30', d: ['數學', '國語', '體育', '國語', '社會'] },
@@ -683,6 +711,11 @@ var S = lsGet(K('pp_state'), DEMO ? { theme: 'kid', font: 'naikai', pomoStyle: '
   if (!S.font) S.font = 'huninn';
   if (!S.pomoStyle) S.pomoStyle = 'pie';
   if (!S.bag) S.bag = {};
+  if (DEMO && !C.taskDays) {                  // 模擬資料：閱讀已經連續 6 天
+    C.taskDays = { '閱讀 20 分鐘': [] };
+    for (var sd = 1; sd <= 6; sd++) { var x = midnight(new Date()); x.setDate(x.getDate() - sd); C.taskDays['閱讀 20 分鐘'].push(ymd(x)); }
+    C.tasksAll = C.tasks.slice(0).concat([{ name: '早起打卡', days: '每天', stars: 1, type: '時段', cond: '06:30-07:15', bonus: 1, on: false }]);
+  }
   if (DEMO && !C.ledger) {                    // 模擬資料：過去 45 天的收支
     var L = [], d0 = midnight(new Date()), bal = 0, items = [['收入', '每週零用錢', 150, 7], ['支出', '零食', 25, 5], ['支出', '文具', 40, 9], ['支出', '玩具', 120, 20], ['收入', '獎勵', 50, 11], ['支出', '捐款', 20, 15]];
     for (var dd = 45; dd >= 0; dd--) {
@@ -873,6 +906,155 @@ function pinnedReward() {
   return C.rewards[0] || null;
 }
 
+/* ===== 任務類型：一般、截止、挑戰、時段、次數、前置、連續、專注、家長確認 ===== */
+var TASK_TYPES = ['一般', '截止', '挑戰', '時段', '次數', '前置', '連續', '專注', '家長確認'];
+var TYPE_HELP = { '一般': '不需要條件', '截止': '填完成時間，例如 20:00（準時完成多拿加碼）', '挑戰': '填分鐘數，例如 10（點開始後在時間內完成就加碼）',
+  '時段': '填時段，例如 06:30-07:15（只有這段時間能打卡）', '次數': '填次數，例如 6（點滿 6 次才完成）', '前置': '填要先完成的任務名稱',
+  '連續': '填天數，例如 7（每連續 7 天加碼一次）', '專注': '填今天要專注的次數，例如 2（達成自動打勾）', '家長確認': '不需要條件（打勾時要家長密碼）' };
+function nowMin() { var d = new Date(); return d.getHours() * 60 + d.getMinutes(); }
+function parseHM(s) { var m = /(\d{1,2})[:：](\d{2})/.exec(String(s || '')); return m ? (+m[1]) * 60 + (+m[2]) : -1; }
+function fmtMin(m) { return pad(Math.floor(m / 60)) + ':' + pad(m % 60); }
+function tstate() {
+  var d = ymd(new Date());
+  if (!S.tst || S.tst.date !== d) S.tst = { date: d, ch: {}, cnt: {}, grant: {} };
+  return S.tst;
+}
+function findTask(name) { for (var i = 0; i < C.tasks.length; i++) if (C.tasks[i].name === name) return C.tasks[i]; return null; }
+function focusToday() { return S.fday && S.fday.d === ymd(new Date()) ? S.fday.n : 0; }
+/* 連續天數：從今天（今天還沒完成就從昨天）往回數 */
+function streakOf(t) {
+  var days = (C.taskDays && C.taskDays[t.name]) || [], set = {}, i, d = midnight(new Date());
+  for (i = 0; i < days.length; i++) set[days[i]] = 1;
+  if (taskDone(t.name)) set[ymd(d)] = 1; else { delete set[ymd(d)]; d = addDays(d, -1); }
+  var n = 0;
+  while (set[ymd(d)]) { n++; d = addDays(d, -1); }
+  return n;
+}
+function cdLeft(s0, mins) { return mins * 60000 / TIME_SCALE - (now() - s0); }
+function cdText(s0, mins) {
+  var l = cdLeft(s0, mins), sec = Math.ceil(Math.abs(l) * TIME_SCALE / 1000);
+  return (l >= 0 ? '剩 ' : '超時 ') + pad(Math.floor(sec / 60)) + ':' + pad(sec % 60);
+}
+/* 任務列上的提示文字、顏色、是否鎖住 */
+function taskInfo(t) {
+  var type = t.type || '一般', c = t.cond, done = taskDone(t.name), st = tstate(), r = { chip: '', cls: '', lock: '' };
+  if (type === '截止') {
+    var dl = parseHM(c), left = dl - nowMin();
+    if (dl >= 0) {
+      if (done) r.chip = st.grant[t.name] > t.stars ? '⏰ 準時完成！' : '⏰ 完成';
+      else if (left > 30) r.chip = '⏰ ' + fmtMin(dl) + ' 前完成' + (t.bonus ? '・加碼 +' + t.bonus : '');
+      else if (left >= 0) { r.chip = '⏰ 只剩 ' + left + ' 分鐘！'; r.cls = 'warn'; }
+      else { r.chip = '⏰ 已超過 ' + fmtMin(dl); r.cls = 'late'; }
+    }
+  } else if (type === '挑戰') {
+    var mins = Number(c) || 5, s0 = st.ch[t.name];
+    if (done) r.chip = st.grant[t.name] > t.stars ? '⏱ 挑戰成功！' : '⏱ 完成';
+    else if (s0) { r.chip = '<span data-cd="' + s0 + '" data-mins="' + mins + '">⏱ ' + cdText(s0, mins) + '</span>　做完再點一下'; r.cls = cdLeft(s0, mins) < 0 ? 'late' : 'warn'; }
+    else r.chip = '⏱ 點一下開始 ' + mins + ' 分鐘挑戰' + (t.bonus ? '・加碼 +' + t.bonus : '');
+  } else if (type === '時段') {
+    var pp = String(c).split(/[-~～到]/), a = parseHM(pp[0]), b = parseHM(pp[1]), m = nowMin();
+    r.chip = '🕒 ' + (a >= 0 ? fmtMin(a) : '') + '–' + (b >= 0 ? fmtMin(b) : '') + ' 打卡';
+    if (!done && a >= 0 && m < a) r.lock = fmtMin(a) + ' 才開放';
+    else if (!done && b >= 0 && m > b) r.lock = '已經過了打卡時間';
+  } else if (type === '次數') {
+    var N = Number(c) || 1;
+    r.chip = '✚ ' + (done ? N : Math.min(st.cnt[t.name] || 0, N)) + ' / ' + N + (done ? '' : '　點一次加一');
+  } else if (type === '前置') {
+    if (!done && c && findTask(c) && !taskDone(c)) r.lock = '要先完成「' + c + '」';
+    else r.chip = '🔓 已解鎖';
+  } else if (type === '連續') {
+    var N2 = Number(c) || 7, sk = streakOf(t);
+    r.chip = '🔥 連續 ' + sk + ' 天・每 ' + N2 + ' 天加碼 +' + (t.bonus || 0);
+  } else if (type === '專注') {
+    var N3 = Number(c) || 1;
+    r.chip = '🍅 今天專注 ' + Math.min(focusToday(), N3) + ' / ' + N3 + ' 次（自動打勾）';
+  } else if (type === '家長確認') r.chip = done ? '👪 家長已確認' : '👪 需要家長確認';
+  if (r.lock) { r.chip = '🔒 ' + r.lock; r.cls = 'lock'; }
+  return r;
+}
+function tickTasks() {
+  var els = document.querySelectorAll('[data-cd]');
+  for (var i = 0; i < els.length; i++) {
+    var s0 = +els[i].getAttribute('data-cd'), m = +els[i].getAttribute('data-mins');
+    els[i].textContent = '⏱ ' + cdText(s0, m);
+    els[i].parentNode.className = 'tchip ' + (cdLeft(s0, m) < 0 ? 'late' : 'warn');
+  }
+}
+function completeTask(t, bonus, line, x) {
+  var st = tstate(), n = (Number(t.stars) || 0) + (bonus || 0), ref = ymd(new Date()) + '|' + t.name;
+  st.grant[t.name] = n;
+  delete st.ch[t.name];
+  saveS();
+  addTreasure(taskGem(t).id, 1);
+  starEvent(n, '完成：' + t.name + (bonus ? '（加碼 +' + bonus + '）' : ''), 'task', ref);
+  var all = true, tl = todayTasks();
+  for (var k = 0; k < tl.length; k++) if (!taskDone(tl[k].name)) all = false;
+  if (all && kidOn()) showCard('new');
+  else if (!kidSay(line || 'task', x || taskGem(t).name)) toast('太棒了！+' + n + SYM() + (bonus ? '（含加碼 ' + bonus + '）' : ''));
+}
+function uncompleteTask(t) {
+  var st = tstate(), n = st.grant[t.name] || Number(t.stars) || 0, ref = ymd(new Date()) + '|' + t.name;
+  delete st.grant[t.name];
+  delete st.ch[t.name];
+  if (t.type === '次數') st.cnt[t.name] = Math.max(0, (Number(t.cond) || 1) - 1);
+  saveS();
+  addTreasure(taskGem(t).id, -1);
+  starEvent(-n, '取消：' + t.name, 'untask', ref);
+}
+/* 專注次數達標的任務自動打勾 */
+function checkAutoTasks() {
+  var tl = todayTasks();
+  for (var i = 0; i < tl.length; i++) {
+    var t = tl[i];
+    if (t.type === '專注' && !taskDone(t.name) && focusToday() >= (Number(t.cond) || 1)) completeTask(t, Number(t.bonus) || 0, 'focusAuto', Number(t.cond) || 1);
+  }
+}
+
+/* ===== 家長設定：在 iPad 上管理任務 ===== */
+var TPL = [
+  ['⏰ 寫功課 20:00 前', '寫功課', '截止', '20:00', 2, 1, '平日'], ['⏱ 刷牙 3 分鐘挑戰', '刷牙挑戰', '挑戰', '3', 1, 1, '每天'],
+  ['⏱ 10 分鐘整理書包', '整理書包挑戰', '挑戰', '10', 1, 1, '平日'], ['🕒 早起打卡', '早起打卡', '時段', '06:30-07:15', 1, 1, '平日'],
+  ['✚ 喝水 6 杯', '喝水', '次數', '6', 1, 0, '每天'], ['🔗 先寫功課再看卡通', '看卡通前先寫功課', '前置', '寫功課', 1, 0, '平日'],
+  ['🔥 連續閱讀 7 天', '閱讀 20 分鐘', '連續', '7', 1, 3, '每天'], ['🍅 今天專注 2 次', '專注 2 次', '專注', '2', 1, 1, '每天'],
+  ['👪 整理房間', '整理房間', '家長確認', '', 2, 1, '週末'], ['⏰ 21:00 前上床', '準時上床', '截止', '21:00', 1, 1, '每天']
+];
+var PF = { name: '', type: '一般', cond: '', stars: '1', bonus: '0', days: '每天', treasure: '' };
+function openParent() {
+  openOv(function () {
+    var list = C.tasksAll || C.tasks, h = ovHead('👪 家長設定・任務管理'), i;
+    h += '<div class="ovsub">任務開關（點右邊的開關，今天就會出現或隱藏）</div>';
+    for (i = 0; i < list.length; i++) {
+      var t = list[i], on = t.on !== false;
+      h += '<div class="ptrow"><span class="pn">' + esc(t.name) + '<span class="badge">' + esc(t.type || '一般') + (t.cond ? '・' + esc(t.cond) : '') + '</span></span>' +
+        '<span class="sw' + (on ? ' on' : '') + '" data-act="ptoggle" data-arg="' + esc(t.name) + '"><i></i></span></div>';
+    }
+    h += '<div class="ovsub">用範本快速新增（點一下會填好下面的表格）</div><div class="cats">';
+    for (i = 0; i < TPL.length; i++) h += '<span class="cat" data-act="ptpl" data-arg="' + i + '">' + TPL[i][0] + '</span>';
+    h += '</div><div class="ovsub">新增任務</div><div class="pform">' +
+      '<label><span>名稱</span><input name="name" value="' + esc(PF.name) + '" placeholder="例如：寫功課"></label>' +
+      '<label><span>類型</span><select name="type">';
+    for (i = 0; i < TASK_TYPES.length; i++) h += '<option' + (PF.type === TASK_TYPES[i] ? ' selected' : '') + '>' + TASK_TYPES[i] + '</option>';
+    h += '</select></label><div class="phint">' + TYPE_HELP[PF.type] + '</div>' +
+      (PF.type === '一般' || PF.type === '家長確認' ? '' : '<label><span>條件</span><input name="cond" value="' + esc(PF.cond) + '"></label>') +
+      '<label><span>獎勵星數</span><input name="stars" type="number" min="0" value="' + esc(PF.stars) + '"><span class="pgap">加碼</span><input name="bonus" type="number" min="0" value="' + esc(PF.bonus) + '"></label>' +
+      '<label><span>適用</span><select name="days">';
+    var ds = ['每天', '平日', '週末', '一三五', '二四', '一二三四五六'];
+    for (i = 0; i < ds.length; i++) h += '<option' + (PF.days === ds[i] ? ' selected' : '') + '>' + ds[i] + '</option>';
+    h += '</select><span class="pgap">寶物</span><input name="treasure" type="number" min="1" max="100" placeholder="1～100" value="' + esc(PF.treasure) + '"></label></div>' +
+      '<div class="okbtn" data-act="padd">＋ 新增這個任務</div><div class="pend" style="margin-top:6px">新增或開關後會寫進試算表，也可以直接在試算表的 Tasks 分頁修改。</div>';
+    return h;
+  });
+}
+function parentCall(params, okMsg) {
+  if (DEMO) { toast(okMsg + '（模擬模式不會寫入試算表）'); renderAll(); refreshOv(); return; }
+  toast('寫入試算表中…');
+  call(params, function (err) {
+    if (err) { toast('寫入失敗：' + err); return; }
+    toast(okMsg);
+    sync();
+  });
+}
+
 function renderTasks() {
   var list = todayTasks(), total = starTotal(), rw = pinnedReward();
   var h = '<h2>' + ic(0) + '今日任務</h2>';
@@ -882,9 +1064,10 @@ function renderTasks() {
   h += '</div><div class="list">';
   if (!list.length) h += '<div class="empty">' + (C.tasks.length ? '今天沒有任務，好好休息！' : '尚未同步任務資料') + '</div>';
   for (var i = 0; i < list.length; i++) {
-    var done = taskDone(list[i].name);
-    h += '<div class="task' + (done ? ' done' : '') + '" data-act="task" data-arg="' + i + '">' +
-      '<span class="box">' + (done ? '✓' : '') + '</span><span class="tname">' + esc(list[i].name) + '</span>' +
+    var done = taskDone(list[i].name), inf = taskInfo(list[i]);
+    h += '<div class="task' + (done ? ' done' : '') + (inf.lock && !done ? ' locked' : '') + '" data-act="task" data-arg="' + i + '">' +
+      '<span class="box">' + (done ? '✓' : (inf.lock ? '🔒' : '')) + '</span><span class="tname">' + esc(list[i].name) +
+      (inf.chip ? '<small class="tchip ' + inf.cls + '">' + inf.chip + '</small>' : '') + '</span>' +
       '<span class="tstar">+' + list[i].stars + (isKid() ? gemSvg(taskGem(list[i]), 22) : '★') + '</span></div>';
   }
   h += '</div>';
@@ -907,9 +1090,10 @@ function renderPomo() {
   h += '<div class="prow">';
   if (p) h += '<div class="pbtn stop" data-act="pstop">停止</div>';
   else {
-    h += '<div class="pbtn" data-act="pomo" data-arg="f15">專注 15</div>' +
-      '<div class="pbtn" data-act="pomo" data-arg="f25">專注 25</div>' +
+    h += '<div class="pbtn" data-act="pomo" data-arg="f5">專注 5</div>' +
+      '<div class="pbtn" data-act="pomo" data-arg="f10">專注 10</div>' +
       '<div class="pbtn" data-act="pomo" data-arg="f30">專注 30</div>' +
+      '<div class="pbtn" data-act="pomoCustom">自訂</div>' +
       '<div class="pbtn rest" data-act="pomo" data-arg="r5">休息 5</div>';
   }
   h += '</div>';
@@ -1906,6 +2090,18 @@ function openKeypad(type, rec) {
   });
 }
 
+/* 自訂專注時間 */
+var MK = { buf: '' };
+function openMinutes() {
+  MK = { buf: '' };
+  openOv(function () {
+    var h = ovHead('自訂專注時間') + '<div class="amt">' + (MK.buf || '0') + ' 分鐘</div><div class="cats">';
+    var q = ['15', '20', '25', '40', '45', '60'];
+    for (var i = 0; i < q.length; i++) h += '<span class="cat' + (MK.buf === q[i] ? ' sel' : '') + '" data-act="mkset" data-arg="' + q[i] + '">' + q[i] + ' 分</span>';
+    return h + '</div>' + keypad('mk') + '<div class="okbtn" data-act="mkok">開始專注</div>';
+  });
+}
+
 /* 獎勵兌換所 */
 function openRewards() {
   openOv(function () {
@@ -1917,7 +2113,7 @@ function openRewards() {
 /* 主題與字型選擇 */
 function openTheme() {
   openOv(function () {
-    var h = ovHead('換個主題吧！') + '<div class="ovsub">外框主題</div><div class="thgrid">';
+    var h = ovHead('換個主題吧！') + '<div class="okbtn" data-act="parent" style="margin:0 0 8px">👪 家長設定：任務管理（需要密碼）</div><div class="ovsub">外框主題</div><div class="thgrid">';
     for (var i = 0; i < THEMES.length; i++) {
       var t = THEMES[i];
       h += '<div class="thc' + (t.id === theme().id ? ' sel' : '') + '" data-act="setTheme" data-arg="' + t.id + '">' +
@@ -2049,6 +2245,16 @@ var KID_LINES = {
   sleep: ["已經九點了。就算是怪盜，也需要充足的睡眠喔，晚安。", "月亮都爬到天空正中央了——該上床囉，明天見。", "今天的表演到此結束。晚安，好夢。", "早點睡，明天才有精神繼續閃閃發亮。", "熬夜不是紳士的作風喔。該睡覺了。", "把書包收好、刷好牙，就去睡吧。晚安。", "夜晚是我的工作時間，卻是你的休息時間。晚安！", "睡個好覺，夢裡也許會遇見滑翔翼喔。", "明天見！今晚的月亮會守護你的。", "該關燈囉。今天辛苦了，晚安。"],
   bday: ["生日快樂，小布丁！今晚的月亮，是特地為你升起的。", "七月九日——全世界最重要的日子之一。小布丁，生日快樂！", "我原本想偷走一顆寶石，結果發現最閃亮的是今天的壽星。生日快樂！", "Ladies and Gentlemen，請為今天的主角小布丁鼓掌！", "又長大一歲了！願你今年的每一天，都像魔術一樣精彩。", "生日快樂！白鴿們都飛來幫你唱生日歌了。", "小布丁，生日快樂。今天的任務就是——好好被大家寵愛。", "許個願吧！這次換我幫你守護它。", "今天的預告函特別不一樣喔，記得完成任務去收下它。", "生日快樂！你是我見過最認真、最閃亮的小魔術師。"],
   moneyTip: ["理財小祕訣：買東西前先問自己——這是「需要」，還是「想要」？", "想要的東西，先等三天再決定。三天後還想要，才是真的想要。", "紳士的習慣：拿到零用錢，先存一部分，再花剩下的。", "小錢也會變大錢。每天省 10 元，一個月就有 300 元喔。", "買之前比一比價格，同樣的東西，聰明的人會買到更划算的。", "試試看把錢分成三份：存起來、花掉、分享給別人。", "把存錢目標寫下來，每天看一眼，就比較不會亂花。", "零食吃完就沒了，但存下來的錢，可以換到更大的夢想。", "朋友有的東西，不一定你也需要。不跟風，也是一種帥氣。", "記帳的人最厲害——因為你知道每一塊錢跑到哪裡去了。", "大目標可以拆成小目標，一步一步存，就一定到得了。", "借來的錢一定要還。守信用，是比寶石更珍貴的東西。", "好的東西可以用很久。買的時候想想：它能陪我多久？", "花錢買經驗也很棒，例如一本好書，或一次學習的機會。", "如果今天沒有花錢，那也是一種勝利喔。", "東西壞了先想想能不能修好，修好再用也很酷。", "等待的時間，會讓你更珍惜得到的東西。", "看到「限時特價」先冷靜。真正需要的東西，不怕等一下。", "存錢就像收集寶石，一顆一顆，最後會變成寶藏。", "錢是工具，不是目標。把它用在讓你和別人開心的地方吧。"],
+  taskOntime: ["準時完成！還多拿了 {x} 顆加碼寶石，漂亮！", "比預告的時間還早，真是一流的手法。", "準時抵達！紳士最重要的，就是守時。", "時間還沒到就完成了，連我都佩服。", "趕在時間內完成！加碼寶石送給你。", "準時交件！這就是專業。", "你跑贏了時鐘，漂亮的一擊！", "時間管理大師就是你！", "在截止前完成，這份從容，很帥氣。", "準時達成！今晚的月亮也在為你鼓掌。"],
+  taskLate: ["完成了！雖然超過時間，但有做完就很棒。下次早一點開始吧。", "時間過了一點，不過你沒有放棄，這很重要。", "完成！下次試試看先做最難的，就不會拖到時間了。", "有做完就值得肯定。明天我們挑戰準時，好嗎？", "慢了一點點，沒關係。魔術師也要練習很多次。", "完成任務！下次把時鐘當成對手，一起贏過它吧。", "雖然超時，但你堅持到最後，給你拍拍手。", "晚了一些，但完成比完美更重要。", "下次提早十分鐘開始，就能拿到加碼喔。", "任務完成！明天再來挑戰準時吧。"],
+  chStart: ["限時挑戰開始！目標：{x} 分鐘內完成！", "計時開始——讓我看看你的速度！", "挑戰開始！動作要快，但也要做好喔。", "預備——開始！時鐘已經在跑了。", "這是一場和時間的比賽，加油！", "挑戰啟動！我在旁邊幫你計時。", "開始！一流的怪盜，動作都很俐落。", "限時任務開始，Show Time！", "倒數開始，專心衝刺吧！", "時鐘開始轉動，看你的了！"],
+  chWin: ["挑戰成功！只花了 {x}，比時間還快！", "太快了！我差點看不清你的動作。", "限時挑戰達成！加碼寶石到手。", "速度與品質兼具，完美！", "挑戰成功！這速度連滑翔翼都追不上。", "在時間內完成了，真有你的！", "漂亮！時鐘輸給你了。", "挑戰達成！下次能不能更快一點呢？", "成功！這就是專注的力量。", "贏了！帥氣地完成了挑戰。"],
+  chLose: ["完成了！這次超過一點時間，下次一定可以。", "時間到了也沒放棄，很好！再練習幾次就會變快。", "完成！這次比時間慢了一點，明天再挑戰。", "有做完就是勝利。速度可以慢慢練。", "雖然超時，但你堅持到底，很棒。", "下次試試看先準備好東西再開始，會更快喔。", "完成任務！差一點點就成功了。", "沒關係，連魔術也要練習很多次才會成功。", "完成了！明天我們再跟時鐘比一次。", "慢慢來比較快——但下次我們一起試試看快一點！"],
+  locked: ["這項任務還沒開放喔，{x}。", "別急別急，時機還沒到。{x}", "這扇門還鎖著——{x}。", "要先完成條件才能打開這項任務喔。{x}", "一流的怪盜都很有耐心。{x}", "還不是時候，{x}。", "按照順序來，才是聰明的做法。{x}", "先別心急，{x}。", "這項任務被施了魔法，{x}。", "時機成熟才能出手，{x}。"],
+  streak: ["連續 {x} 天！這份堅持比任何寶石都珍貴。", "連續達成 {x} 天，加碼寶石送給你！", "{x} 天不間斷，你真的很厲害。", "連續紀錄 {x} 天！習慣就是這樣養成的。", "{x} 天連勝！我都想把你寫進預告函了。", "堅持了 {x} 天，了不起！", "連續 {x} 天的努力，終於開花結果了。", "這就是持之以恆的力量——{x} 天！", "{x} 天的連續紀錄，閃閃發亮。", "厲害！連續 {x} 天，繼續保持！"],
+  parentOk: ["家長確認完成！得到認可的感覺很棒吧？", "爸爸媽媽說你做得很好喔！", "通過家長的檢查了，一流！", "家長蓋章認證！這項任務完美達成。", "得到家人的肯定，是最好的獎勵。", "檢查通過！你做得很仔細。", "家長說 OK！今天又進步了。", "認證完成，寶石送到！", "被稱讚了吧？我也覺得你很棒。", "確認完成！謝謝你這麼認真。"],
+  focusAuto: ["專注次數達標，任務自動完成！", "今天的專注目標達成了，了不起！", "專注 {x} 次完成！任務自動打勾。", "專注力滿點，任務自動達成！", "你的專注，讓任務自己完成了——這就是魔術。", "達標！今天的你超級專心。", "專注任務完成！寶石已經送到。", "目標達成！專注就是你的超能力。", "今天專注滿 {x} 次了，太棒了！", "專注任務自動完成，給你拍拍手！"],
+  countDone: ["全部完成！一次一次累積，終於達標了。", "達成目標次數！很有毅力喔。", "最後一次完成！任務達成！", "次數任務達標，寶石到手！", "一點一點完成，最後就會成功。", "全部打勾！你真的很有耐心。", "任務完成！每一次都算數。", "達標了！這就是累積的力量。", "完成所有次數，漂亮！", "次數挑戰達成！給你一個大大的讚。"],
   fix: ["修正好了！誠實面對錯誤，是紳士的美德。", "帳本更新完成。記錯沒關係，願意改正才是最厲害的。", "修正完畢！連最厲害的魔術師，也會重新檢查道具。", "改好了。清清楚楚的帳本，才能守護你的寶藏。", "修正成功！犯錯不可怕，假裝沒看到才可怕。", "帳目已經對好了。謝謝爸爸媽媽幫忙確認喔。", "很好，錯誤被抓出來了——你比偵探還細心。", "修正完成！下次記帳時，再多看一眼金額就好。", "帳本恢復正確了，這樣存錢目標也算得準。", "改正錯誤的勇氣，比任何寶石都閃亮。"],
   spend: ["記下來了：{x}。好的魔術師都會管好自己的道具費。", "{x}已記帳。花錢之前想一想，是紳士的好習慣。", "收支記錄完成！清楚的帳本，是聰明人的祕密。", "記好了：{x}。花得開心，也要花得值得。", "這筆{x}，記得好好珍惜買到的東西喔。", "帳本更新完畢。連我都很少記得這麼仔細。", "記帳完成！知道錢去哪裡，才能存到想要的寶物。", "{x}，記下來了。下一個目標，記得慢慢存喔。", "支出記好了！管理零用錢，也是一種魔術。", "很好，每一筆都記清楚，才是真正的高手。"],
   income: ["收入入帳：{x}！你的金庫又變大了。", "{x}進帳！離存錢目標又近了一步。", "記下來了：{x}。這可是你的寶藏喔。", "金庫進帳！要好好守護這筆財寶。", "收入記好了！聰明的人會先存起來。", "{x}，入庫完成。連我都想來偷看一眼。", "財寶增加了！存錢罐正在對你微笑。", "進帳成功！照這個速度，目標很快就到了。", "收好這筆{x}吧，慢慢累積就會變成大寶石。", "收入記帳完成！你的金庫，由我來守護。"]
@@ -2099,13 +2305,17 @@ function finishPomo() {
   beep(3);
   if (p.kind === 'focus') {
     var n = Number(C.config.pomoStars) || 0;
-    var st = pomoStyle().id, unlocked = addFocusCount();
+    var st = pomoStyle().id, unlocked = addFocusCount(), fdk = ymd(new Date());
+    if (!S.fday || S.fday.d !== fdk) S.fday = { d: fdk, n: 0 };
+    S.fday.n++;
+    saveS();
     if (st === 'tophat' || st === 'glider') celebrate(st === 'tophat');
     addTreasure('moonstone', 1);
     if (n) starEvent(n, '蕃茄鐘 ' + p.min + ' 分鐘', 'pomo');
     else renderAll();
     if (!kidSay('end_' + st, LANDMARK_NAME[curRoute().to])) toast('專注完成！' + (n ? '+' + n + SYM() : ''));
     if (unlocked) kidSay('unlock', unlocked);
+    checkAutoTasks();
   } else {
     renderPomo();
     if (!kidSay('rest')) toast('休息結束，繼續加油！');
@@ -2234,16 +2444,85 @@ var ACTS = {
   task: function (i) {
     var t = todayTasks()[+i];
     if (!t) return;
-    var done = taskDone(t.name), n = Number(t.stars) || 0, ref = ymd(new Date()) + '|' + t.name;
-    if (done) { starEvent(-n, '取消：' + t.name, 'untask', ref); addTreasure(taskGem(t).id, -1); }
-    else {
-      addTreasure(taskGem(t).id, 1);
-      starEvent(n, '完成：' + t.name, 'task', ref);
-      var all = true, tl = todayTasks();
-      for (var k = 0; k < tl.length; k++) if (!taskDone(tl[k].name)) all = false;
-      if (all && kidOn()) showCard('new');
-      else if (!kidSay('task', taskGem(t).name)) toast('太棒了！+' + n + SYM());
+    var info = taskInfo(t), st = tstate(), type = t.type || '一般', b = Number(t.bonus) || 0;
+    if (taskDone(t.name)) {
+      if (type === '家長確認') { askPin('取消「' + t.name + '」', function () { uncompleteTask(t); }); return; }
+      uncompleteTask(t);
+      return;
     }
+    if (info.lock) { if (!kidSay('locked', info.lock)) toast('🔒 ' + info.lock); return; }
+    if (type === '專注') { toast('今天完成 ' + (Number(t.cond) || 1) + ' 次專注，就會自動打勾喔'); return; }
+    if (type === '家長確認') { askPin('確認「' + t.name + '」完成了', function () { completeTask(t, b, 'parentOk'); }); return; }
+    if (type === '次數') {
+      var N = Number(t.cond) || 1;
+      st.cnt[t.name] = (st.cnt[t.name] || 0) + 1;
+      saveS();
+      if (st.cnt[t.name] < N) { renderTasks(); toast('✚ ' + st.cnt[t.name] + ' / ' + N); return; }
+      completeTask(t, b, 'countDone');
+      return;
+    }
+    if (type === '挑戰') {
+      var mins = Number(t.cond) || 5;
+      if (!st.ch[t.name]) {
+        st.ch[t.name] = now();
+        saveS();
+        renderTasks();
+        if (!kidSay('chStart', mins)) toast('⏱ 挑戰開始！' + mins + ' 分鐘內完成');
+        return;
+      }
+      var ok = cdLeft(st.ch[t.name], mins) >= 0, sec = Math.round((now() - st.ch[t.name]) * TIME_SCALE / 1000);
+      completeTask(t, ok ? b : 0, ok ? 'chWin' : 'chLose', Math.floor(sec / 60) + ' 分 ' + (sec % 60) + ' 秒');
+      return;
+    }
+    if (type === '截止') {
+      var ontime = nowMin() <= parseHM(t.cond);
+      completeTask(t, ontime ? b : 0, ontime ? 'taskOntime' : 'taskLate', b);
+      return;
+    }
+    if (type === '連續') {
+      var N2 = Number(t.cond) || 7, nx = streakOf(t) + 1, hit = nx % N2 === 0;
+      completeTask(t, hit ? b : 0, hit ? 'streak' : 'task', hit ? nx : null);
+      return;
+    }
+    completeTask(t, 0);
+  },
+  parent: function () { askPin('家長設定', openParent); },
+  ptpl: function (i) {
+    var tp = TPL[+i];
+    PF = { name: tp[1], type: tp[2], cond: tp[3], stars: String(tp[4]), bonus: String(tp[5]), days: tp[6], treasure: '' };
+    refreshOv();
+  },
+  padd: function () {
+    if (!PF.name) { toast('請輸入任務名稱'); return; }
+    if (PF.type !== '一般' && PF.type !== '家長確認' && !PF.cond) { toast('這個類型需要填條件：' + TYPE_HELP[PF.type]); return; }
+    var nt = { name: PF.name, days: PF.days, stars: Number(PF.stars) || 0, bonus: Number(PF.bonus) || 0, type: PF.type, cond: PF.cond, treasure: Number(PF.treasure) || 0, on: true };
+    if (DEMO) { C.tasks.push(nt); if (C.tasksAll) C.tasksAll.push(nt); lsSet(K('pp_cache'), C); }
+    var params = { action: 'addTask', name: PF.name, days: PF.days, stars: nt.stars, bonus: nt.bonus, type: PF.type, cond: PF.cond, treasure: nt.treasure || '' };
+    PF = { name: '', type: '一般', cond: '', stars: '1', bonus: '0', days: '每天', treasure: '' };
+    parentCall(params, '已新增任務');
+  },
+  ptoggle: function (name) {
+    var list = C.tasksAll || C.tasks, t = null, i;
+    for (i = 0; i < list.length; i++) if (list[i].name === name) t = list[i];
+    if (!t) return;
+    var on = t.on === false;
+    if (DEMO) {
+      t.on = on;
+      var a = [];
+      for (i = 0; i < list.length; i++) if (list[i].on !== false) a.push(list[i]);
+      C.tasks = a;
+      lsSet(K('pp_cache'), C);
+    }
+    parentCall({ action: 'toggleTask', name: name, on: on ? '1' : '0' }, on ? '已開啟「' + name + '」' : '已關閉「' + name + '」');
+  },
+  pomoCustom: function () { openMinutes(); },
+  mk: function (k) { MK.buf = typeKey(MK.buf, k, 3).replace(/^0+/, ''); refreshOv(); },
+  mkset: function (v) { MK.buf = v; refreshOv(); },
+  mkok: function () {
+    var n = parseInt(MK.buf, 10) || 0;
+    if (n < 1 || n > 120) { toast('請輸入 1～120 分鐘'); return; }
+    closeOv();
+    ACTS.pomo('f' + n);
   },
   rewards: function () { if (isKid()) openMuseum(); else openRewards(); },
   catalog: function () { openCatalog(); },
@@ -2444,6 +2723,7 @@ function tick() {
   var d = new Date();
   $('time').textContent = hm(d);
   tickPomo();
+  tickTasks();
   if (d.getMinutes() !== lastMin) {
     lastMin = d.getMinutes();
     if (ymd(d) !== lastDay) { lastDay = ymd(d); sync(); }
@@ -2478,6 +2758,14 @@ if (DEMO) {
   db.addEventListener('click', onTap, false);
 }
 $('ov').addEventListener('click', onTap, false);
+function formSync(e) {
+  var el = e.target;
+  if (!el || !el.name || !PF.hasOwnProperty(el.name)) return;
+  PF[el.name] = el.value;
+  if (el.name === 'type') { PF.cond = ''; refreshOv(); }
+}
+$('ov').addEventListener('input', formSync, false);
+$('ov').addEventListener('change', formSync, false);
 /* 旋轉時 iOS 會晚一點才更新尺寸，所以分兩次檢查 */
 var fitTimer = null;
 function fitLater() {
