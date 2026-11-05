@@ -396,7 +396,14 @@
   .case b { display: block; font-size: 15px; margin-top: 2px; }
   .case small { display: block; font-size: 12px; color: #7b8794; line-height: 1.3; }
   .case.lock b { color: #adb5bd; }
-  .cardrow { display: flex; flex-wrap: wrap; }
+  .cal { margin: 2px 0; }
+  .calrow { display: flex; align-items: center; height: 15px; margin-bottom: 2px; }
+  .calm { width: 32px; font-size: 11px; color: #7b8794; flex-shrink: 0; }
+  .cald { width: 11px; height: 11px; margin-right: 2px; border-radius: 2px; background: #e9ecef; flex-shrink: 0; }
+  .cald.sp { box-shadow: inset 0 0 0 1.5px #c9a227; }
+  .cald.on { background: #1c3d8f; }
+  .cald.on.sp { background: #c9a227; }
+  .yk-no { position: absolute; right: 64px; top: 16px; font-size: 13px; color: #8a7a55; font-weight: normal; }
   .minicard { width: 46px; margin: 3px; padding: 4px 0; text-align: center; font-size: 12px; line-height: 1.4; background: #fff9db; border: 1px solid #e9d8a6; border-radius: 4px; }
   #ovBox.wide { width: 640px; margin-left: -320px; padding: 10px; background: #f3e9cf; }
   body.th-kid #ovBox.wide { border: 0; }
@@ -497,7 +504,7 @@ var API_URL = 'https://script.google.com/macros/s/AKfycbxY-7ZoZfDN-pRjV-p0rnsqRY
 var API_KEY = 'change-me-1234';
 /* ======================================== */
 
-var APP_VERSION = '1105-v3';   // 每次更新都改這個，用來確認 iPad 載入的是新版
+var APP_VERSION = '1105-v4';   // 每次更新都改這個，用來確認 iPad 載入的是新版
 var WD = '日一二三四五六';
 var SPEND_CATS = ['零食', '文具', '玩具', '捐款', '其他'];
 var INCOME_CATS = ['零用錢', '紅包', '獎勵', '其他'];
@@ -1115,29 +1122,27 @@ function openMuseum() {
       h += '<div class="case' + (n ? '' : ' lock') + '">' + gemSvg(g, 44, !n) + '<b>' + (n ? g.name : '？？？') + '</b>' +
         '<small>' + (n ? '× ' + n : esc(gemHint(g))) + '</small></div>';
     }
-    var cards = S.cards || [];
-    h += '</div><div class="ovsub">預告函收藏（' + cards.length + ' 張）</div><div class="cardrow">';
-    if (!cards.length) h += '<span class="pend">任務全部完成的那天，就會收到一張預告函</span>';
-    for (i = Math.max(0, cards.length - 8); i < cards.length; i++) {
-      var cd = parseYmd(cards[i]);
-      h += '<span class="minicard">🎩<br>' + (cd ? (cd.getMonth() + 1) + '/' + cd.getDate() : '') + '</span>';
+    var cards = S.cards || [], got = {}, n = 0;
+    for (i = 0; i < cards.length; i++) if (!got[cards[i].slice(5)]) { got[cards[i].slice(5)] = 1; n++; }
+    h += '</div><div class="ovsub">預告函年曆（已收集 ' + n + ' / 366 天，點亮的日子可以重看）</div><div class="cal">';
+    for (var mm = 1; mm <= 12; mm++) {
+      h += '<div class="calrow"><span class="calm">' + mm + '月</span>';
+      for (var dd = 1; dd <= MONTH_DAYS[mm - 1]; dd++) {
+        var md = pad(mm) + '-' + pad(dd), sp = FIXED_DAYS[md] ? ' sp' : '';
+        h += got[md] ? '<span class="cald on' + sp + '" data-act="viewCard" data-arg="' + md + '"></span>' : '<span class="cald' + sp + '"></span>';
+      }
+      h += '</div>';
     }
-    return h + '</div><div class="ovsub">用寶石兌換獎勵</div>' + rewardRows();
+    return h + '</div><div class="pend">金色框＝節日或生日的特別版</div><div class="ovsub">用寶石兌換獎勵</div>' + rewardRows();
   });
 }
-/* 預告函：依日期選內容（特殊節日 → 寒暑假/停課日 → 週末 → 週一到週五） */
+/* 預告函：一年 366 天，每天一張不同的內容（節日與生日有專屬版本） */
+var CARD_MONTH = {"1": ["一月的寒風吹過屋頂", "新年的月光乾淨明亮", "冬夜的星星特別清楚", "一月的窗上結著薄霜", "裹著圍巾的月亮探出頭", "寒冬的夜空一片寧靜", "一月的晚風帶著年味", "冷冷的冬夜裡月光正好"], "2": ["二月的梅花悄悄綻放", "早春的月光帶點寒意", "二月的夜空掛著彎月", "春節的燈籠還沒收起", "二月的晚風開始變暖", "冬天的尾巴輕輕搖晃", "二月的星星眨著眼睛", "梅香飄過寧靜的夜晚"], "3": ["三月的春風吹開花苞", "春雨過後月光格外清新", "三月的夜空帶著花香", "櫻花開始在月下飄落", "三月的晚風輕輕柔柔", "春天的第一聲雷剛剛走遠", "三月的月亮像一顆珍珠", "新芽在月光下伸懶腰"], "4": ["四月的春雨滴滴答答", "杜鵑花在月光下盛開", "四月的夜空清澈透明", "春天的晚風帶著青草香", "四月的月亮掛在樹梢", "雨後的星星特別閃亮", "四月的蛙鳴陪著月光", "春夜的空氣暖暖的"], "5": ["五月的桐花像雪花飄落", "初夏的月光柔和溫暖", "五月的夜空有螢火蟲", "梅雨前的晚風悶悶的", "五月的月亮又大又亮", "夏天的腳步悄悄靠近", "五月的星空熱鬧非凡", "微風吹動窗邊的窗簾"], "6": ["六月的梅雨終於停了", "初夏的蟬聲開始響起", "六月的月光照著荷花", "夏夜的晚風帶來涼意", "六月的星星像撒了一地的糖", "畢業季的鳳凰花正紅", "六月的夜空高高的", "夏天的第一個晚上真舒服"], "7": ["七月的夜晚蟬聲漸歇", "盛夏的月光照亮屋頂", "七月的星空格外遼闊", "夏夜的西瓜還冰冰涼涼", "七月的晚風吹過稻田", "螢火蟲在月下跳舞", "七月的月亮笑得燦爛", "炎熱的白天終於過去"], "8": ["八月的夜空流星劃過", "盛夏的晚風帶著海味", "八月的月亮又圓又亮", "夏天的煙火剛剛結束", "八月的星星特別多", "颱風過後夜空清澈", "八月的蟲鳴好熱鬧", "暑假的夜晚長長的"], "9": ["九月的秋風輕輕吹起", "開學後的月光格外明亮", "九月的夜空掛著圓月", "秋天的第一片落葉飄下", "九月的晚風涼涼的", "桂花香在月光下飄散", "九月的星星安安靜靜", "新學期的夜晚充滿希望"], "10": ["十月的秋高氣爽", "楓葉在月光下慢慢變紅", "十月的夜空乾淨清澈", "秋天的晚風帶著果香", "十月的月亮掛得好高", "南瓜燈在遠方亮起", "十月的星星閃閃爍爍", "涼爽的秋夜最適合飛行"], "11": ["十一月的落葉輕輕飄下", "深秋的月光帶點涼意", "十一月的夜空格外安靜", "晚風吹過金黃的銀杏", "十一月的月亮清清冷冷", "秋天的最後一場雨剛停", "十一月的星空像一片海", "厚外套的季節來臨了"], "12": ["十二月的寒風呼呼吹", "冬夜的月光潔白如雪", "十二月的夜空掛滿星星", "聖誕燈在遠方閃爍", "十二月的晚風冷冰冰", "一年的尾聲悄悄來到", "十二月的月亮特別溫柔", "冬至的湯圓還暖暖的"]};
+var CARD_P2 = ["你把今天的清單全部打勾", "你的努力比星星還耀眼", "我看見你一項一項完成任務", "你沒有讓任何一分鐘溜走", "你的專注連月亮都佩服", "今天的你閃閃發亮", "你用認真寫下了完美的一天", "每一項任務都被你漂亮拿下", "你的堅持比寶石更稀有", "今天的舞台由你完美演出", "你一步一步走到了終點", "你的筆尖從未停下", "這份認真值得一場掌聲", "你今天又往前邁了一大步", "連最厲害的偵探都找不到破綻", "你把困難的關卡都闖過了"];
+var CARD_P3 = ["我將前來收下「{d}」的榮耀", "特來取走「{d}・全部完成」", "「{d}」的光芒　由我收藏", "今晚收下「{d}」這枚勳章", "我將帶走「{d}」的喝采", "收下「{d}・任務全部完成」", "「{d}」　謹此收下", "我將取走「{d}」這顆寶石", "今晚收藏「{d}」的掌聲", "「{d}・全部達成」　由怪盜收下", "怪盜特來收取「{d}」的光彩", "「{d}」這份榮耀　請交給我"];
 var CARD_TEXT = {
-  mon: [["週一的月亮剛剛升起", "新的一週由我揭開序幕", "前來收下「{d}・任務全部完成」的榮耀"], ["星期一　鐘聲響起之時", "我已看穿你一整天的努力", "特來收取「{d}」這顆閃亮的寶石"], ["一週的第一道月光", "照在你完成的任務清單上", "「{d}・全部達成」　由我收下"], ["週一總是最難的舞台", "而你漂亮地完成了表演", "今晚　我將取走「{d}」的掌聲"], ["星期一的夜空格外清澈", "因為你沒有留下任何待辦", "「{d}」的榮耀　請容我收藏"], ["新的一週　新的魔術", "你用專注寫下了第一頁", "我前來收下「{d}」這枚勳章"], ["當週一的月光灑落窗台", "我將悄悄降落在你的書桌", "取走「{d}・任務全部完成」的光芒"], ["一週之始　便已完美", "這份開場白值得被珍藏", "「{d}」　由怪盜親自收下"], ["週一　舞台布幕拉開", "主角已完成所有的演出", "我將帶走「{d}」這份喝采"], ["從週一開始閃閃發亮的人", "整週都會被幸運眷顧", "今晚收下「{d}」　以茲證明"]],
-  tue: [["週二的晚風輕輕吹過", "帶來你完成任務的消息", "我將收下「{d}」這份榮耀"], ["星期二　月光正好", "你的努力比星星還耀眼", "特來取走「{d}・全部完成」"], ["第二天的舞台　依然完美", "觀眾席上掌聲不斷", "「{d}」的喝采　由我收藏"], ["週二的夜晚安靜無聲", "只有你的筆尖持續前進", "今晚　我將收下「{d}」的光芒"], ["當週二的時鐘敲響九下", "我會準時出現在月光下", "取走「{d}・任務全部完成」"], ["星期二　連續第二天的精彩", "這份堅持值得一枚寶石", "「{d}」　由怪盜收下"], ["週二的天空掛著彎月", "像是在對你微笑", "我前來收取「{d}」的榮耀"], ["不慌不忙的週二", "一項一項完成的你", "今晚將被我記錄在「{d}」"], ["月光與檯燈都在作證", "週二的你毫不鬆懈", "「{d}・全部完成」　謹此收下"], ["星期二的夜色溫柔", "你的努力更加溫暖", "我將帶走「{d}」這顆小太陽"]],
-  wed: [["週三　一週的正中央", "你已經翻過了最高的山", "前來收下「{d}」的榮耀"], ["星期三的月亮半圓", "你的任務卻完完整整", "特來取走「{d}・全部完成」"], ["週三的夜晚　星光閃爍", "像在為你的努力鼓掌", "「{d}」的掌聲　由我收下"], ["一週走到一半", "你的腳步卻從未停下", "今晚收藏「{d}」這份毅力"], ["星期三　舞台中場", "主角依然完美演出", "我將取走「{d}」的喝采"], ["當週三的月光照亮屋頂", "我會帶著滑翔翼前來", "收下「{d}・任務全部完成」"], ["過了週三就是下坡", "而你早已輕鬆滑過", "「{d}」的榮耀　請交給我"], ["星期三　不早也不晚", "剛好是展現實力的時刻", "我將收下「{d}」這顆寶石"], ["週三的你　穩穩的", "像月亮一樣不急不徐", "今晚取走「{d}」的光芒"], ["一週的中心點上", "你畫下了漂亮的圓", "「{d}・全部達成」　由怪盜收下"]],
-  thu: [["週四的夜空格外明亮", "因為你又完成了一天", "前來收下「{d}」的榮耀"], ["星期四　週末的腳步近了", "你卻沒有因此鬆懈", "特來取走「{d}・全部完成」"], ["週四的月光斜照書桌", "照見一整排打勾的任務", "「{d}」的光芒　由我收藏"], ["再撐一天就是週五", "而你今天已經滿分", "今晚收下「{d}」這枚勳章"], ["星期四　魔術師的練習日", "你的每一個動作都完美", "我將帶走「{d}」的喝采"], ["當週四的星星一顆顆亮起", "就是我出發的暗號", "收下「{d}・任務全部完成」"], ["週四的你依然堅持", "這份毅力比寶石更稀有", "「{d}」　謹此收下"], ["星期四的晚風帶著期待", "期待週末　也期待你", "我將取走「{d}」的榮耀"], ["週四　倒數第二道關卡", "你輕鬆地通過了", "今晚收藏「{d}」的掌聲"], ["月亮說　週四的你最可靠", "我完全同意", "「{d}・全部達成」　由怪盜收下"]],
-  fri: [["週五的月亮笑得特別燦爛", "因為一週的表演即將謝幕", "前來收下「{d}」的榮耀"], ["星期五　最後一道布幕落下", "你完美地演完了整週", "特來取走「{d}・全部完成」"], ["週五的夜晚　自由的氣息", "你用努力換來了輕鬆", "「{d}」的光芒　由我收藏"], ["一週的最後一天", "你依然沒有放鬆", "今晚收下「{d}」這枚勳章"], ["星期五的星空格外熱鬧", "像是在為你開慶功宴", "我將帶走「{d}」的喝采"], ["當週五的鐘聲響起", "週末的大門為你敞開", "收下「{d}・任務全部完成」"], ["五天的努力　一天不缺", "這是最閃亮的寶藏", "「{d}」　謹此收下"], ["週五晚上　好好休息吧", "你這週表現得太出色了", "我將取走「{d}」的榮耀"], ["星期五　謝幕的時刻", "觀眾全體起立鼓掌", "今晚收藏「{d}」的掌聲"], ["月光照亮週末的入口", "門口站著完成一切的你", "「{d}・全部達成」　由怪盜收下"]],
-  weekend: [["週末的月光慵懶溫柔", "你卻依然完成了任務", "前來收下「{d}」的榮耀"], ["假日的悠閒時光", "也沒能讓你忘記努力", "特來取走「{d}・全部完成」"], ["週末　連怪盜都想休息", "你卻把清單全部打勾", "「{d}」的光芒　由我收藏"], ["假日的陽光與月光", "都見證了你的認真", "今晚收下「{d}」這枚勳章"], ["週末不是偷懶的藉口", "你用行動證明了這一點", "我將帶走「{d}」的喝采"], ["當假日的夜幕降臨", "我會帶著鴿子前來祝賀", "收下「{d}・任務全部完成」"], ["玩得開心　也做得漂亮", "這才是週末的正確打開方式", "「{d}」　謹此收下"], ["假日的你依然閃閃發亮", "比任何寶石都耀眼", "我將取走「{d}」的榮耀"], ["週末的舞台沒有觀眾", "你卻演得比平常更好", "今晚收藏「{d}」的掌聲"], ["休息與努力剛剛好", "週末就該這樣度過", "「{d}・全部達成」　由怪盜收下"]],
-  holiday: [["放假的日子　月光特別溫柔", "你卻沒有放下努力", "前來收下「{d}」的榮耀"], ["停課的一天　依然精彩", "你把清單全部完成", "特來取走「{d}・全部完成」"], ["假期裡的自律", "是最稀有的寶石", "「{d}」的光芒　由我收藏"], ["連假的夜空星光滿天", "每一顆都為你閃爍", "今晚收下「{d}」這枚勳章"], ["放假也不忘初心", "這份堅持值得喝采", "我將帶走「{d}」的掌聲"], ["假日的月亮悄悄告訴我", "你今天表現得很棒", "收下「{d}・任務全部完成」"], ["休假是為了走更遠的路", "而你一步也沒停", "「{d}」　謹此收下"], ["放假的書桌上", "依然擺著完成的作品", "我將取走「{d}」的榮耀"], ["假期的魔法　由你施展", "每一項任務都準時完成", "今晚收藏「{d}」的光芒"], ["在大家放鬆的日子裡", "你默默完成了一切", "「{d}・全部達成」　由怪盜收下"]],
-  summer: [["暑假的夜晚蟬聲漸歇", "月光照見你完成的任務", "前來收下「{d}」的榮耀"], ["炎炎夏日　你依然認真", "這份毅力比冰淇淋還酷", "特來取走「{d}・全部完成」"], ["暑假的星空格外遼闊", "就像你的無限可能", "「{d}」的光芒　由我收藏"], ["夏天的晚風吹過窗邊", "帶來你又完成一天的消息", "今晚收下「{d}」這枚勳章"], ["暑假不是放空的季節", "你用行動證明了這點", "我將帶走「{d}」的喝采"], ["當夏夜的螢火蟲亮起", "就是我出發的暗號", "收下「{d}・任務全部完成」"], ["漫長的暑假裡", "你沒有浪費任何一天", "「{d}」　謹此收下"], ["夏天的月亮又圓又亮", "像你今天的成績單", "我將取走「{d}」的榮耀"], ["暑假作業一點一點完成", "開學時你會感謝自己", "今晚收藏「{d}」的掌聲"], ["夏夜的魔術　由你主演", "每項任務都漂亮落幕", "「{d}・全部達成」　由怪盜收下"]],
-  winter: [["寒假的夜晚寒風刺骨", "你的努力卻溫暖如火", "前來收下「{d}」的榮耀"], ["冬天的月光清冷明亮", "照見你認真的身影", "特來取走「{d}・全部完成」"], ["寒假裡的每一天", "你都沒有讓它溜走", "「{d}」的光芒　由我收藏"], ["冬夜的星星特別清楚", "就像你清楚的目標", "今晚收下「{d}」這枚勳章"], ["裹著棉被也不忘任務", "這份堅持值得一顆寶石", "我將帶走「{d}」的喝采"], ["當冬天的第一顆星亮起", "我會披著披風前來", "收下「{d}・任務全部完成」"], ["寒假短短的　努力長長的", "你把時間用得剛剛好", "「{d}」　謹此收下"], ["冬天的熱可可", "就是今晚給你的獎勵", "我將取走「{d}」的榮耀"], ["寒冷的季節裡", "你是最溫暖的存在", "今晚收藏「{d}」的光芒"], ["冬夜的魔術　安靜而美麗", "就像你默默完成的一切", "「{d}・全部達成」　由怪盜收下"]],
   newyear: [["新年的第一道月光", "照在你完成的第一張清單上", "前來收下「{d}」的榮耀"], ["元旦快樂　新的一年開始了", "你的第一天就完美無缺", "特來取走「{d}・全部完成」"], ["新年新希望", "你已經用行動實現了第一個", "「{d}」　由怪盜親自收下"]],
-  cny: [["新春的鞭炮聲中", "你依然完成了今天的任務", "前來收下「{d}」的榮耀　恭喜發財"], ["過年的月光喜氣洋洋", "你的努力比紅包還珍貴", "特來取走「{d}・全部完成」"], ["新春佳節　萬象更新", "最閃亮的寶物是認真的你", "「{d}」　謹此收下"]],
+  cny: [["除夕夜　家家戶戶燈火通明", "你把今年最後的任務完成了", "我將前來收下「{d}」的榮耀　圍爐快樂"], ["大年初一　新年快樂！", "新年的第一張清單被你全部打勾", "特來取走「{d}」　祝你一整年閃閃發亮"], ["初二的月光暖洋洋", "回娘家的路上你也沒忘記任務", "「{d}・全部完成」　謹此收下"], ["初三的鞭炮聲漸漸停了", "你的認真卻一點都沒停", "我將帶走「{d}」的喝采　新春如意"], ["新春的鞭炮聲中", "你依然完成了今天的任務", "前來收下「{d}」的榮耀　恭喜發財"], ["過年的月光喜氣洋洋", "你的努力比紅包還珍貴", "特來取走「{d}・全部完成」"], ["新春佳節　萬象更新", "最閃亮的寶物是認真的你", "「{d}」　謹此收下"]],
   lantern: [["元宵的燈籠高高掛起", "你的努力比燈火還明亮", "前來收下「{d}」的榮耀"], ["月圓人團圓的元宵夜", "你的任務也圓滿完成", "特來取走「{d}・全部完成」"], ["猜燈謎不如猜猜看", "今晚誰會來收下你的寶石？", "答案是怪盜　收下「{d}」"]],
   peace: [["和平的日子最珍貴", "就像你安穩完成的每一天", "前來收下「{d}」的榮耀"], ["放假的月光安靜祥和", "你把清單全部打勾", "特來取走「{d}・全部完成」"], ["珍惜和平　珍惜時間", "你兩樣都做到了", "「{d}」　謹此收下"]],
   children: [["兒童節快樂！", "今天的你值得最大的掌聲", "前來收下「{d}」的榮耀"], ["屬於小朋友的節日", "你用努力替自己加冕", "特來取走「{d}・全部完成」"], ["兒童節的禮物", "就是這張專屬於你的預告函", "「{d}」　由怪盜親自送上"]],
@@ -1150,43 +1155,53 @@ var CARD_TEXT = {
   halloween: [["萬聖夜　南瓜燈亮起", "最神秘的訪客是怪盜", "前來收下「{d}」的榮耀"], ["不給糖就搗蛋？", "不　完成任務就給寶石", "特來取走「{d}・全部完成」"], ["今晚有很多人變裝", "但最帥氣的還是認真的你", "「{d}」　謹此收下"]],
   christmas: [["聖誕夜　雪花與月光一起落下", "比聖誕老人更早到的是我", "前來收下「{d}」的榮耀"], ["聖誕快樂！", "你的努力是最好的禮物", "特來取走「{d}・全部完成」"], ["鈴聲響起的平安夜", "我把寶石放進你的襪子裡", "收下「{d}」　Merry Christmas"]],
   nye: [["一年的最後一天", "你依然把清單全部完成", "前來收下「{d}」的榮耀"], ["跨年的倒數即將開始", "而你早已完美收尾", "特來取走「{d}・全部完成」"], ["再見了　今年", "謝謝你這麼努力的一整年", "「{d}」　由怪盜親自收下"]],
-  kidbday: [["今天是怪盜的生日", "你送來的禮物是完成的清單", "我將收下「{d}」　這是最好的生日禮物"], ["六月二十一日　月光為我而亮", "也為認真的你而亮", "特來取走「{d}・全部完成」"], ["怪盜的生日派對", "最重要的貴賓就是你", "「{d}」　謹此收下　謝謝你"]]
+  kidbday: [["今天是怪盜的生日", "你送來的禮物是完成的清單", "我將收下「{d}」　這是最好的生日禮物"], ["六月二十一日　月光為我而亮", "也為認真的你而亮", "特來取走「{d}・全部完成」"], ["怪盜的生日派對", "最重要的貴賓就是你", "「{d}」　謹此收下　謝謝你"]],
+  pudding: [["今天是小布丁的生日！", "月亮特地換上了最亮的禮服", "我將前來獻上祝福　收下「{d}」的笑容"], ["七月九日　星星們都在唱歌", "因為小布丁又長大了一歲", "怪盜特來收取「{d}」最閃亮的寶物——你的笑容"], ["生日快樂　小布丁", "今晚的月光　只為你一個人亮", "「{d}」的所有幸福　由怪盜親自送上"]]
 };
-var CARD_NAME = { mon: '週一', tue: '週二', wed: '週三', thu: '週四', fri: '週五', weekend: '週末', holiday: '停課日', summer: '暑假', winter: '寒假',
-  newyear: '元旦', cny: '春節', lantern: '元宵', peace: '和平紀念日', children: '兒童節', mother: '母親節', father: '父親節', dragon: '端午',
-  teacher: '教師節', midautumn: '中秋', national: '國慶', halloween: '萬聖節', christmas: '聖誕節', nye: '跨年', kidbday: '怪盜生日' };
+var CARD_NAME = { newyear: '元旦', cny: '春節', lantern: '元宵', peace: '和平紀念日', children: '兒童節', mother: '母親節', father: '父親節',
+  dragon: '端午', teacher: '教師節', midautumn: '中秋', national: '國慶', halloween: '萬聖節', christmas: '聖誕節', nye: '跨年',
+  kidbday: '怪盜生日', pudding: '小布丁生日' };
 var LUNAR = {   // 農曆節日的國曆日期
   cny: ['2026-02-17', '2027-02-06', '2028-01-26', '2029-02-13', '2030-02-03'],
   lantern: ['2026-03-03', '2027-02-20', '2028-02-09', '2029-02-27', '2030-02-17'],
   dragon: ['2026-06-19', '2027-06-09', '2028-05-28', '2029-06-16', '2030-06-05'],
   midautumn: ['2026-09-25', '2027-09-15', '2028-10-03', '2029-09-22', '2030-09-12']
 };
-var FIXED_DAYS = { '01-01': 'newyear', '02-28': 'peace', '04-04': 'children', '06-21': 'kidbday', '08-08': 'father', '09-28': 'teacher',
-  '10-10': 'national', '10-31': 'halloween', '12-24': 'christmas', '12-25': 'christmas', '12-31': 'nye' };
+var FIXED_DAYS = { '01-01': 'newyear', '02-28': 'peace', '04-04': 'children', '06-21': 'kidbday', '07-09': 'pudding', '08-08': 'father',
+  '09-28': 'teacher', '10-10': 'national', '10-31': 'halloween', '12-24': 'christmas', '12-25': 'christmas', '12-31': 'nye' };
+var MONTH_DAYS = [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+function cardNo(m, d) { var n = d; for (var i = 0; i < m - 1; i++) n += MONTH_DAYS[i]; return n; }   // 第幾號（1～366）
 function cardKind(d) {
   var ds = ymd(d), md = ds.slice(5), k, i, cny = null;
+  if (FIXED_DAYS[md] === 'pudding' || FIXED_DAYS[md] === 'kidbday') return FIXED_DAYS[md];
   for (k in LUNAR) if (LUNAR.hasOwnProperty(k) && LUNAR[k].indexOf(ds) >= 0) return k;
   for (i = 0; i < LUNAR.cny.length; i++) if (LUNAR.cny[i].slice(0, 4) === ds.slice(0, 4)) cny = parseYmd(LUNAR.cny[i]);
   var dc = cny ? dayDiff(cny, d) : 999;
   if (dc >= -1 && dc <= 5) return 'cny';                                  // 除夕到初五
   if (FIXED_DAYS[md]) return FIXED_DAYS[md];
   if (d.getMonth() === 4 && d.getDay() === 0 && d.getDate() >= 8 && d.getDate() <= 14) return 'mother';   // 五月第二個星期日
-  if (md >= '07-01' && md <= '08-31') return 'summer';
-  if (dc >= -12 && dc <= 12) return 'winter';                             // 春節前後約三週
-  if (isHoliday(d)) return 'holiday';
-  var wd = d.getDay();
-  if (wd === 0 || wd === 6) return 'weekend';
-  return ['', 'mon', 'tue', 'wed', 'thu', 'fri'][wd];
+  return 'daily';
 }
-function showCard(forceKind) {
-  var d = new Date(), key = ymd(d);
-  if (!forceKind) {
+/* 同一個日期永遠是同一張，才能收集與重看 */
+function cardLines(d, kind) {
+  if (kind === 'cny') {                                   // 除夕到初五，每天一張不同的
+    for (var c = 0; c < LUNAR.cny.length; c++) if (LUNAR.cny[c].slice(0, 4) === ymd(d).slice(0, 4)) return CARD_TEXT.cny[(dayDiff(parseYmd(LUNAR.cny[c]), d) + 1) % CARD_TEXT.cny.length];
+  }
+  if (kind === 'christmas') return CARD_TEXT.christmas[d.getDate() === 24 ? 0 : 1 + d.getFullYear() % 2];
+  if (kind !== 'daily') { var L = CARD_TEXT[kind]; return L[d.getFullYear() % L.length]; }
+  var m = d.getMonth() + 1, i = d.getDate() - 1;
+  return [CARD_MONTH[m][i % 8], CARD_P2[(i + 3 * Math.floor(i / 8) + m) % 16], CARD_P3[(i + m) % 12]];
+}
+/* mode：'new' = 今天收到新的一張；'view' = 從收集冊重看；'preview' = 模擬預覽 */
+function showCard(mode, date) {
+  var d = date || new Date(), key = ymd(d);
+  if (mode === 'new') {
     if (!S.cards) S.cards = [];
     if (S.cards.indexOf(key) >= 0) { kidSay('taskAll'); return; }
     S.cards.push(key);
     saveS();
   }
-  var kind = forceKind || cardKind(d), list = CARD_TEXT[kind], lines = list[Math.floor(Math.random() * list.length)];
+  var kind = cardKind(d), lines = cardLines(d, kind), no = cardNo(d.getMonth() + 1, d.getDate());
   var dtxt = (d.getMonth() + 1) + '月' + d.getDate() + '日', body = [];
   for (var i = 0; i < lines.length; i++) body.push(esc(lines[i].replace('{d}', dtxt)));
   $('ovBox').className = 'wide';
@@ -1195,7 +1210,7 @@ function showCard(forceKind) {
       '<path d="M12,56 C12,32 32,12 56,12" fill="none" stroke="#d4b25a" stroke-width="1.5"/>' +
       '<path d="M8,30 C14,22 22,20 26,26 C22,30 16,30 12,26" fill="#c9a227"/><path d="M30,8 C22,14 20,22 26,26 C30,22 30,16 26,12" fill="#c9a227"/>' +
       '<circle cx="26" cy="26" r="3.5" fill="#b8902b"/></svg>';
-    return '<div class="yokoku" data-act="closeCard">' +
+    return '<div class="yokoku" data-act="closeCard" data-arg="' + mode + '"><span class="yk-no">No.' + no + ' / 366</span>' +
       '<span class="yk-c tl">' + corner + '</span><span class="yk-c tr">' + corner + '</span>' +
       '<span class="yk-c bl">' + corner + '</span><span class="yk-c br">' + corner + '</span>' +
       '<div class="yk-orn"><svg viewBox="0 0 120 24"><path d="M10,14 C30,14 40,4 60,4 C80,4 90,14 110,14" fill="none" stroke="#c9a227" stroke-width="2"/>' +
@@ -1206,7 +1221,8 @@ function showCard(forceKind) {
       '<circle cx="97" cy="7" r="2" fill="#b8902b"/><circle cx="123" cy="7" r="2" fill="#b8902b"/></svg></div>' +
       '<div class="yk-body">' + body.join('<br>') + '</div>' +
       '<div class="yk-sign"><span>怪盜基德</span><img src="' + KID_IMG.doodle + '" alt=""></div>' +
-      '<div class="yk-tip">' + (forceKind ? '預覽：' + CARD_NAME[kind] + '版' : CARD_NAME[kind] + '版・點一下收進寶石展示館') + '</div></div>';
+      '<div class="yk-tip">' + dtxt + (kind !== 'daily' ? '・' + CARD_NAME[kind] + '特別版' : '') +
+      (mode === 'new' ? '・點一下收進寶石展示館' : (mode === 'preview' ? '・預覽' : '')) + '</div></div>';
   });
 }
 /* 每週專注次數與路線解鎖 */
@@ -1540,6 +1556,7 @@ var KID_LINES = {
   redeem: ["獎勵到手！這可是你憑實力贏來的寶物。", "兌換成功！好好享受吧，你值得。", "這份獎勵，是你一顆一顆寶石換來的。", "恭喜！努力過後的獎勵，特別閃亮。", "成交！這筆交易，連我都覺得很划算。", "獎勵送到！下一個目標是什麼呢？", "收下吧！這皇冠也一併送給你。", "兌換完成！你的努力，終於變成寶物了。", "好好享受獎勵，然後繼續閃閃發亮吧。", "這份獎勵，比我偷過的任何寶石都珍貴。"],
   unlock: ["新路線解鎖：{x}！下一次專注，就飛這條吧。", "恭喜！你解鎖了新航線：{x}。", "本週的努力換來新的天空——{x}，出發吧！", "新的目的地出現了：{x}。我已經迫不及待了。", "解鎖成功！{x}的夜景，一定很漂亮。", "你的專注打開了新的航線：{x}！", "新航線{x}已開通，滑翔翼隨時待命。", "厲害！連{x}的路線都被你解鎖了。", "{x}，等著我們吧！", "新的舞台：{x}。下一次專注就在那裡表演！"],
   sleep: ["已經九點了。就算是怪盜，也需要充足的睡眠喔，晚安。", "月亮都爬到天空正中央了——該上床囉，明天見。", "今天的表演到此結束。晚安，好夢。", "早點睡，明天才有精神繼續閃閃發亮。", "熬夜不是紳士的作風喔。該睡覺了。", "把書包收好、刷好牙，就去睡吧。晚安。", "夜晚是我的工作時間，卻是你的休息時間。晚安！", "睡個好覺，夢裡也許會遇見滑翔翼喔。", "明天見！今晚的月亮會守護你的。", "該關燈囉。今天辛苦了，晚安。"],
+  bday: ["生日快樂，小布丁！今晚的月亮，是特地為你升起的。", "七月九日——全世界最重要的日子之一。小布丁，生日快樂！", "我原本想偷走一顆寶石，結果發現最閃亮的是今天的壽星。生日快樂！", "Ladies and Gentlemen，請為今天的主角小布丁鼓掌！", "又長大一歲了！願你今年的每一天，都像魔術一樣精彩。", "生日快樂！白鴿們都飛來幫你唱生日歌了。", "小布丁，生日快樂。今天的任務就是——好好被大家寵愛。", "許個願吧！這次換我幫你守護它。", "今天的預告函特別不一樣喔，記得完成任務去收下它。", "生日快樂！你是我見過最認真、最閃亮的小魔術師。"],
   spend: ["記下來了：{x}。好的魔術師都會管好自己的道具費。", "{x}已記帳。花錢之前想一想，是紳士的好習慣。", "收支記錄完成！清楚的帳本，是聰明人的祕密。", "記好了：{x}。花得開心，也要花得值得。", "這筆{x}，記得好好珍惜買到的東西喔。", "帳本更新完畢。連我都很少記得這麼仔細。", "記帳完成！知道錢去哪裡，才能存到想要的寶物。", "{x}，記下來了。下一個目標，記得慢慢存喔。", "支出記好了！管理零用錢，也是一種魔術。", "很好，每一筆都記清楚，才是真正的高手。"],
   income: ["收入入帳：{x}！你的金庫又變大了。", "{x}進帳！離存錢目標又近了一步。", "記下來了：{x}。這可是你的寶藏喔。", "金庫進帳！要好好守護這筆財寶。", "收入記好了！聰明的人會先存起來。", "{x}，入庫完成。連我都想來偷看一眼。", "財寶增加了！存錢罐正在對你微笑。", "進帳成功！照這個速度，目標很快就到了。", "收好這筆{x}吧，慢慢累積就會變成大寶石。", "收入記帳完成！你的金庫，由我來守護。"]
 };
@@ -1731,12 +1748,22 @@ var ACTS = {
       starEvent(n, '完成：' + t.name, 'task', ref);
       var all = true, tl = todayTasks();
       for (var k = 0; k < tl.length; k++) if (!taskDone(tl[k].name)) all = false;
-      if (all && kidOn()) showCard();
+      if (all && kidOn()) showCard('new');
       else if (!kidSay('task', taskGem(t.name).name)) toast('太棒了！+' + n + SYM());
     }
   },
   rewards: function () { if (isKid()) openMuseum(); else openRewards(); },
-  closeCard: function () { var preview = /預覽/.test($('ovBox').textContent); closeOv(); if (!preview) kidSay('taskAll'); },
+  closeCard: function (mode) {
+    if (mode === 'view') { openMuseum(); return; }
+    closeOv();
+    if (mode === 'new') kidSay('taskAll');
+  },
+  viewCard: function (md) {
+    var p = md.split('-'), y = new Date().getFullYear();
+    if (md === '02-29' && !(y % 4 === 0 && (y % 100 !== 0 || y % 400 === 0))) y = 2028;
+    closeOv();
+    showCard('view', new Date(y, +p[0] - 1, +p[1]));
+  },
   setRoute: function (id) {
     var r = findById(ROUTES, id);
     if (!routeUnlocked(r)) { toast('本週完成 ' + r.need + ' 次專注就能解鎖'); return; }
@@ -1746,10 +1773,11 @@ var ACTS = {
     refreshOv();
   },
   demoSleep: function () { kidSay('sleep'); },
+  demoBday: function () { kidSay('bday'); celebrate(false); showCard('preview', new Date(2028, 6, 9)); },
   demoCard: function () {
-    var ks = [];
-    for (var k in CARD_TEXT) if (CARD_TEXT.hasOwnProperty(k)) ks.push(k);
-    showCard(ks[Math.floor(Math.random() * ks.length)]);
+    var day = Math.floor(Math.random() * 366), d = new Date(2028, 0, 1);    // 2028 是閏年，涵蓋 2/29
+    d.setDate(d.getDate() + day);
+    showCard('preview', d);
   },
   demoWeek: function () { addFocusCount(); addFocusCount(); addFocusCount(); toast('本週專注次數 +3'); },
   redeem: function (i) {
@@ -1911,6 +1939,7 @@ function tick() {
     if (!ovRender) renderAll();
     if (now() - (S.lastSync || 0) > 5 * 60000) sync();
     if (kidOn() && d.getHours() >= 21 && S.sleepTold !== ymd(d)) { S.sleepTold = ymd(d); saveS(); kidSay('sleep'); }
+    if (kidOn() && ymd(d).slice(5) === '07-09' && S.bdayTold !== ymd(d)) { S.bdayTold = ymd(d); saveS(); kidSay('bday'); celebrate(false); }
   }
 }
 
@@ -1922,7 +1951,7 @@ if (DEMO) {
   db.style.display = 'flex';
   db.innerHTML = '<b>模擬模式</b><span>時間快 60 倍・不連線</span>' +
     '<span class="dbtn" data-act="demoTalk">測試對話</span><span class="dbtn" data-act="demoFinish">直接飛到終點</span>' +
-    '<span class="dbtn" data-act="demoCard">預告函</span><span class="dbtn" data-act="demoSleep">晚安提醒</span><span class="dbtn" data-act="demoWeek">專注 +3 次</span>' +
+    '<span class="dbtn" data-act="demoBday">生日</span><span class="dbtn" data-act="demoCard">預告函</span><span class="dbtn" data-act="demoSleep">晚安提醒</span><span class="dbtn" data-act="demoWeek">專注 +3 次</span>' +
     '<span class="dbtn" data-act="demoReset">重置</span>';
   db.addEventListener('click', onTap, false);
 }
