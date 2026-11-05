@@ -396,6 +396,21 @@
   .case b { display: block; font-size: 15px; margin-top: 2px; }
   .case small { display: block; font-size: 12px; color: #7b8794; line-height: 1.3; }
   .case.lock b { color: #adb5bd; }
+  .tgrid { display: flex; flex-wrap: wrap; margin: 4px -3px 0; }
+  .tcell { width: 20%; padding: 5px 2px; text-align: center; }
+  .tcell small { display: block; font-size: 10px; color: #8a7a55; }
+  .tcell b { display: block; font-size: 12px; line-height: 1.25; height: 30px; overflow: hidden; }
+  .tcell.lock b { color: #adb5bd; }
+  .tdetail { text-align: center; }
+  .tbig { display: inline-block; background: #fffdf6; border: 3px solid #c9a227; border-radius: 16px; padding: 8px; margin: 2px 0 6px; }
+  .tno { font-size: 13px; color: #8a7a55; }
+  .tname { font-size: 26px; font-weight: bold; margin: 2px 0; }
+  .trare { color: #f59f00; font-size: 18px; letter-spacing: 2px; } .trare span { color: #dee2e6; }
+  .tintro { font-size: 17px; line-height: 1.6; margin: 8px 6px; }
+  .tlog { text-align: left; background: #f8f9fa; border-radius: 10px; padding: 8px 12px; font-size: 15px; line-height: 1.7; }
+  .tlog b { display: inline-block; width: 90px; color: #495057; }
+  .tlist span { display: block; margin-left: 90px; color: #495057; }
+  .tlist b { float: left; }
   .cal { margin: 2px 0; }
   .calrow { display: flex; align-items: center; height: 15px; margin-bottom: 2px; }
   .calm { width: 32px; font-size: 11px; color: #7b8794; flex-shrink: 0; }
@@ -504,7 +519,7 @@ var API_URL = 'https://script.google.com/macros/s/AKfycbxY-7ZoZfDN-pRjV-p0rnsqRY
 var API_KEY = 'change-me-1234';
 /* ======================================== */
 
-var APP_VERSION = '1105-v4';   // 每次更新都改這個，用來確認 iPad 載入的是新版
+var APP_VERSION = '1105-v5';   // 每次更新都改這個，用來確認 iPad 載入的是新版
 var WD = '日一二三四五六';
 var SPEND_CATS = ['零食', '文具', '玩具', '捐款', '其他'];
 var INCOME_CATS = ['零用錢', '紅包', '獎勵', '其他'];
@@ -593,7 +608,7 @@ function K(k) { return (DEMO ? 'demo_' : '') + k; }
 var DEMO_DATA = {
   date: '', starTotal: 12, taskNet: {}, ledgerBalance: 380,
   tasks: [{ name: '寫功課', days: '每天', stars: 2 }, { name: '閱讀 20 分鐘', days: '每天', stars: 1 },
-    { name: '整理書包', days: '每天', stars: 1 }, { name: '練習鋼琴', days: '每天', stars: 1 }],
+    { name: '整理書包', days: '每天', stars: 1 }, { name: '練習鋼琴', days: '每天', stars: 1, treasure: 80 }],
   schedule: [
     { period: '1', time: '08:40', d: ['國語', '數學', '國語', '英語', '數學'] },
     { period: '2', time: '09:30', d: ['數學', '國語', '體育', '國語', '社會'] },
@@ -796,7 +811,7 @@ function renderTasks() {
     var done = taskDone(list[i].name);
     h += '<div class="task' + (done ? ' done' : '') + '" data-act="task" data-arg="' + i + '">' +
       '<span class="box">' + (done ? '✓' : '') + '</span><span class="tname">' + esc(list[i].name) + '</span>' +
-      '<span class="tstar">+' + list[i].stars + (isKid() ? gemSvg(taskGem(list[i].name), 22) : '★') + '</span></div>';
+      '<span class="tstar">+' + list[i].stars + (isKid() ? gemSvg(taskGem(list[i]), 22) : '★') + '</span></div>';
   }
   h += '</div>';
   $('cTasks').innerHTML = h;
@@ -1058,43 +1073,215 @@ function celebrate(withHat) {
 }
 
 /* ===== 寶石展示館 ===== */
-var GEMS = [
-  { id: 'sapphire', name: '藍寶石', c: '#339af0' }, { id: 'ruby', name: '紅寶石', c: '#f03e3e' },
-  { id: 'emerald', name: '祖母綠', c: '#37b24d' }, { id: 'amethyst', name: '紫水晶', c: '#9775fa' },
-  { id: 'topaz', name: '黃玉', c: '#fab005' }, { id: 'pearl', name: '珍珠', shape: 'pearl' },
-  { id: 'moonstone', name: '月光石', shape: 'moon', how: '完成一次專注飛行' },
-  { id: 'cards', name: '魔術撲克牌', shape: 'card', how: '書包全部收好' },
-  { id: 'crown', name: '皇冠', shape: 'crown', how: '兌換一次獎勵' }
+/* ===== 寶物圖鑑：100 件寶物（[id, 名稱, 圖案, 主色, 副色, 稀有度, 分類, 介紹]） ===== */
+var TREASURES = [
+  ["sapphire", "藍寶石", "gem", "#339af0", "#a5d8ff", 2, "寶石", "如夜空般深邃的藍，傳說能讓人看清自己的心。"],
+  ["ruby", "紅寶石", "gem", "#f03e3e", "#ffc9c9", 2, "寶石", "燃燒般的紅色，象徵勇氣與熱情。"],
+  ["emerald", "祖母綠", "emerald", "#37b24d", "#b2f2bb", 2, "寶石", "森林般的綠色寶石，據說能讓人心情平靜。"],
+  ["amethyst", "紫水晶", "gem", "#9775fa", "#e5dbff", 2, "寶石", "神祕的紫色，古人相信它能帶來好夢。"],
+  ["topaz", "黃玉", "gem", "#fab005", "#fff3bf", 2, "寶石", "像陽光一樣溫暖，代表友誼與希望。"],
+  ["pearl", "珍珠", "pearl", "#f8f9fa", "#dee2e6", 2, "寶石", "在貝殼裡慢慢長大的寶物，就像慢慢累積的努力。"],
+  ["moonstone", "月光石", "moon", "#d0ebff", "#74c0fc", 3, "寶石", "在月光下會發出淡藍色光芒，是夜晚專注的證明。"],
+  ["cards", "魔術撲克牌", "card", "#ffffff", "#e03131", 3, "魔術道具", "魔術師最重要的道具，代表準備萬全。"],
+  ["crown", "皇冠", "crown", "#fcc419", "#e03131", 4, "古董寶物", "只有用努力換來獎勵的人，才配戴上它。"],
+  ["diamond", "鑽石", "round", "#e7f5ff", "#a5d8ff", 3, "寶石", "世界上最堅硬的寶石，就像不會放棄的心。"],
+  ["pinkdiamond", "粉紅鑽", "round", "#faa2c1", "#fff0f6", 4, "寶石", "非常稀有的粉紅色鑽石，溫柔又堅強。"],
+  ["blackdiamond", "黑鑽石", "round", "#343a40", "#868e96", 4, "寶石", "在黑暗中閃耀的鑽石，是怪盜最愛的夜色。"],
+  ["deepheart", "深海之心", "heart", "#1971c2", "#74c0fc", 5, "寶石", "傳說沉睡在海底的心形藍鑽，只為勇敢的人發光。"],
+  ["redheart", "紅心石", "heart", "#e03131", "#ffa8a8", 3, "寶石", "心形的紅色寶石，代表對家人的愛。"],
+  ["aquamarine", "海藍寶", "oval", "#66d9e8", "#e3fafc", 2, "寶石", "像大海一樣清澈，水手們的幸運石。"],
+  ["peridot", "橄欖石", "oval", "#94d82d", "#e9fac8", 2, "寶石", "夏天的綠色寶石，帶來滿滿的活力。"],
+  ["garnet", "石榴石", "round", "#a61e4d", "#f783ac", 2, "寶石", "像石榴籽一樣紅，代表堅持到底。"],
+  ["opal", "蛋白石", "oval", "#d0bfff", "#96f2d7", 4, "寶石", "從不同角度看會出現不同顏色，像魔術一樣。"],
+  ["tourmaline", "碧璽", "emerald", "#f06595", "#69db7c", 3, "寶石", "一顆寶石裡同時有粉紅和綠色，好像西瓜。"],
+  ["orangetopaz", "橙拓帕", "pear", "#ffa94d", "#ffe8cc", 2, "寶石", "水滴形的橙色寶石，像夕陽落下的那一刻。"],
+  ["spinel", "尖晶石", "marquise", "#f06595", "#ffdeeb", 3, "寶石", "曾經被誤認為紅寶石的美麗寶石。"],
+  ["tanzanite", "坦桑石", "trillion", "#5f3dc4", "#b197fc", 4, "寶石", "只在一個地方被發現的稀有藍紫色寶石。"],
+  ["amber", "琥珀", "oval", "#f59f00", "#ffe066", 3, "寶石", "樹的眼淚變成的寶石，裡面藏著遠古的時光。"],
+  ["jade", "翡翠", "oval", "#2b8a3e", "#8ce99a", 3, "寶石", "溫潤的綠色玉石，象徵平安與長壽。"],
+  ["obsidian", "黑曜石", "trillion", "#212529", "#495057", 2, "寶石", "火山誕生的黑色寶石，能守護主人。"],
+  ["starsapphire", "星光藍寶", "star", "#4263eb", "#bac8ff", 4, "寶石", "寶石裡藏著一顆六角星，是夜空的縮影。"],
+  ["starruby", "星光紅寶", "star", "#c92a2a", "#ffc9c9", 4, "寶石", "閃著星芒的紅寶石，非常稀有。"],
+  ["cateye", "貓眼石", "cateye", "#e8c547", "#5c3b1e", 3, "寶石", "中間有一條光帶，像貓咪在夜裡眨眼。"],
+  ["malachite", "孔雀石", "round", "#0ca678", "#63e6be", 2, "寶石", "像孔雀羽毛的花紋，每一顆都獨一無二。"],
+  ["lapis", "青金石", "round", "#364fc7", "#ffd43b", 3, "寶石", "深藍色裡有金色星點，像一片小星空。"],
+  ["rosequartz", "粉晶", "cluster", "#fcc2d7", "#fff0f6", 2, "寶石", "溫柔的粉紅色水晶，代表愛與溫暖。"],
+  ["clearquartz", "白水晶", "cluster", "#f1f3f5", "#ced4da", 1, "寶石", "透明的水晶，能讓頭腦變得清楚。"],
+  ["geode", "紫晶洞", "cluster", "#845ef7", "#d0bfff", 3, "寶石", "敲開石頭，裡面是滿滿的紫色水晶。"],
+  ["citrine", "黃水晶", "pear", "#ffd43b", "#fff9db", 2, "寶石", "被稱為「商人之石」，象徵財富與好運。"],
+  ["morganite", "摩根石", "emerald", "#ffc9c9", "#fff5f5", 3, "寶石", "像桃子一樣的粉橘色，柔和又優雅。"],
+  ["paraiba", "帕拉伊巴", "pear", "#22b8cf", "#c5f6fa", 5, "寶石", "閃著霓虹藍光的超稀有寶石。"],
+  ["alexandrite", "變色石", "marquise", "#7048e8", "#37b24d", 5, "寶石", "白天是綠色、晚上變紫色，是寶石界的魔術師。"],
+  ["turquoise", "綠松石", "round", "#3bc9db", "#0b7285", 2, "寶石", "天空般的藍綠色，古老的守護石。"],
+  ["coral", "珊瑚", "cluster", "#ff8787", "#ffe3e3", 2, "寶石", "大海裡長出來的紅色寶物。"],
+  ["blackpearl", "黑珍珠", "pearl", "#495057", "#adb5bd", 4, "寶石", "神祕的黑色珍珠，在月光下會泛出綠光。"],
+  ["goldpearl", "金珍珠", "pearl", "#fcc419", "#fff3bf", 4, "寶石", "閃著金色光芒的珍珠，非常珍貴。"],
+  ["icecrystal", "冰晶石", "snowflake", "#a5d8ff", "#e7f5ff", 3, "寶石", "像雪花一樣的結晶，冰冰涼涼的。"],
+  ["rainbowheart", "彩虹之心", "heart", "#ff8787", "#74c0fc", 4, "寶石", "一顆心裡藏著七種顏色。"],
+  ["glowstone", "夜光石", "star", "#b2f2bb", "#ebfbee", 3, "寶石", "白天吸收陽光，晚上會自己發光。"],
+  ["meteor", "流星石", "trillion", "#74c0fc", "#e7f5ff", 4, "寶石", "從天空掉下來的石頭，帶著流星的願望。"],
+  ["sunstone", "太陽石", "round", "#ff922b", "#ffe8cc", 3, "寶石", "像小太陽一樣閃閃發亮。"],
+  ["aurora", "極光石", "oval", "#63e6be", "#9775fa", 5, "寶石", "把北極的極光封在裡面的夢幻寶石。"],
+  ["thunder", "雷霆石", "marquise", "#fab005", "#495057", 4, "寶石", "裡面有一道閃電的花紋，充滿力量。"],
+  ["seatear", "海之淚", "pear", "#4dabf7", "#d0ebff", 4, "寶石", "據說是人魚流下的眼淚。"],
+  ["moontear", "月之淚", "pear", "#dbe4ff", "#91a7ff", 5, "寶石", "月光凝結成的寶石，只在滿月時出現。"],
+  ["diamondring", "鑽石戒指", "ring", "#ffd43b", "#e7f5ff", 3, "飾品", "閃亮的鑽石戒指，代表一輩子的約定。"],
+  ["rubyring", "紅寶石戒指", "ring", "#ced4da", "#f03e3e", 3, "飾品", "銀色指環配上紅寶石，優雅又耀眼。"],
+  ["sapphirependant", "藍寶石墜子", "pendant", "#ffd43b", "#339af0", 3, "飾品", "掛在胸前的藍寶石，像帶著一片海。"],
+  ["pearlnecklace", "珍珠項鍊", "necklace", "#f8f9fa", "#dee2e6", 3, "飾品", "一顆一顆串起來的珍珠，就像一天一天的努力。"],
+  ["butterfly", "蝴蝶胸針", "butterfly", "#da77f2", "#ffd43b", 3, "飾品", "鑲著寶石的蝴蝶，好像隨時會飛走。"],
+  ["clover", "四葉草胸針", "clover", "#40c057", "#ffd43b", 4, "飾品", "找到四葉草的人，會擁有幸運。"],
+  ["starearring", "星星耳環", "star", "#ffd43b", "#fff9db", 2, "飾品", "小小的星星，戴著就像把夜空帶在身上。"],
+  ["princesstiara", "公主頭冠", "tiara", "#ced4da", "#74c0fc", 4, "飾品", "銀色頭冠上鑲著藍寶石。"],
+  ["queentiara", "女王頭冠", "tiara", "#fcc419", "#e03131", 5, "飾品", "只有最優秀的人才能戴上的黃金頭冠。"],
+  ["scepter", "國王權杖", "scepter", "#fcc419", "#e03131", 5, "古董寶物", "國王手中的權杖，象徵領導與責任。"],
+  ["wand", "魔法手杖", "wand", "#212529", "#ffffff", 3, "魔術道具", "黑白相間的手杖，一揮就會變出驚喜。"],
+  ["goldwatch", "黃金懷錶", "watch", "#fcc419", "#fff9db", 4, "古董寶物", "紳士必備的懷錶，提醒你珍惜每一分鐘。"],
+  ["silverwatch", "銀色懷錶", "watch", "#ced4da", "#f8f9fa", 3, "古董寶物", "滴答滴答，時間是最珍貴的寶物。"],
+  ["monocle", "單片眼鏡", "monocle", "#adb5bd", "#e7f5ff", 4, "魔術道具", "戴上它，就能看穿所有的祕密。"],
+  ["goldcoin", "古董金幣", "coin", "#fcc419", "#e67700", 2, "古董寶物", "很久很久以前的金幣，上面刻著月亮。"],
+  ["goldkey", "黃金鑰匙", "key", "#fcc419", "#e67700", 3, "古董寶物", "能打開藏寶箱的鑰匙。"],
+  ["silverkey", "銀色鑰匙", "key", "#ced4da", "#868e96", 2, "古董寶物", "據說能打開通往星空的門。"],
+  ["jewelegg", "寶石彩蛋", "egg", "#4dabf7", "#fcc419", 5, "古董寶物", "鑲滿寶石的彩蛋，裡面藏著小驚喜。"],
+  ["royalegg", "皇家彩蛋", "egg", "#e64980", "#fcc419", 5, "古董寶物", "皇室珍藏的彩蛋，世界上只有幾顆。"],
+  ["silvercoin", "銀幣", "coin", "#ced4da", "#868e96", 1, "古董寶物", "閃亮的銀幣，存起來就會變多。"],
+  ["tophat", "魔術禮帽", "tophat", "#f8f9fa", "#1c7ed6", 3, "魔術道具", "白色禮帽，裡面不知道藏著什麼。"],
+  ["dove", "白鴿", "dove", "#ffffff", "#adb5bd", 2, "魔術道具", "魔術師的好夥伴，帶來和平與好消息。"],
+  ["redrose", "魔法紅玫瑰", "rose", "#e03131", "#2f9e44", 3, "魔術道具", "從手中變出來的玫瑰，送給最努力的人。"],
+  ["bluerose", "藍色玫瑰", "rose", "#1c7ed6", "#2f9e44", 5, "魔術道具", "代表「奇蹟」的藍色玫瑰。"],
+  ["aceofspades", "黑桃 A", "ace", "#ffffff", "#212529", 3, "魔術道具", "撲克牌裡最強的一張。"],
+  ["joker", "鬼牌", "joker", "#ffffff", "#7048e8", 4, "魔術道具", "可以變成任何一張牌的神奇卡片。"],
+  ["hourglass", "魔術沙漏", "hourglass", "#a9784d", "#ffd43b", 3, "魔術道具", "倒過來時間就會重新開始。"],
+  ["whitefeather", "白色羽毛", "feather", "#f8f9fa", "#adb5bd", 1, "魔術道具", "輕飄飄的羽毛，是白鴿留下的禮物。"],
+  ["goldfeather", "金色羽毛", "feather", "#fcc419", "#e67700", 4, "魔術道具", "傳說中金色鳥兒的羽毛。"],
+  ["musicbox", "音樂盒", "musicbox", "#e599f7", "#fcc419", 3, "古董寶物", "打開就會響起溫柔的旋律。"],
+  ["bell", "魔法鈴鐺", "bell", "#fcc419", "#e03131", 2, "魔術道具", "搖一搖，好事就會發生。"],
+  ["mask", "化妝舞會面具", "mask", "#1c3d8f", "#fcc419", 3, "魔術道具", "戴上它，就能變成另一個人。"],
+  ["telescope", "黃銅望遠鏡", "telescope", "#c9a227", "#495057", 3, "古董寶物", "能看見遠方的星星和月亮。"],
+  ["compass", "星星指南針", "compass", "#c9a227", "#e03131", 3, "古董寶物", "永遠指向你最想去的地方。"],
+  ["wingbadge", "滑翔翼徽章", "wing", "#f8f9fa", "#1c7ed6", 4, "魔術道具", "完成很多次飛行的勇者才能得到。"],
+  ["map", "古老藏寶圖", "scroll", "#f3e9cf", "#e03131", 3, "古董寶物", "上面的紅色叉叉，就是寶藏的位置。"],
+  ["chest", "藏寶箱", "chest", "#a9784d", "#fcc419", 4, "古董寶物", "裡面裝滿了閃閃發亮的寶物。"],
+  ["chalice", "黃金聖杯", "chalice", "#fcc419", "#e03131", 4, "古董寶物", "古代國王用來慶祝勝利的杯子。"],
+  ["crystalball", "水晶球", "crystalball", "#d0ebff", "#7048e8", 4, "古董寶物", "據說能看見未來的自己。"],
+  ["candle", "月光燭台", "candle", "#c9a227", "#ffd43b", 2, "古董寶物", "在夜晚點亮書桌的小小燭光。"],
+  ["astrolabe", "星象儀", "compass", "#4263eb", "#fcc419", 4, "古董寶物", "能找到天上每一顆星星的位置。"],
+  ["shellbox", "貝殼寶盒", "shell", "#ffc9c9", "#fff0f6", 3, "古董寶物", "打開貝殼，裡面躺著一顆珍珠。"],
+  ["mermaidtear", "人魚之淚", "pearl", "#74c0fc", "#e7f5ff", 5, "寶石", "藍色的珍珠，是人魚送給勇敢孩子的禮物。"],
+  ["phoenix", "鳳凰之羽", "feather", "#ff6b6b", "#ffd43b", 5, "古董寶物", "不死鳥的羽毛，代表永不放棄。"],
+  ["dragoneye", "龍之眼", "cateye", "#37b24d", "#212529", 5, "寶石", "傳說中龍的眼睛化成的寶石。"],
+  ["snowcrystal", "雪花水晶", "snowflake", "#e7f5ff", "#74c0fc", 2, "寶石", "冬天第一片雪花變成的水晶。"],
+  ["trophy", "黃金獎盃", "trophy", "#fcc419", "#e67700", 4, "古董寶物", "頒給最努力的人的獎盃。"],
+  ["magicbook", "魔法書", "book", "#7048e8", "#fcc419", 4, "古董寶物", "寫滿了魔術祕密的古老書本。"],
+  ["timegem", "時之寶石", "hourglass", "#9775fa", "#e5dbff", 5, "寶石", "能讓時間變慢的神祕寶石。"],
+  ["grandjewel", "月之大寶石", "grand", "#fcc419", "#4dabf7", 5, "寶石", "圖鑑最後一件傳說寶物。只有收集了全部寶物的人才能見到它。"]
 ];
-function taskGem(name) {
-  var h = 0;
-  for (var i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) % 9973;
-  return GEMS[h % 6];
-}
-function gemSvg(g, size, locked) {
-  var c = locked ? '#ced4da' : g.c, s = '<svg class="gem" viewBox="0 0 40 40" width="' + size + '" height="' + size + '">';
-  if (g.shape === 'pearl') {
-    s += '<circle cx="20" cy="22" r="12" fill="' + (locked ? c : '#f8f9fa') + '" stroke="#adb5bd" stroke-width="1.5"/><circle cx="16" cy="18" r="3.5" fill="#fff"/>';
-  } else if (g.shape === 'moon') {
-    s += '<ellipse cx="20" cy="21" rx="12" ry="14" fill="' + (locked ? c : '#d0ebff') + '" stroke="#74c0fc" stroke-width="1.5"/><path d="M14,14 Q18,10 24,12" stroke="#fff" stroke-width="2.5" fill="none" stroke-linecap="round"/>';
-  } else if (g.shape === 'card') {
-    s += '<rect x="11" y="6" width="20" height="28" rx="3" fill="#fff" stroke="' + (locked ? c : '#1c3d8f') + '" stroke-width="2"/>' +
-      '<path d="M21,26 C15,21 14,17 17,15 C19,14 21,16 21,17 C21,16 23,14 25,15 C28,17 27,21 21,26 Z" fill="' + (locked ? c : '#e03131') + '"/>';
-  } else if (g.shape === 'crown') {
-    s += '<polygon points="6,31 6,14 13,22 20,9 27,22 34,14 34,31" fill="' + (locked ? c : '#fcc419') + '" stroke="' + (locked ? '#adb5bd' : '#e67700') + '" stroke-width="1.5"/>' +
-      '<circle cx="20" cy="25" r="2.5" fill="' + (locked ? '#adb5bd' : '#e03131') + '"/>';
-  } else {
-    s += '<polygon points="7,15 14,6 26,6 33,15 20,35" fill="' + c + '"/>' +
-      '<path d="M7,15 L33,15 M14,6 L17,15 L20,35 M26,6 L23,15 L20,35" stroke="#fff" stroke-opacity="0.55" stroke-width="1.2" fill="none"/>' +
-      '<polygon points="14,6 20,6 17,15 10,15" fill="#fff" opacity="0.35"/>';
+var TR = [], TR_BY = {};
+(function () {
+  for (var i = 0; i < TREASURES.length; i++) {
+    var t = TREASURES[i];
+    TR.push({ no: i + 1, id: t[0], name: t[1], shape: t[2], c: t[3], a: t[4], r: t[5], cat: t[6], intro: t[7] });
+    TR_BY[t[0]] = TR[i];
   }
-  return s + '</svg>';
+})();
+var TR_HOW = { moonstone: '完成一次專注', cards: '書包全部收好', crown: '兌換一次獎勵' };
+/* 寶物圖案：畫布 40×40，c = 主色、a = 副色 */
+function treasureArt(shape, c, a) {
+  var W = '#ffffff', D = '#343a40', s = '';
+  function shine(x, y, r) { return '<ellipse cx="' + x + '" cy="' + y + '" rx="' + r + '" ry="' + (r * 0.6) + '" fill="#fff" opacity="0.6" transform="rotate(-30 ' + x + ' ' + y + ')"/>'; }
+  switch (shape) {
+    case 'gem': return '<polygon points="7,15 14,6 26,6 33,15 20,35" fill="' + c + '"/><path d="M7,15 L33,15 M14,6 L17,15 L20,35 M26,6 L23,15 L20,35" stroke="#fff" stroke-opacity="0.55" stroke-width="1.2" fill="none"/><polygon points="14,6 20,6 17,15 10,15" fill="#fff" opacity="0.35"/>';
+    case 'round': return '<polygon points="20,4 31,9 36,20 31,31 20,36 9,31 4,20 9,9" fill="' + c + '" stroke="' + a + '" stroke-width="1"/><polygon points="20,11 27,14 29,20 27,26 20,29 13,26 11,20 13,14" fill="' + a + '" opacity="0.45"/><path d="M20,4 L20,11 M36,20 L29,20 M20,36 L20,29 M4,20 L11,20 M9,9 L13,14 M31,9 L27,14 M31,31 L27,26 M9,31 L13,26" stroke="#fff" stroke-opacity="0.5"/>' + shine(14, 12, 3);
+    case 'emerald': return '<polygon points="11,6 29,6 34,11 34,29 29,34 11,34 6,29 6,11" fill="' + c + '"/><polygon points="14,10 26,10 30,14 30,26 26,30 14,30 10,26 10,14" fill="' + a + '" opacity="0.5"/><rect x="14" y="14" width="12" height="12" fill="' + c + '"/>' + shine(14, 11, 3);
+    case 'heart': return '<path d="M20,35 C8,26 4,19 6,13 C8,7 16,6 20,12 C24,6 32,7 34,13 C36,19 32,26 20,35 Z" fill="' + c + '"/><path d="M20,30 C12,24 10,19 11,15 C13,11 18,12 20,16 C22,12 27,11 29,15 C30,19 28,24 20,30 Z" fill="' + a + '" opacity="0.45"/>' + shine(12, 13, 3);
+    case 'pear': return '<path d="M20,4 C27,14 32,20 32,26 C32,32 26,36 20,36 C14,36 8,32 8,26 C8,20 13,14 20,4 Z" fill="' + c + '"/><path d="M20,12 C24,18 27,22 27,26 C27,29 24,31 20,31 C16,31 13,29 13,26 C13,22 16,18 20,12 Z" fill="' + a + '" opacity="0.5"/>' + shine(15, 24, 2.5);
+    case 'marquise': return '<path d="M4,20 C10,9 30,9 36,20 C30,31 10,31 4,20 Z" fill="' + c + '"/><path d="M11,20 C15,14 25,14 29,20 C25,26 15,26 11,20 Z" fill="' + a + '" opacity="0.55"/><path d="M4,20 L36,20" stroke="#fff" stroke-opacity="0.4"/>' + shine(14, 16, 2.5);
+    case 'oval': return '<ellipse cx="20" cy="20" rx="12" ry="15" fill="' + c + '"/><ellipse cx="20" cy="21" rx="7" ry="9" fill="' + a + '" opacity="0.55"/>' + shine(15, 12, 3);
+    case 'trillion': return '<polygon points="20,5 35,32 5,32" fill="' + c + '"/><polygon points="20,13 28,28 12,28" fill="' + a + '" opacity="0.5"/><path d="M20,5 L20,13 M35,32 L28,28 M5,32 L12,28" stroke="#fff" stroke-opacity="0.5"/>';
+    case 'cluster': return '<polygon points="9,34 7,18 11,12 15,18 14,34" fill="' + c + '" stroke="' + a + '"/><polygon points="16,34 15,12 20,4 25,12 24,34" fill="' + c + '" stroke="' + a + '"/><polygon points="26,34 25,20 29,15 33,20 31,34" fill="' + c + '" stroke="' + a + '"/><rect x="5" y="33" width="30" height="4" rx="2" fill="#868e96"/><path d="M18,12 L19,30" stroke="#fff" stroke-opacity="0.7"/>';
+    case 'pearl': return '<circle cx="20" cy="21" r="13" fill="' + c + '" stroke="' + a + '" stroke-width="1.5"/><circle cx="15" cy="16" r="4" fill="#fff" opacity="0.8"/>';
+    case 'moon': return '<ellipse cx="20" cy="21" rx="12" ry="14" fill="' + c + '" stroke="' + a + '" stroke-width="1.5"/><path d="M14,14 Q18,10 24,12" stroke="#fff" stroke-width="2.5" fill="none" stroke-linecap="round"/>';
+    case 'card': return '<rect x="11" y="6" width="20" height="28" rx="3" fill="' + c + '" stroke="#1c3d8f" stroke-width="2"/><path d="M21,26 C15,21 14,17 17,15 C19,14 21,16 21,17 C21,16 23,14 25,15 C28,17 27,21 21,26 Z" fill="' + a + '"/>';
+    case 'crown': return '<polygon points="6,31 6,14 13,22 20,9 27,22 34,14 34,31" fill="' + c + '" stroke="#e67700" stroke-width="1.5"/><circle cx="20" cy="25" r="2.5" fill="' + a + '"/><circle cx="12" cy="26" r="1.8" fill="#4dabf7"/><circle cx="28" cy="26" r="1.8" fill="#4dabf7"/>';
+    case 'star': return '<polygon points="20,4 24.5,14 35,15 27,22.5 29.5,33 20,27.5 10.5,33 13,22.5 5,15 15.5,14" fill="' + c + '" stroke="' + a + '" stroke-width="1"/><polygon points="20,12 22,17 27,17.5 23,21 24.5,26 20,23 15.5,26 17,21 13,17.5 18,17" fill="' + a + '" opacity="0.6"/>';
+    case 'cateye': return '<ellipse cx="20" cy="20" rx="13" ry="15" fill="' + c + '"/><path d="M20,7 C23,14 23,26 20,33 C17,26 17,14 20,7 Z" fill="' + a + '" opacity="0.8"/>' + shine(14, 12, 3);
+    case 'snowflake': return '<g stroke="' + c + '" stroke-width="3" stroke-linecap="round"><line x1="20" y1="4" x2="20" y2="36"/><line x1="6" y1="12" x2="34" y2="28"/><line x1="6" y1="28" x2="34" y2="12"/></g><g stroke="' + a + '" stroke-width="1.5" stroke-linecap="round"><path d="M16,7 L20,11 L24,7 M16,33 L20,29 L24,33"/></g><circle cx="20" cy="20" r="3.5" fill="' + a + '"/>';
+    case 'ring': return '<circle cx="20" cy="25" r="10" fill="none" stroke="' + c + '" stroke-width="4"/><polygon points="14,12 17,7 23,7 26,12 20,18" fill="' + a + '" stroke="#adb5bd"/>' + shine(18, 9, 1.5);
+    case 'pendant': return '<path d="M8,4 Q20,18 32,4" fill="none" stroke="' + c + '" stroke-width="2"/><circle cx="20" cy="12" r="2" fill="' + c + '"/><path d="M20,14 C27,22 29,26 29,29 C29,33 25,36 20,36 C15,36 11,33 11,29 C11,26 13,22 20,14 Z" fill="' + a + '" stroke="' + c + '" stroke-width="1.5"/>' + shine(16, 27, 2);
+    case 'necklace': var n = '<path d="M5,6 Q20,40 35,6" fill="none" stroke="#ced4da" stroke-width="1"/>'; for (var i = 0; i < 9; i++) { var t = i / 8, x = 5 + 30 * t, y = 6 + 34 * 2 * t * (1 - t) * 0.92; n += '<circle cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" r="3" fill="' + c + '" stroke="' + a + '"/>'; } return n;
+    case 'butterfly': return '<path d="M20,20 C14,6 4,8 6,17 C7,22 14,22 20,20 C14,22 8,28 12,33 C15,35 19,28 20,20 Z" fill="' + c + '"/><path d="M20,20 C26,6 36,8 34,17 C33,22 26,22 20,20 C26,22 32,28 28,33 C25,35 21,28 20,20 Z" fill="' + c + '"/><circle cx="12" cy="15" r="2.5" fill="' + a + '"/><circle cx="28" cy="15" r="2.5" fill="' + a + '"/><rect x="19" y="12" width="2" height="18" rx="1" fill="' + D + '"/>';
+    case 'clover': return '<g fill="' + c + '"><circle cx="15" cy="14" r="6"/><circle cx="25" cy="14" r="6"/><circle cx="15" cy="24" r="6"/><circle cx="25" cy="24" r="6"/></g><path d="M20,24 Q22,32 26,36" stroke="' + c + '" stroke-width="2" fill="none"/><circle cx="20" cy="19" r="2.5" fill="' + a + '"/>';
+    case 'tiara': return '<path d="M5,30 Q20,24 35,30 L33,22 L27,24 L24,14 L20,20 L16,14 L13,24 L7,22 Z" fill="' + c + '" stroke="#868e96"/><circle cx="20" cy="11" r="3" fill="' + a + '"/><circle cx="16" cy="13" r="1.8" fill="' + a + '"/><circle cx="24" cy="13" r="1.8" fill="' + a + '"/>';
+    case 'scepter': return '<rect x="18.5" y="14" width="3" height="22" rx="1.5" fill="' + c + '"/><circle cx="20" cy="10" r="6" fill="' + a + '" stroke="' + c + '" stroke-width="2"/><polygon points="14,15 26,15 24,18 16,18" fill="' + c + '"/>' + shine(18, 8, 1.8);
+    case 'wand': return '<g transform="rotate(35 20 20)"><rect x="18" y="4" width="4" height="32" rx="2" fill="' + c + '"/><rect x="18" y="4" width="4" height="6" rx="2" fill="' + a + '"/><rect x="18" y="30" width="4" height="6" rx="2" fill="' + a + '"/></g><path d="M30,6 l1.5,4 l4,1.5 l-4,1.5 l-1.5,4 l-1.5,-4 l-4,-1.5 l4,-1.5 Z" fill="#ffd43b"/>';
+    case 'watch': return '<path d="M20,3 L20,8" stroke="' + c + '" stroke-width="3"/><circle cx="20" cy="4" r="2.5" fill="none" stroke="' + c + '" stroke-width="1.5"/><circle cx="20" cy="22" r="13" fill="' + c + '"/><circle cx="20" cy="22" r="10" fill="' + a + '"/><path d="M20,22 L20,15 M20,22 L25,24" stroke="' + D + '" stroke-width="1.5" stroke-linecap="round"/><circle cx="20" cy="22" r="1" fill="' + D + '"/>';
+    case 'monocle': return '<circle cx="18" cy="16" r="10" fill="' + a + '" stroke="' + c + '" stroke-width="3"/><path d="M26,23 Q30,30 26,37" stroke="' + c + '" stroke-width="1.2" fill="none"/><rect x="23" y="34" width="6" height="4" fill="#212529"/>' + shine(14, 12, 3);
+    case 'coin': return '<circle cx="20" cy="20" r="14" fill="' + c + '" stroke="' + a + '" stroke-width="2"/><circle cx="20" cy="20" r="10" fill="none" stroke="' + a + '" stroke-width="1"/><path d="M22,13 A7,7 0 1,0 22,27 A5.5,5.5 0 1,1 22,13 Z" fill="' + a + '"/>';
+    case 'key': return '<circle cx="12" cy="20" r="7" fill="none" stroke="' + c + '" stroke-width="3.5"/><rect x="18" y="18.2" width="18" height="3.6" fill="' + c + '"/><rect x="30" y="21" width="3" height="6" fill="' + c + '"/><rect x="25" y="21" width="3" height="4" fill="' + c + '"/><circle cx="12" cy="20" r="2" fill="' + a + '"/>';
+    case 'egg': return '<path d="M20,4 C29,4 33,18 33,25 C33,32 27,37 20,37 C13,37 7,32 7,25 C7,18 11,4 20,4 Z" fill="' + c + '"/><path d="M8,22 Q20,26 32,22 M7.5,28 Q20,32 32.5,28" stroke="' + a + '" stroke-width="2" fill="none"/><circle cx="20" cy="15" r="2.5" fill="' + a + '"/><circle cx="14" cy="17" r="1.5" fill="#fff"/><circle cx="26" cy="17" r="1.5" fill="#fff"/>';
+    case 'tophat': return '<path d="M12,8 Q20,6 28,8 L27,28 L13,28 Z" fill="' + c + '" stroke="' + D + '" stroke-width="1.5"/><ellipse cx="20" cy="30" rx="15" ry="4" fill="' + c + '" stroke="' + D + '" stroke-width="1.5"/><rect x="13" y="22" width="14" height="4" fill="' + a + '"/>';
+    case 'dove': return '<path d="M4,22 C10,20 14,18 17,19 C15,11 20,5 27,6 C25,10 25,14 27,16 C31,15 35,13 38,15 C34,19 30,22 26,23 L29,31 L22,25 C16,27 9,26 4,22 Z" fill="' + c + '" stroke="' + a + '" stroke-width="1.2"/><circle cx="31" cy="16" r="1" fill="' + D + '"/>';
+    case 'rose': return '<path d="M20,22 L20,38" stroke="' + a + '" stroke-width="2.5"/><path d="M20,30 Q14,26 12,30 Q16,33 20,31" fill="' + a + '"/><circle cx="20" cy="15" r="10" fill="' + c + '"/><path d="M14,14 Q20,6 26,14 Q20,22 14,14 M17,16 Q20,11 23,16" stroke="#fff" stroke-opacity="0.45" stroke-width="1.5" fill="none"/>';
+    case 'ace': return '<rect x="10" y="5" width="20" height="30" rx="3" fill="' + c + '" stroke="' + D + '" stroke-width="1.5"/><path d="M20,12 C24,17 28,19 26,23 C25,25 22,25 21,23 L22,28 L18,28 L19,23 C18,25 15,25 14,23 C12,19 16,17 20,12 Z" fill="' + a + '"/><text x="13" y="11" font-size="5" fill="' + a + '">A</text>';
+    case 'joker': return '<rect x="10" y="5" width="20" height="30" rx="3" fill="' + c + '" stroke="' + D + '" stroke-width="1.5"/><path d="M13,18 L16,10 L20,16 L24,10 L27,18 Z" fill="' + a + '"/><circle cx="20" cy="24" r="5" fill="#ffd8a8"/><path d="M17,25 Q20,28 23,25" stroke="' + D + '" fill="none"/><circle cx="16" cy="10" r="1.5" fill="#ffd43b"/><circle cx="24" cy="10" r="1.5" fill="#ffd43b"/>';
+    case 'hourglass': return '<rect x="9" y="4" width="22" height="4" rx="2" fill="' + c + '"/><rect x="9" y="32" width="22" height="4" rx="2" fill="' + c + '"/><path d="M12,8 L28,8 L21,20 L28,32 L12,32 L19,20 Z" fill="#e9ecef" stroke="' + c + '"/><path d="M15,11 L25,11 L20,18 Z M14,31 L26,31 L20,24 Z" fill="' + a + '"/>';
+    case 'feather': return '<path d="M30,5 C18,8 10,20 9,33 C16,30 26,22 30,5 Z" fill="' + c + '" stroke="' + a + '" stroke-width="1"/><path d="M30,5 L8,36" stroke="' + a + '" stroke-width="1.5"/>';
+    case 'musicbox': return '<rect x="6" y="18" width="28" height="16" rx="2" fill="' + c + '"/><path d="M6,18 L10,8 L34,8 L34,18" fill="' + a + '" opacity="0.85"/><circle cx="20" cy="26" r="3" fill="' + a + '"/><path d="M26,4 L26,12 M26,4 L31,3 L31,10" stroke="' + D + '" stroke-width="1.2" fill="none"/><circle cx="24.5" cy="12" r="1.8" fill="' + D + '"/><circle cx="29.5" cy="10.5" r="1.8" fill="' + D + '"/>';
+    case 'bell': return '<path d="M20,6 C28,6 30,14 30,22 L33,28 L7,28 L10,22 C10,14 12,6 20,6 Z" fill="' + c + '"/><circle cx="20" cy="31" r="3" fill="' + a + '"/><rect x="18" y="3" width="4" height="4" rx="2" fill="' + c + '"/><path d="M15,10 Q13,16 13,21" stroke="#fff" stroke-opacity="0.6" stroke-width="2" fill="none"/>';
+    case 'mask': return '<path d="M4,16 C10,12 16,14 20,17 C24,14 30,12 36,16 C36,24 30,28 24,25 L20,22 L16,25 C10,28 4,24 4,16 Z" fill="' + c + '"/><ellipse cx="12" cy="19" rx="3.5" ry="2.5" fill="#fff"/><ellipse cx="28" cy="19" rx="3.5" ry="2.5" fill="#fff"/><path d="M4,16 L1,12 M36,16 L39,12" stroke="' + a + '" stroke-width="2"/><circle cx="20" cy="14" r="2" fill="' + a + '"/>';
+    case 'telescope': return '<g transform="rotate(-25 20 20)"><rect x="4" y="15" width="12" height="8" rx="1" fill="' + c + '"/><rect x="15" y="14" width="10" height="10" rx="1" fill="' + c + '" opacity="0.85"/><rect x="24" y="12.5" width="12" height="13" rx="1.5" fill="' + c + '"/><rect x="34" y="12.5" width="2.5" height="13" fill="' + a + '"/></g><path d="M18,26 L12,37 M22,26 L28,37" stroke="' + a + '" stroke-width="2"/>';
+    case 'compass': return '<circle cx="20" cy="20" r="15" fill="' + c + '"/><circle cx="20" cy="20" r="12" fill="#fffdf6"/><polygon points="20,9 23,20 20,31 17,20" fill="' + a + '"/><polygon points="20,9 23,20 17,20" fill="' + D + '" opacity="0.4"/><circle cx="20" cy="20" r="2" fill="' + c + '"/>';
+    case 'wing': return '<path d="M20,14 C14,6 4,8 2,16 C8,15 12,18 14,22 C10,22 7,25 6,28 C12,26 17,26 20,22 Z" fill="' + c + '" stroke="' + a + '"/><path d="M20,14 C26,6 36,8 38,16 C32,15 28,18 26,22 C30,22 33,25 34,28 C28,26 23,26 20,22 Z" fill="' + c + '" stroke="' + a + '"/><circle cx="20" cy="19" r="4" fill="' + a + '"/>';
+    case 'scroll': return '<rect x="8" y="8" width="24" height="24" fill="' + c + '" stroke="#c9a227"/><rect x="5" y="6" width="30" height="4" rx="2" fill="#a9784d"/><rect x="5" y="30" width="30" height="4" rx="2" fill="#a9784d"/><path d="M12,14 Q18,16 16,22 T26,26" stroke="#868e96" stroke-dasharray="2 2" fill="none"/><path d="M24,23 L28,27 M28,23 L24,27" stroke="' + a + '" stroke-width="2"/>';
+    case 'chest': return '<rect x="5" y="18" width="30" height="16" rx="2" fill="' + c + '"/><path d="M5,18 C5,10 35,10 35,18 Z" fill="' + c + '" stroke="#5c3b1e"/><rect x="5" y="17" width="30" height="3" fill="' + a + '"/><rect x="17" y="17" width="6" height="8" rx="1" fill="' + a + '"/><circle cx="20" cy="22" r="1" fill="#5c3b1e"/><circle cx="12" cy="14" r="2" fill="#4dabf7"/><circle cx="27" cy="13" r="2" fill="#f03e3e"/>';
+    case 'chalice': return '<path d="M9,6 L31,6 C31,16 26,22 20,22 C14,22 9,16 9,6 Z" fill="' + c + '"/><rect x="18.5" y="22" width="3" height="8" fill="' + c + '"/><path d="M11,34 L29,34 L25,30 L15,30 Z" fill="' + c + '"/><circle cx="20" cy="13" r="3" fill="' + a + '"/>' + shine(14, 10, 2);
+    case 'crystalball': return '<circle cx="20" cy="17" r="13" fill="' + c + '" stroke="' + a + '" stroke-width="1"/><circle cx="20" cy="17" r="7" fill="' + a + '" opacity="0.35"/><path d="M10,32 L30,32 L27,26 L13,26 Z" fill="#a9784d"/>' + shine(14, 11, 3.5);
+    case 'candle': return '<rect x="16" y="14" width="8" height="16" rx="1" fill="#fff9db" stroke="#e9d8a6"/><path d="M20,4 C23,8 23,11 20,13 C17,11 17,8 20,4 Z" fill="' + a + '"/><path d="M8,30 L32,30 L28,35 L12,35 Z" fill="' + c + '"/><circle cx="20" cy="9" r="6" fill="' + a + '" opacity="0.25"/>';
+    case 'shell': return '<path d="M20,6 C30,6 36,16 34,28 L6,28 C4,16 10,6 20,6 Z" fill="' + c + '" stroke="#e599a6"/><path d="M20,6 L20,28 M13,8 L10,28 M27,8 L30,28" stroke="#fff" stroke-opacity="0.6"/><circle cx="20" cy="30" r="5" fill="' + a + '" stroke="#dee2e6"/><circle cx="18.5" cy="28.5" r="1.5" fill="#fff"/>';
+    case 'trophy': return '<path d="M11,5 L29,5 L28,17 C27,22 24,24 20,24 C16,24 13,22 12,17 Z" fill="' + c + '"/><path d="M11,8 C5,8 5,16 12,17 M29,8 C35,8 35,16 28,17" stroke="' + c + '" stroke-width="2" fill="none"/><rect x="18" y="24" width="4" height="6" fill="' + c + '"/><rect x="11" y="30" width="18" height="5" rx="1" fill="' + a + '"/><path d="M20,9 l1.5,3 l3,0.5 l-2.2,2 l0.6,3 l-2.9,-1.5 l-2.9,1.5 l0.6,-3 l-2.2,-2 l3,-0.5 Z" fill="#fff" opacity="0.8"/>';
+    case 'book': return '<rect x="8" y="6" width="24" height="28" rx="2" fill="' + c + '"/><rect x="8" y="6" width="4" height="28" fill="#000" opacity="0.2"/><rect x="11" y="31" width="21" height="3" fill="#f8f9fa"/><path d="M22,12 l2,4.5 l5,0.5 l-3.8,3.2 l1.2,4.8 l-4.4,-2.6 l-4.4,2.6 l1.2,-4.8 l-3.8,-3.2 l5,-0.5 Z" fill="' + a + '"/>';
+    case 'grand': return '<circle cx="20" cy="20" r="18" fill="' + a + '" opacity="0.25"/><polygon points="20,3 32,12 32,28 20,37 8,28 8,12" fill="' + c + '" stroke="#e67700" stroke-width="1.5"/><polygon points="20,10 27,15 27,25 20,30 13,25 13,15" fill="' + a + '"/><path d="M20,3 L20,10 M32,12 L27,15 M32,28 L27,25 M20,37 L20,30 M8,28 L13,25 M8,12 L13,15" stroke="#fff" stroke-opacity="0.7"/><path d="M23,16 A5,5 0 1,0 23,24 A4,4 0 1,1 23,16 Z" fill="#fff"/>';
+  }
+  return '<circle cx="20" cy="20" r="12" fill="' + c + '"/>';
+}
+
+
+function gemSvg(g, size, locked) {
+  return '<svg class="gem" viewBox="0 0 40 40" width="' + size + '" height="' + size + '">' +
+    (locked ? '<g opacity="0.3">' + treasureArt(g.shape, '#495057', '#868e96') + '</g>' : treasureArt(g.shape, g.c, g.a)) + '</svg>';
+}
+/* 任務對應的寶物：試算表 Tasks 的「寶物編號」欄（1～100）；沒填就自動分配前 6 種寶石 */
+function taskGem(task) {
+  if (task.treasure >= 1 && task.treasure <= TR.length) return TR[task.treasure - 1];
+  var h = 0, name = task.name || '';
+  for (var i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) % 9973;
+  return TR[h % 6];
+}
+/* 取得紀錄：S.got[id] = { n: 次數, first: 第一次時間, log: [最近 10 次] } */
+function gotOf(id) {
+  if (!S.got) {
+    S.got = {};
+    var m = S.museum || {};                              // 舊版只有次數，搬過來
+    for (var k in m) if (m.hasOwnProperty(k) && m[k] > 0) S.got[k] = { n: m[k], first: '', log: [] };
+  }
+  return S.got[id];
 }
 function addTreasure(id, n) {
-  if (!S.museum) S.museum = {};
-  S.museum[id] = Math.max(0, (S.museum[id] || 0) + n);
+  gotOf(id);
+  var g = S.got[id] || (S.got[id] = { n: 0, first: '', log: [] }), d = new Date(), ts = ymd(d) + ' ' + hm(d);
+  if (n > 0) {
+    g.n++;
+    if (!g.first) g.first = ts;
+    g.log.push(ts);
+    if (g.log.length > 10) g.log.shift();
+  } else if (g.n > 0) {
+    g.n--;
+    g.log.pop();
+    if (!g.n) g.first = '';
+  }
   saveS();
 }
+function gotCount() { var n = 0; gotOf(''); for (var k in S.got) if (S.got.hasOwnProperty(k) && S.got[k].n > 0) n++; return n; }
 function isKid() { return theme().id === 'kid'; }
 function SYM() { return isKid() ? '💎' : '★'; }
 function rewardRows() {
@@ -1109,19 +1296,58 @@ function rewardRows() {
   return h;
 }
 function gemHint(g) {
-  if (g.how) return g.how;
-  for (var i = 0; i < C.tasks.length; i++) if (taskGem(C.tasks[i].name).id === g.id) return '完成「' + C.tasks[i].name + '」';
-  return '繼續完成任務';
+  if (TR_HOW[g.id]) return TR_HOW[g.id];
+  var names = [];
+  for (var i = 0; i < C.tasks.length; i++) if (taskGem(C.tasks[i]).id === g.id) names.push('「' + C.tasks[i].name + '」');
+  return names.length ? '完成' + names.join('、') : '預留給未來的新任務';
+}
+function fmtTs(ts) { var m = /^(\d{4})-(\d{2})-(\d{2}) (\d{2}:\d{2})/.exec(ts || ''); return m ? m[1] + '/' + m[2] + '/' + m[3] + ' ' + m[4] : '—'; }
+var CATS = ['全部', '寶石', '飾品', '魔術道具', '古董寶物'], CAT = { f: '全部' };
+function openCatalog() {
+  openOv(function () {
+    var h = '<div class="ovh"><span class="x" data-act="rewards">← 展示館</span><h2 style="text-align:center">寶物圖鑑（' + gotCount() + ' / ' + TR.length + '）</h2><span class="x" data-act="close">關閉</span></div><div class="cats">';
+    for (var i = 0; i < CATS.length; i++) h += '<span class="cat' + (CAT.f === CATS[i] ? ' sel' : '') + '" data-act="catFilter" data-arg="' + CATS[i] + '">' + CATS[i] + '</span>';
+    h += '</div><div class="tgrid">';
+    for (i = 0; i < TR.length; i++) {
+      var t = TR[i], g = gotOf(t.id), has = g && g.n > 0;
+      if (CAT.f !== '全部' && t.cat !== CAT.f) continue;
+      h += '<div class="tcell' + (has ? '' : ' lock') + '" data-act="treasure" data-arg="' + t.id + '"><small>No.' + ('00' + t.no).slice(-3) + '</small>' +
+        gemSvg(t, 42, !has) + '<b>' + (has ? t.name : '？？？') + '</b></div>';
+    }
+    return h + '</div>';
+  });
+}
+function openTreasure(id) {
+  var t = TR_BY[id];
+  openOv(function () {
+    var g = gotOf(id), has = g && g.n > 0, h = '<div class="ovh"><span class="x" data-act="catalog">← 圖鑑</span><h2></h2><span class="x" data-act="close">關閉</span></div>';
+    h += '<div class="tdetail"><div class="tbig">' + gemSvg(t, 130, !has) + '</div>' +
+      '<div class="tno">No.' + ('00' + t.no).slice(-3) + '・' + t.cat + '</div>' +
+      '<div class="tname">' + (has ? t.name : '？？？') + '</div><div class="trare">' + new Array(t.r + 1).join('★') + '<span>' + new Array(6 - t.r).join('☆') + '</span></div>' +
+      '<div class="tintro">' + (has ? esc(t.intro) : '還沒有取得這件寶物。<br>取得方式：' + esc(gemHint(t))) + '</div>';
+    if (has) {
+      h += '<div class="tlog"><div><b>第一次取得</b>' + fmtTs(g.first) + '</div><div><b>最近一次</b>' + fmtTs(g.log[g.log.length - 1]) + '</div>' +
+        '<div><b>累計取得</b>' + g.n + ' 次</div><div class="tlist"><b>最近紀錄</b>';
+      for (var i = g.log.length - 1; i >= 0 && i >= g.log.length - 5; i--) h += '<span>' + fmtTs(g.log[i]) + '</span>';
+      h += '</div><div class="pend">取得方式：' + esc(gemHint(t)) + '</div></div>';
+    }
+    return h + '</div>';
+  });
 }
 function openMuseum() {
   openOv(function () {
-    var m = S.museum || {}, h = ovHead('💎 寶石展示館（可用寶石 ' + starTotal() + '）');
-    h += '<div class="ovsub">收藏品</div><div class="mus">';
-    for (var i = 0; i < GEMS.length; i++) {
-      var g = GEMS[i], n = m[g.id] || 0;
-      h += '<div class="case' + (n ? '' : ' lock') + '">' + gemSvg(g, 44, !n) + '<b>' + (n ? g.name : '？？？') + '</b>' +
-        '<small>' + (n ? '× ' + n : esc(gemHint(g))) + '</small></div>';
+    var h = ovHead('💎 寶石展示館（可用寶石 ' + starTotal() + '）'), recent = [], i;
+    gotOf('');
+    for (i = 0; i < TR.length; i++) { var g = S.got[TR[i].id]; if (g && g.n > 0) recent.push([g.log[g.log.length - 1] || '', TR[i]]); }
+    recent.sort(function (x, y) { return x[0] < y[0] ? 1 : -1; });
+    h += '<div class="ovsub">寶物圖鑑（已收集 ' + recent.length + ' / ' + TR.length + ' 件）</div><div class="mus">';
+    for (i = 0; i < recent.length && i < 6; i++) {
+      var t = recent[i][1];
+      h += '<div class="case" data-act="treasure" data-arg="' + t.id + '">' + gemSvg(t, 44) + '<b>' + t.name + '</b><small>× ' + S.got[t.id].n + '</small></div>';
     }
+    if (!recent.length) h += '<span class="pend">完成任務就能收集寶物！</span>';
+    h += '</div><div class="okbtn" data-act="catalog">📖 打開寶物圖鑑</div><div class="mus">';
+    h += '</div>';
     var cards = S.cards || [], got = {}, n = 0;
     for (i = 0; i < cards.length; i++) if (!got[cards[i].slice(5)]) { got[cards[i].slice(5)] = 1; n++; }
     h += '</div><div class="ovsub">預告函年曆（已收集 ' + n + ' / 366 天，點亮的日子可以重看）</div><div class="cal">';
@@ -1742,17 +1968,20 @@ var ACTS = {
     var t = todayTasks()[+i];
     if (!t) return;
     var done = taskDone(t.name), n = Number(t.stars) || 0, ref = ymd(new Date()) + '|' + t.name;
-    if (done) { starEvent(-n, '取消：' + t.name, 'untask', ref); addTreasure(taskGem(t.name).id, -1); }
+    if (done) { starEvent(-n, '取消：' + t.name, 'untask', ref); addTreasure(taskGem(t).id, -1); }
     else {
-      addTreasure(taskGem(t.name).id, 1);
+      addTreasure(taskGem(t).id, 1);
       starEvent(n, '完成：' + t.name, 'task', ref);
       var all = true, tl = todayTasks();
       for (var k = 0; k < tl.length; k++) if (!taskDone(tl[k].name)) all = false;
       if (all && kidOn()) showCard('new');
-      else if (!kidSay('task', taskGem(t.name).name)) toast('太棒了！+' + n + SYM());
+      else if (!kidSay('task', taskGem(t).name)) toast('太棒了！+' + n + SYM());
     }
   },
   rewards: function () { if (isKid()) openMuseum(); else openRewards(); },
+  catalog: function () { openCatalog(); },
+  catFilter: function (c) { CAT.f = c; refreshOv(); },
+  treasure: function (id) { openTreasure(id); },
   closeCard: function (mode) {
     if (mode === 'view') { openMuseum(); return; }
     closeOv();
