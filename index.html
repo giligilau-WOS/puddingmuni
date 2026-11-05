@@ -608,6 +608,18 @@
   body.L-narrow .rpg-ava { width: 64px; height: 64px; }
   body.L-narrow .rpg-text { font-size: 18px; min-height: 52px; }
 
+  /* 對話框裡的獎勵與按鈕 */
+  .rwd { margin-top: 6px; }
+  .rchip { display: inline-block; margin: 0 6px 4px 0; padding: 3px 12px; border-radius: 14px; font-size: 18px; font-weight: bold; }
+  .rchip small { font-size: 13px; font-weight: normal; margin-left: 4px; }
+  .rchip.dia { background: #ffd43b; color: #1b1446; }
+  .rchip.gem { background: #ffffff; color: #1c3d8f; }
+  .rchip .gem { vertical-align: -5px; }
+  .rline { font-size: 15px; color: #c5d3ff; }
+  .rchoices { display: flex; flex-wrap: wrap; margin-top: 6px; }
+  .rchoice { margin: 0 8px 4px 0; padding: 7px 14px; border-radius: 16px; border: 2px solid #ffffff; font-size: 16px; color: #ffffff; background: rgba(255,255,255,0.12); }
+  .rchoice:active, .rchoice.tapped { background: #ffffff; color: #1c3d8f; }
+
   /* 模擬模式控制列 */
   #demoBar { display: none; position: fixed; left: 8px; bottom: 8px; z-index: 44; align-items: center; background: rgba(224,49,49,0.92); color: #fff; font-size: 13px; padding: 4px 6px 4px 10px; border-radius: 16px; }
   #demoBar b { margin-right: 6px; } #demoBar span { margin-right: 6px; }
@@ -656,7 +668,7 @@
 <div id="toast"></div>
 <div id="dim"></div>
 <div id="rpg"><div class="rpg-box"><img id="rpgAva" class="rpg-ava" alt="">
-  <div class="rpg-main"><span class="rpg-name">怪盜基德</span><div id="rpgText" class="rpg-text"></div></div>
+  <div class="rpg-main"><span class="rpg-name">怪盜基德</span><div id="rpgText" class="rpg-text"></div><div id="rpgExtra"></div></div>
   <div class="rpg-next">▼</div></div></div>
 <div id="demoBar"></div>
 <div id="errbar"></div>
@@ -669,7 +681,7 @@ var API_URL = 'https://script.google.com/macros/s/AKfycbxY-7ZoZfDN-pRjV-p0rnsqRY
 var API_KEY = 'change-me-1234';
 /* ======================================== */
 
-var APP_VERSION = '1105-v12';   // 每次更新都改這個，用來確認 iPad 載入的是新版
+var APP_VERSION = '1105-v13';   // 每次更新都改這個，用來確認 iPad 載入的是新版
 var WD = '日一二三四五六';
 var SPEND_CATS = ['零食', '文具', '玩具', '捐款', '其他'];
 var INCOME_CATS = ['零用錢', '紅包', '獎勵', '其他'];
@@ -1107,12 +1119,15 @@ function completeTask(t, bonus, line, x) {
   st.grant[t.name] = n;
   delete st.ch[t.name];
   saveS();
-  addTreasure(taskGem(t).id, 1);
+  var gem = taskGem(t);
+  addTreasure(gem.id, 1);
   starEvent(n, '完成：' + t.name + (bonus ? '（加碼 +' + bonus + '）' : ''), 'task', ref);
   var all = true, tl = todayTasks();
   for (var k = 0; k < tl.length; k++) if (!taskDone(tl[k].name)) all = false;
+  LAST_REWARD = gemReward(gem, n, bonus, progressLine());
   if (all && kidOn()) showCard('new');
-  else if (!kidSay(line || 'task', x || taskGem(t).name)) toast('太棒了！+' + n + SYM() + (bonus ? '（含加碼 ' + bonus + '）' : ''));
+  else if (!kidSay(line || 'task', x || gem.name, { r: LAST_REWARD, c: [['next', '下一個任務！'], ['gem:' + gem.id, '看看寶物'], ['thanks', '謝謝基德']] }))
+    toast('太棒了！+' + n + SYM() + (bonus ? '（含加碼 ' + bonus + '）' : '') + '・' + gem.name);
 }
 function uncompleteTask(t) {
   var st = tstate(), n = st.grant[t.name] || Number(t.stars) || 0, ref = ymd(new Date()) + '|' + t.name;
@@ -2807,22 +2822,71 @@ var KID_LINES = {
 };
 var RPG = { queue: [], timer: null, typing: null, full: '' };
 function kidOn() { return theme().id === 'kid' && S.talk !== 'off'; }
-function kidSay(kind, x) {
+/* extra：{ r: 獎勵內容, c: [[動作, 按鈕文字], ...] } */
+function kidSay(kind, x, extra) {
   if (!kidOn()) return false;
   var L = KID_LINES[kind];
   if (!L) return false;
-  RPG.queue.push(L[Math.floor(Math.random() * L.length)].replace('{x}', x || ''));
-  if (RPG.queue.length > 2) RPG.queue.shift();
+  return kidSayText(L[Math.floor(Math.random() * L.length)].replace('{x}', x === undefined || x === null ? '' : x), extra);
+}
+function kidSayText(text, extra, now) {
+  if (!kidOn()) return false;
+  var it = { t: text, r: extra && extra.r ? rewardHtml(extra.r) : '', c: extra && extra.c ? extra.c : null };
+  if (now) { RPG.queue = [it]; rpgNext(); return true; }       // 回應按鈕：馬上換成這一句
+  RPG.queue.push(it);
+  if (RPG.queue.length > 3) RPG.queue.shift();
   if ($('rpg').style.display !== 'block') rpgNext();
   return true;
 }
+/* 對話框裡的獎勵明細 */
+function rewardHtml(o) {
+  var h = '<div class="rwd">';
+  if (o.n) h += '<span class="rchip dia">' + SYM() + ' +' + o.n + (o.bonus ? '<small>（含加碼 ' + o.bonus + '）</small>' : '') + '</span>';
+  if (o.gem) h += '<span class="rchip gem">' + gemSvg(o.gem, 22) + ' ' + o.gem.name + (o.first ? '<small>新收藏！</small>' : '<small>×' + o.cnt + '</small>') + '</span>';
+  h += '</div>';
+  if (o.line) h += '<div class="rline">' + o.line + '</div>';
+  return h;
+}
+function progressLine() {
+  var tl = todayTasks(), d = 0;
+  for (var i = 0; i < tl.length; i++) if (taskDone(tl[i].name)) d++;
+  if (!tl.length) return '';
+  return d >= tl.length ? '🎉 今日任務全部完成！' : '今日進度 ' + d + ' / ' + tl.length + '，再完成 ' + (tl.length - d) + ' 個就全部達成！';
+}
+function gemReward(gem, n, bonus, line) { var g = gotOf(gem.id) || { n: 1 }; return { n: n, bonus: bonus, gem: gem, cnt: g.n, first: g.n === 1, line: line }; }
+var LAST_REWARD = null;
+var THANKS = ["不客氣，小魔術師！", "能看到你的笑容，就是最好的回禮。", "BINGO！我們是最佳搭檔。", "不用謝——表演的主角一直都是你。", "嘿嘿，保持撲克臉……其實我也很開心。", "謝謝你這麼努力，讓我也想更認真了。", "我只是遞上道具，真正變出魔術的是你。", "下次也讓我看看你的精彩演出吧！", "這是紳士的禮儀，不足掛齒。", "今晚的月亮，也替我說聲：你好棒！"];
+/* 對話框按鈕 */
+function rpgChoice(a) {
+  var parts = String(a).split(':');
+  if (parts[0] === 'thanks') { kidSayText(THANKS[Math.floor(Math.random() * THANKS.length)], null, true); return; }
+  if (parts[0] === 'next') {
+    var tl = todayTasks(), nx = null;
+    for (var i = 0; i < tl.length; i++) if (!taskDone(tl[i].name) && !taskInfo(tl[i]).lock && tl[i].type !== '專注') { nx = tl[i]; break; }
+    if (!nx) { kidSayText('今天能做的任務都完成了！去商店逛逛，或好好休息一下吧。', { c: [['shop', '去商店逛逛'], ['thanks', '謝謝基德']] }, true); return; }
+    var inf = taskInfo(nx), gem = taskGem(nx);
+    kidSayText('下一個目標：「' + nx.name + '」！完成就能拿到 ' + SYM() + ' ' + nx.stars + (nx.bonus ? '（加碼再 +' + nx.bonus + '）' : '') + '，還有一顆' + gem.name + '。' +
+      (inf.chip && inf.chip.indexOf('<') < 0 ? '　' + inf.chip : '') + '　It\'s show time！', { c: [['thanks', '好，我去做！']] }, true);
+    return;
+  }
+  hideRpg();
+  if (parts[0] === 'gem') openTreasure(parts[1]);
+  else if (parts[0] === 'shop') openShop();
+  else if (parts[0] === 'collect') openCollect('gem');
+  else if (parts[0] === 'again') ACTS.pomo('f' + (parts[1] || 25));
+  else if (parts[0] === 'rest') ACTS.pomo('r5');
+}
+function hideRpg() { RPG.queue = []; clearInterval(RPG.typing); clearTimeout(RPG.timer); RPG.typing = null; $('rpg').style.display = 'none'; }
 function rpgNext() {
   clearInterval(RPG.typing);
   clearTimeout(RPG.timer);
   RPG.typing = null;
-  var t = RPG.queue.shift(), el = $('rpgText'), i = 0;
-  if (!t) { $('rpg').style.display = 'none'; return; }
+  var it = RPG.queue.shift(), el = $('rpgText'), i = 0;
+  if (!it) { $('rpg').style.display = 'none'; return; }
+  var t = it.t;
   RPG.full = t;
+  RPG.cur = it;
+  $('rpgExtra').innerHTML = '';
   var av = KID_IMG.avatars, k = Math.floor(Math.random() * av.length);   // 每次隨機換頭像
   if (k === RPG.lastAva) k = (k + 1) % av.length;
   RPG.lastAva = k;
@@ -2832,15 +2896,29 @@ function rpgNext() {
   RPG.typing = setInterval(function () {             // 一個字一個字跑出來
     i++;
     el.textContent = t.slice(0, i);
-    if (i >= t.length) { clearInterval(RPG.typing); RPG.typing = null; RPG.timer = setTimeout(rpgNext, 5000); }
+    if (i >= t.length) { clearInterval(RPG.typing); RPG.typing = null; rpgExtra(); }
   }, 50);
 }
-function rpgTap() {
+/* 打完字之後，顯示獎勵明細與按鈕；有按鈕的話停久一點讓小朋友選 */
+function rpgExtra() {
+  var it = RPG.cur || {}, h = it.r || '';
+  if (it.c) {
+    h += '<div class="rchoices">';
+    for (var i = 0; i < it.c.length; i++) h += '<span class="rchoice" data-act="rpgChoice" data-arg="' + esc(it.c[i][0]) + '">' + esc(it.c[i][1]) + '</span>';
+    h += '</div>';
+  }
+  $('rpgExtra').innerHTML = h;
+  clearTimeout(RPG.timer);
+  RPG.timer = setTimeout(rpgNext, it.c ? 15000 : (it.r ? 8000 : 5000));
+}
+function rpgTap(e) {
+  var el = e && e.target;
+  while (el && el.getAttribute && el.id !== 'rpg') { if (el.getAttribute('data-act')) { onTap(e); return; } el = el.parentNode; }   // 點到按鈕
   if (RPG.typing) {                                  // 還在打字：先顯示全部
     clearInterval(RPG.typing);
     RPG.typing = null;
     $('rpgText').textContent = RPG.full;
-    RPG.timer = setTimeout(rpgNext, 5000);
+    rpgExtra();
   } else rpgNext();
 }
 
@@ -2859,7 +2937,9 @@ function finishPomo() {
     addTreasure('moonstone', 1);
     if (n) starEvent(n, '蕃茄鐘 ' + p.min + ' 分鐘', 'pomo');
     else renderAll();
-    if (!kidSay('end_' + st, LANDMARK_NAME[curRoute().to])) toast('專注完成！' + (n ? '+' + n + SYM() : ''));
+    var pr = gemReward(TR_BY.moonstone, n, 0, '今天已經專注 ' + S.fday.n + ' 次' + (S.fday.n >= 3 ? '，超級厲害！' : '，繼續保持！'));
+    if (!kidSay('end_' + st, LANDMARK_NAME[curRoute().to], { r: pr, c: [['again:' + p.min, '再專注一次'], ['rest', '休息 5 分鐘'], ['thanks', '謝謝基德']] }))
+      toast('專注完成！' + (n ? '+' + n + SYM() : '') + '・月光石');
     if (unlocked) kidSay('unlock', unlocked);
     checkAutoTasks();
   } else {
@@ -3094,6 +3174,7 @@ var ACTS = {
   },
   rewards: function () { openShop(); },
   shop: function () { openShop(); },
+  rpgChoice: function (a) { rpgChoice(a); },
   ttab: function (t) { S.ttab = t; saveS(); renderTasks(); },
   mis: function (id) { openMission(id); },
   spScore: function (id) { askPin('登記成績', function () { openScore(id); }); },
@@ -3110,7 +3191,9 @@ var ACTS = {
     saveSpecialRemote(nm, '成績已登記，' + (diff >= 0 ? '發放' : '扣回') + ' ' + SYM() + ' ' + Math.abs(diff));
     closeOv();
     renderTasks();
-    if (earned > 0) { celebrate(false); kidSay('specialDone', earned); } else kidSay('specialZero');
+    var spr = { n: diff > 0 ? diff : 0, line: '「' + m.name + '」共獲得 ' + SYM() + ' ' + earned + (m.status === 'done' && diff ? '（這次修改 ' + (diff > 0 ? '補發' : '扣回') + ' ' + Math.abs(diff) + '）' : '') };
+    if (earned > 0) { celebrate(false); kidSay('specialDone', earned, { r: spr, c: [['collect', '看收藏區'], ['shop', '去商店逛逛'], ['thanks', '謝謝基德']] }); }
+    else kidSay('specialZero', null, { c: [['thanks', '謝謝基德']] });
   },
   specialAdmin: function () { MF = blankMF(); openSpecialAdmin(); },
   spEdit: function (id) { MF = mfFrom(findSp(id)); refreshOv(); var t = $('mfTop'); if (t) $('ovBox').scrollTop = t.offsetTop - 10; },
@@ -3192,7 +3275,7 @@ var ACTS = {
   closeCard: function (mode) {
     if (mode === 'view') { openCollect('card'); return; }
     closeOv();
-    if (mode === 'new') kidSay('taskAll');
+    if (mode === 'new') kidSay('taskAll', null, LAST_REWARD ? { r: LAST_REWARD, c: [['shop', '去商店逛逛'], ['gem:' + LAST_REWARD.gem.id, '看看寶物'], ['thanks', '謝謝基德']] } : null);
   },
   viewCard: function (md) {
     var p = md.split('-'), y = new Date().getFullYear();
@@ -3431,6 +3514,7 @@ $('app').addEventListener('click', onTap, false);
 fastTap($('app'));
 fastTap($('ov'));
 $('rpg').addEventListener('click', rpgTap, false);
+fastTap($('rpg'));
 /* 零用錢卡片左右滑動 */
 (function () {
   var sx = null, sy = 0, card = $('cMoney');
