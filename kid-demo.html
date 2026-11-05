@@ -306,6 +306,16 @@
   .ctab { flex: 1; text-align: center; padding: 9px 0; border-radius: 10px; background: #f1f3f5; margin: 0 3px; font-size: 16px; }
   .ctab.sel { background: #1c3d8f; color: #fff; font-weight: bold; }
   .tcell em { display: block; font-style: normal; font-size: 11px; color: #e8590c; }
+  .tcell { border-radius: 10px; border: 2px solid transparent; }
+  .tcell.r3 { border-color: #a5d8ff; } .tcell.r4 { border-color: #d0bfff; background: #f8f0fc; } .tcell.r5 { border-color: #ffd43b; background: #fff9db; }
+  .tcell.lock.r4, .tcell.lock.r5 { background: none; }
+  .rrow { display: flex; margin: 0 -2px 6px; }
+  .rsum { flex: 1; margin: 0 2px; text-align: center; border: 2px solid; border-radius: 10px; font-size: 10px; padding: 3px 0; line-height: 1.25; background: #fff; }
+  .rsum b { display: block; font-size: 13px; }
+  .rsum.sel { background: #fff9db; }
+  .rtag { display: inline-block; color: #fff; font-size: 15px; padding: 2px 12px; border-radius: 12px; letter-spacing: 1px; }
+  .rchip.gem { border: 2px solid #fff; }
+  .rchip.drop { background: #fff9db; }
   .sicon { font-size: 20px; margin-right: 6px; }
   .psel { font-size: 15px; padding: 4px; margin-right: 8px; border: 1px solid #ced4da; border-radius: 8px; background: #fff; }
 
@@ -681,7 +691,7 @@ var API_URL = 'https://script.google.com/macros/s/AKfycbxY-7ZoZfDN-pRjV-p0rnsqRY
 var API_KEY = 'change-me-1234';
 /* ======================================== */
 
-var APP_VERSION = '1105-v13';   // 每次更新都改這個，用來確認 iPad 載入的是新版
+var APP_VERSION = '1105-v14';   // 每次更新都改這個，用來確認 iPad 載入的是新版
 var WD = '日一二三四五六';
 var SPEND_CATS = ['零食', '文具', '玩具', '捐款', '其他'];
 var INCOME_CATS = ['零用錢', '紅包', '獎勵', '其他'];
@@ -1125,9 +1135,13 @@ function completeTask(t, bonus, line, x) {
   var all = true, tl = todayTasks();
   for (var k = 0; k < tl.length; k++) if (!taskDone(tl[k].name)) all = false;
   LAST_REWARD = gemReward(gem, n, bonus, progressLine());
+  var drops = [], today = ymd(new Date());
+  if (bonus > 0 && Math.random() < 0.25) drops.push(dropInfo(randomDrop(3)));               // 加碼成功：25% 掉落 ★3
+  if (all && S.allDrop !== today) { S.allDrop = today; saveS(); drops.push(dropInfo(randomDrop(Math.random() < 0.4 ? 3 : 2))); }   // 全部完成：一定掉落 ★2／★3
+  if (drops.length) { LAST_REWARD.drops = drops; LAST_REWARD.line += '　🎁 額外掉落了寶物！'; }
   if (all && kidOn()) showCard('new');
   else if (!kidSay(line || 'task', x || gem.name, { r: LAST_REWARD, c: [['next', '下一個任務！'], ['gem:' + gem.id, '看看寶物'], ['thanks', '謝謝基德']] }))
-    toast('太棒了！+' + n + SYM() + (bonus ? '（含加碼 ' + bonus + '）' : '') + '・' + gem.name);
+    toast('太棒了！+' + n + SYM() + (bonus ? '（含加碼 ' + bonus + '）' : '') + '・' + gem.name + (drops.length ? '・額外掉落 ' + drops[0].gem.name : ''));
 }
 function uncompleteTask(t) {
   var st = tstate(), n = st.grant[t.name] || Number(t.stars) || 0, ref = ymd(new Date()) + '|' + t.name;
@@ -1237,7 +1251,7 @@ function openParent() {
     var auto = taskGem({ name: PF.name, treasure: 0 });
     h += '</select></label><label><span>家長確認</span><select name="parent"><option value="0">不需要</option><option value="1"' + (PF.parent ? ' selected' : '') + '>需要（打勾時要家長密碼）</option></select></label>' +
       '<label><span>寶物</span><select name="treasure"><option value="">自動分配（目前是：' + auto.name + '）</option>';
-    for (i = 0; i < TR.length; i++) h += '<option value="' + TR[i].no + '"' + (String(PF.treasure) === String(TR[i].no) ? ' selected' : '') + '>No.' + ('00' + TR[i].no).slice(-3) + ' ' + TR[i].name + '</option>';
+    for (i = 0; i < TR.length; i++) h += '<option value="' + TR[i].no + '"' + (String(PF.treasure) === String(TR[i].no) ? ' selected' : '') + '>No.' + ('00' + TR[i].no).slice(-3) + ' ' + TR[i].name + '（' + new Array(TR[i].r + 1).join('★') + ' ' + RARITY[TR[i].r][0] + '）</option>';
     h += '</select></label></div>';
     if (PF.orig) h += '<div class="okbtn" data-act="padd">💾 儲存修改</div><div class="okbtn graybtn" data-act="pcancel">取消修改</div>';
     else h += '<div class="okbtn" data-act="padd">＋ 新增這個任務</div>';
@@ -1540,105 +1554,105 @@ function celebrate(withHat) {
 /* ===== 寶石展示館 ===== */
 /* ===== 寶物圖鑑：100 件寶物（[id, 名稱, 圖案, 主色, 副色, 稀有度, 分類, 介紹]） ===== */
 var TREASURES = [
-  ["sapphire", "藍寶石", "gem", "#339af0", "#a5d8ff", 2, "寶石", "如夜空般深邃的藍，傳說能讓人看清自己的心。"],
-  ["ruby", "紅寶石", "gem", "#f03e3e", "#ffc9c9", 2, "寶石", "燃燒般的紅色，象徵勇氣與熱情。"],
-  ["emerald", "祖母綠", "emerald", "#37b24d", "#b2f2bb", 2, "寶石", "森林般的綠色寶石，據說能讓人心情平靜。"],
-  ["amethyst", "紫水晶", "gem", "#9775fa", "#e5dbff", 2, "寶石", "神祕的紫色，古人相信它能帶來好夢。"],
-  ["topaz", "黃玉", "gem", "#fab005", "#fff3bf", 2, "寶石", "像陽光一樣溫暖，代表友誼與希望。"],
-  ["pearl", "珍珠", "pearl", "#f8f9fa", "#dee2e6", 2, "寶石", "在貝殼裡慢慢長大的寶物，就像慢慢累積的努力。"],
+  ["sapphire", "藍寶石", "gem", "#339af0", "#a5d8ff", 1, "寶石", "如夜空般深邃的藍，傳說能讓人看清自己的心。"],
+  ["ruby", "紅寶石", "gem", "#f03e3e", "#ffc9c9", 1, "寶石", "燃燒般的紅色，象徵勇氣與熱情。"],
+  ["emerald", "祖母綠", "emerald", "#37b24d", "#b2f2bb", 1, "寶石", "森林般的綠色寶石，據說能讓人心情平靜。"],
+  ["amethyst", "紫水晶", "gem", "#9775fa", "#e5dbff", 1, "寶石", "神祕的紫色，古人相信它能帶來好夢。"],
+  ["topaz", "黃玉", "gem", "#fab005", "#fff3bf", 1, "寶石", "像陽光一樣溫暖，代表友誼與希望。"],
+  ["pearl", "珍珠", "pearl", "#f8f9fa", "#dee2e6", 1, "寶石", "在貝殼裡慢慢長大的寶物，就像慢慢累積的努力。"],
   ["moonstone", "月光石", "moon", "#d0ebff", "#74c0fc", 3, "寶石", "在月光下會發出淡藍色光芒，是夜晚專注的證明。"],
   ["cards", "魔術撲克牌", "card", "#ffffff", "#e03131", 3, "魔術道具", "魔術師最重要的道具，代表準備萬全。"],
-  ["crown", "皇冠", "crown", "#fcc419", "#e03131", 4, "古董寶物", "只有用努力換來獎勵的人，才配戴上它。"],
-  ["diamond", "鑽石", "round", "#e7f5ff", "#a5d8ff", 3, "寶石", "世界上最堅硬的寶石，就像不會放棄的心。"],
-  ["pinkdiamond", "粉紅鑽", "round", "#faa2c1", "#fff0f6", 4, "寶石", "非常稀有的粉紅色鑽石，溫柔又堅強。"],
-  ["blackdiamond", "黑鑽石", "round", "#343a40", "#868e96", 4, "寶石", "在黑暗中閃耀的鑽石，是怪盜最愛的夜色。"],
+  ["crown", "皇冠", "crown", "#fcc419", "#e03131", 3, "古董寶物", "只有用努力換來獎勵的人，才配戴上它。"],
+  ["diamond", "鑽石", "round", "#e7f5ff", "#a5d8ff", 2, "寶石", "世界上最堅硬的寶石，就像不會放棄的心。"],
+  ["pinkdiamond", "粉紅鑽", "round", "#faa2c1", "#fff0f6", 3, "寶石", "非常稀有的粉紅色鑽石，溫柔又堅強。"],
+  ["blackdiamond", "黑鑽石", "round", "#343a40", "#868e96", 3, "寶石", "在黑暗中閃耀的鑽石，是怪盜最愛的夜色。"],
   ["deepheart", "深海之心", "heart", "#1971c2", "#74c0fc", 5, "寶石", "傳說沉睡在海底的心形藍鑽，只為勇敢的人發光。"],
-  ["redheart", "紅心石", "heart", "#e03131", "#ffa8a8", 3, "寶石", "心形的紅色寶石，代表對家人的愛。"],
-  ["aquamarine", "海藍寶", "oval", "#66d9e8", "#e3fafc", 2, "寶石", "像大海一樣清澈，水手們的幸運石。"],
-  ["peridot", "橄欖石", "oval", "#94d82d", "#e9fac8", 2, "寶石", "夏天的綠色寶石，帶來滿滿的活力。"],
-  ["garnet", "石榴石", "round", "#a61e4d", "#f783ac", 2, "寶石", "像石榴籽一樣紅，代表堅持到底。"],
-  ["opal", "蛋白石", "oval", "#d0bfff", "#96f2d7", 4, "寶石", "從不同角度看會出現不同顏色，像魔術一樣。"],
-  ["tourmaline", "碧璽", "emerald", "#f06595", "#69db7c", 3, "寶石", "一顆寶石裡同時有粉紅和綠色，好像西瓜。"],
-  ["orangetopaz", "橙拓帕", "pear", "#ffa94d", "#ffe8cc", 2, "寶石", "水滴形的橙色寶石，像夕陽落下的那一刻。"],
-  ["spinel", "尖晶石", "marquise", "#f06595", "#ffdeeb", 3, "寶石", "曾經被誤認為紅寶石的美麗寶石。"],
-  ["tanzanite", "坦桑石", "trillion", "#5f3dc4", "#b197fc", 4, "寶石", "只在一個地方被發現的稀有藍紫色寶石。"],
-  ["amber", "琥珀", "oval", "#f59f00", "#ffe066", 3, "寶石", "樹的眼淚變成的寶石，裡面藏著遠古的時光。"],
-  ["jade", "翡翠", "oval", "#2b8a3e", "#8ce99a", 3, "寶石", "溫潤的綠色玉石，象徵平安與長壽。"],
-  ["obsidian", "黑曜石", "trillion", "#212529", "#495057", 2, "寶石", "火山誕生的黑色寶石，能守護主人。"],
+  ["redheart", "紅心石", "heart", "#e03131", "#ffa8a8", 2, "寶石", "心形的紅色寶石，代表對家人的愛。"],
+  ["aquamarine", "海藍寶", "oval", "#66d9e8", "#e3fafc", 1, "寶石", "像大海一樣清澈，水手們的幸運石。"],
+  ["peridot", "橄欖石", "oval", "#94d82d", "#e9fac8", 1, "寶石", "夏天的綠色寶石，帶來滿滿的活力。"],
+  ["garnet", "石榴石", "round", "#a61e4d", "#f783ac", 1, "寶石", "像石榴籽一樣紅，代表堅持到底。"],
+  ["opal", "蛋白石", "oval", "#d0bfff", "#96f2d7", 3, "寶石", "從不同角度看會出現不同顏色，像魔術一樣。"],
+  ["tourmaline", "碧璽", "emerald", "#f06595", "#69db7c", 2, "寶石", "一顆寶石裡同時有粉紅和綠色，好像西瓜。"],
+  ["orangetopaz", "橙拓帕", "pear", "#ffa94d", "#ffe8cc", 1, "寶石", "水滴形的橙色寶石，像夕陽落下的那一刻。"],
+  ["spinel", "尖晶石", "marquise", "#f06595", "#ffdeeb", 2, "寶石", "曾經被誤認為紅寶石的美麗寶石。"],
+  ["tanzanite", "坦桑石", "trillion", "#5f3dc4", "#b197fc", 3, "寶石", "只在一個地方被發現的稀有藍紫色寶石。"],
+  ["amber", "琥珀", "oval", "#f59f00", "#ffe066", 2, "寶石", "樹的眼淚變成的寶石，裡面藏著遠古的時光。"],
+  ["jade", "翡翠", "oval", "#2b8a3e", "#8ce99a", 2, "寶石", "溫潤的綠色玉石，象徵平安與長壽。"],
+  ["obsidian", "黑曜石", "trillion", "#212529", "#495057", 1, "寶石", "火山誕生的黑色寶石，能守護主人。"],
   ["starsapphire", "星光藍寶", "star", "#4263eb", "#bac8ff", 4, "寶石", "寶石裡藏著一顆六角星，是夜空的縮影。"],
   ["starruby", "星光紅寶", "star", "#c92a2a", "#ffc9c9", 4, "寶石", "閃著星芒的紅寶石，非常稀有。"],
-  ["cateye", "貓眼石", "cateye", "#e8c547", "#5c3b1e", 3, "寶石", "中間有一條光帶，像貓咪在夜裡眨眼。"],
-  ["malachite", "孔雀石", "round", "#0ca678", "#63e6be", 2, "寶石", "像孔雀羽毛的花紋，每一顆都獨一無二。"],
-  ["lapis", "青金石", "round", "#364fc7", "#ffd43b", 3, "寶石", "深藍色裡有金色星點，像一片小星空。"],
-  ["rosequartz", "粉晶", "cluster", "#fcc2d7", "#fff0f6", 2, "寶石", "溫柔的粉紅色水晶，代表愛與溫暖。"],
+  ["cateye", "貓眼石", "cateye", "#e8c547", "#5c3b1e", 2, "寶石", "中間有一條光帶，像貓咪在夜裡眨眼。"],
+  ["malachite", "孔雀石", "round", "#0ca678", "#63e6be", 1, "寶石", "像孔雀羽毛的花紋，每一顆都獨一無二。"],
+  ["lapis", "青金石", "round", "#364fc7", "#ffd43b", 2, "寶石", "深藍色裡有金色星點，像一片小星空。"],
+  ["rosequartz", "粉晶", "cluster", "#fcc2d7", "#fff0f6", 1, "寶石", "溫柔的粉紅色水晶，代表愛與溫暖。"],
   ["clearquartz", "白水晶", "cluster", "#f1f3f5", "#ced4da", 1, "寶石", "透明的水晶，能讓頭腦變得清楚。"],
-  ["geode", "紫晶洞", "cluster", "#845ef7", "#d0bfff", 3, "寶石", "敲開石頭，裡面是滿滿的紫色水晶。"],
-  ["citrine", "黃水晶", "pear", "#ffd43b", "#fff9db", 2, "寶石", "被稱為「商人之石」，象徵財富與好運。"],
-  ["morganite", "摩根石", "emerald", "#ffc9c9", "#fff5f5", 3, "寶石", "像桃子一樣的粉橘色，柔和又優雅。"],
-  ["paraiba", "帕拉伊巴", "pear", "#22b8cf", "#c5f6fa", 5, "寶石", "閃著霓虹藍光的超稀有寶石。"],
+  ["geode", "紫晶洞", "cluster", "#845ef7", "#d0bfff", 2, "寶石", "敲開石頭，裡面是滿滿的紫色水晶。"],
+  ["citrine", "黃水晶", "pear", "#ffd43b", "#fff9db", 1, "寶石", "被稱為「商人之石」，象徵財富與好運。"],
+  ["morganite", "摩根石", "emerald", "#ffc9c9", "#fff5f5", 2, "寶石", "像桃子一樣的粉橘色，柔和又優雅。"],
+  ["paraiba", "帕拉伊巴", "pear", "#22b8cf", "#c5f6fa", 4, "寶石", "閃著霓虹藍光的超稀有寶石。"],
   ["alexandrite", "變色石", "marquise", "#7048e8", "#37b24d", 5, "寶石", "白天是綠色、晚上變紫色，是寶石界的魔術師。"],
-  ["turquoise", "綠松石", "round", "#3bc9db", "#0b7285", 2, "寶石", "天空般的藍綠色，古老的守護石。"],
-  ["coral", "珊瑚", "cluster", "#ff8787", "#ffe3e3", 2, "寶石", "大海裡長出來的紅色寶物。"],
-  ["blackpearl", "黑珍珠", "pearl", "#495057", "#adb5bd", 4, "寶石", "神祕的黑色珍珠，在月光下會泛出綠光。"],
-  ["goldpearl", "金珍珠", "pearl", "#fcc419", "#fff3bf", 4, "寶石", "閃著金色光芒的珍珠，非常珍貴。"],
-  ["icecrystal", "冰晶石", "snowflake", "#a5d8ff", "#e7f5ff", 3, "寶石", "像雪花一樣的結晶，冰冰涼涼的。"],
+  ["turquoise", "綠松石", "round", "#3bc9db", "#0b7285", 1, "寶石", "天空般的藍綠色，古老的守護石。"],
+  ["coral", "珊瑚", "cluster", "#ff8787", "#ffe3e3", 1, "寶石", "大海裡長出來的紅色寶物。"],
+  ["blackpearl", "黑珍珠", "pearl", "#495057", "#adb5bd", 3, "寶石", "神祕的黑色珍珠，在月光下會泛出綠光。"],
+  ["goldpearl", "金珍珠", "pearl", "#fcc419", "#fff3bf", 3, "寶石", "閃著金色光芒的珍珠，非常珍貴。"],
+  ["icecrystal", "冰晶石", "snowflake", "#a5d8ff", "#e7f5ff", 2, "寶石", "像雪花一樣的結晶，冰冰涼涼的。"],
   ["rainbowheart", "彩虹之心", "heart", "#ff8787", "#74c0fc", 4, "寶石", "一顆心裡藏著七種顏色。"],
-  ["glowstone", "夜光石", "star", "#b2f2bb", "#ebfbee", 3, "寶石", "白天吸收陽光，晚上會自己發光。"],
-  ["meteor", "流星石", "trillion", "#74c0fc", "#e7f5ff", 4, "寶石", "從天空掉下來的石頭，帶著流星的願望。"],
-  ["sunstone", "太陽石", "round", "#ff922b", "#ffe8cc", 3, "寶石", "像小太陽一樣閃閃發亮。"],
+  ["glowstone", "夜光石", "star", "#b2f2bb", "#ebfbee", 2, "寶石", "白天吸收陽光，晚上會自己發光。"],
+  ["meteor", "流星石", "trillion", "#74c0fc", "#e7f5ff", 3, "寶石", "從天空掉下來的石頭，帶著流星的願望。"],
+  ["sunstone", "太陽石", "round", "#ff922b", "#ffe8cc", 2, "寶石", "像小太陽一樣閃閃發亮。"],
   ["aurora", "極光石", "oval", "#63e6be", "#9775fa", 5, "寶石", "把北極的極光封在裡面的夢幻寶石。"],
-  ["thunder", "雷霆石", "marquise", "#fab005", "#495057", 4, "寶石", "裡面有一道閃電的花紋，充滿力量。"],
-  ["seatear", "海之淚", "pear", "#4dabf7", "#d0ebff", 4, "寶石", "據說是人魚流下的眼淚。"],
+  ["thunder", "雷霆石", "marquise", "#fab005", "#495057", 3, "寶石", "裡面有一道閃電的花紋，充滿力量。"],
+  ["seatear", "海之淚", "pear", "#4dabf7", "#d0ebff", 3, "寶石", "據說是人魚流下的眼淚。"],
   ["moontear", "月之淚", "pear", "#dbe4ff", "#91a7ff", 5, "寶石", "月光凝結成的寶石，只在滿月時出現。"],
-  ["diamondring", "鑽石戒指", "ring", "#ffd43b", "#e7f5ff", 3, "飾品", "閃亮的鑽石戒指，代表一輩子的約定。"],
-  ["rubyring", "紅寶石戒指", "ring", "#ced4da", "#f03e3e", 3, "飾品", "銀色指環配上紅寶石，優雅又耀眼。"],
-  ["sapphirependant", "藍寶石墜子", "pendant", "#ffd43b", "#339af0", 3, "飾品", "掛在胸前的藍寶石，像帶著一片海。"],
-  ["pearlnecklace", "珍珠項鍊", "necklace", "#f8f9fa", "#dee2e6", 3, "飾品", "一顆一顆串起來的珍珠，就像一天一天的努力。"],
-  ["butterfly", "蝴蝶胸針", "butterfly", "#da77f2", "#ffd43b", 3, "飾品", "鑲著寶石的蝴蝶，好像隨時會飛走。"],
-  ["clover", "四葉草胸針", "clover", "#40c057", "#ffd43b", 4, "飾品", "找到四葉草的人，會擁有幸運。"],
-  ["starearring", "星星耳環", "star", "#ffd43b", "#fff9db", 2, "飾品", "小小的星星，戴著就像把夜空帶在身上。"],
-  ["princesstiara", "公主頭冠", "tiara", "#ced4da", "#74c0fc", 4, "飾品", "銀色頭冠上鑲著藍寶石。"],
+  ["diamondring", "鑽石戒指", "ring", "#ffd43b", "#e7f5ff", 2, "飾品", "閃亮的鑽石戒指，代表一輩子的約定。"],
+  ["rubyring", "紅寶石戒指", "ring", "#ced4da", "#f03e3e", 2, "飾品", "銀色指環配上紅寶石，優雅又耀眼。"],
+  ["sapphirependant", "藍寶石墜子", "pendant", "#ffd43b", "#339af0", 2, "飾品", "掛在胸前的藍寶石，像帶著一片海。"],
+  ["pearlnecklace", "珍珠項鍊", "necklace", "#f8f9fa", "#dee2e6", 2, "飾品", "一顆一顆串起來的珍珠，就像一天一天的努力。"],
+  ["butterfly", "蝴蝶胸針", "butterfly", "#da77f2", "#ffd43b", 2, "飾品", "鑲著寶石的蝴蝶，好像隨時會飛走。"],
+  ["clover", "四葉草胸針", "clover", "#40c057", "#ffd43b", 3, "飾品", "找到四葉草的人，會擁有幸運。"],
+  ["starearring", "星星耳環", "star", "#ffd43b", "#fff9db", 1, "飾品", "小小的星星，戴著就像把夜空帶在身上。"],
+  ["princesstiara", "公主頭冠", "tiara", "#ced4da", "#74c0fc", 3, "飾品", "銀色頭冠上鑲著藍寶石。"],
   ["queentiara", "女王頭冠", "tiara", "#fcc419", "#e03131", 5, "飾品", "只有最優秀的人才能戴上的黃金頭冠。"],
-  ["scepter", "國王權杖", "scepter", "#fcc419", "#e03131", 5, "古董寶物", "國王手中的權杖，象徵領導與責任。"],
-  ["wand", "魔法手杖", "wand", "#212529", "#ffffff", 3, "魔術道具", "黑白相間的手杖，一揮就會變出驚喜。"],
-  ["goldwatch", "黃金懷錶", "watch", "#fcc419", "#fff9db", 4, "古董寶物", "紳士必備的懷錶，提醒你珍惜每一分鐘。"],
-  ["silverwatch", "銀色懷錶", "watch", "#ced4da", "#f8f9fa", 3, "古董寶物", "滴答滴答，時間是最珍貴的寶物。"],
-  ["monocle", "單片眼鏡", "monocle", "#adb5bd", "#e7f5ff", 4, "魔術道具", "戴上它，就能看穿所有的祕密。"],
-  ["goldcoin", "古董金幣", "coin", "#fcc419", "#e67700", 2, "古董寶物", "很久很久以前的金幣，上面刻著月亮。"],
-  ["goldkey", "黃金鑰匙", "key", "#fcc419", "#e67700", 3, "古董寶物", "能打開藏寶箱的鑰匙。"],
-  ["silverkey", "銀色鑰匙", "key", "#ced4da", "#868e96", 2, "古董寶物", "據說能打開通往星空的門。"],
-  ["jewelegg", "寶石彩蛋", "egg", "#4dabf7", "#fcc419", 5, "古董寶物", "鑲滿寶石的彩蛋，裡面藏著小驚喜。"],
+  ["scepter", "國王權杖", "scepter", "#fcc419", "#e03131", 4, "古董寶物", "國王手中的權杖，象徵領導與責任。"],
+  ["wand", "魔法手杖", "wand", "#212529", "#ffffff", 2, "魔術道具", "黑白相間的手杖，一揮就會變出驚喜。"],
+  ["goldwatch", "黃金懷錶", "watch", "#fcc419", "#fff9db", 3, "古董寶物", "紳士必備的懷錶，提醒你珍惜每一分鐘。"],
+  ["silverwatch", "銀色懷錶", "watch", "#ced4da", "#f8f9fa", 2, "古董寶物", "滴答滴答，時間是最珍貴的寶物。"],
+  ["monocle", "單片眼鏡", "monocle", "#adb5bd", "#e7f5ff", 3, "魔術道具", "戴上它，就能看穿所有的祕密。"],
+  ["goldcoin", "古董金幣", "coin", "#fcc419", "#e67700", 1, "古董寶物", "很久很久以前的金幣，上面刻著月亮。"],
+  ["goldkey", "黃金鑰匙", "key", "#fcc419", "#e67700", 2, "古董寶物", "能打開藏寶箱的鑰匙。"],
+  ["silverkey", "銀色鑰匙", "key", "#ced4da", "#868e96", 1, "古董寶物", "據說能打開通往星空的門。"],
+  ["jewelegg", "寶石彩蛋", "egg", "#4dabf7", "#fcc419", 4, "古董寶物", "鑲滿寶石的彩蛋，裡面藏著小驚喜。"],
   ["royalegg", "皇家彩蛋", "egg", "#e64980", "#fcc419", 5, "古董寶物", "皇室珍藏的彩蛋，世界上只有幾顆。"],
   ["silvercoin", "銀幣", "coin", "#ced4da", "#868e96", 1, "古董寶物", "閃亮的銀幣，存起來就會變多。"],
-  ["tophat", "魔術禮帽", "tophat", "#f8f9fa", "#1c7ed6", 3, "魔術道具", "白色禮帽，裡面不知道藏著什麼。"],
-  ["dove", "白鴿", "dove", "#ffffff", "#adb5bd", 2, "魔術道具", "魔術師的好夥伴，帶來和平與好消息。"],
-  ["redrose", "魔法紅玫瑰", "rose", "#e03131", "#2f9e44", 3, "魔術道具", "從手中變出來的玫瑰，送給最努力的人。"],
-  ["bluerose", "藍色玫瑰", "rose", "#1c7ed6", "#2f9e44", 5, "魔術道具", "代表「奇蹟」的藍色玫瑰。"],
-  ["aceofspades", "黑桃 A", "ace", "#ffffff", "#212529", 3, "魔術道具", "撲克牌裡最強的一張。"],
-  ["joker", "鬼牌", "joker", "#ffffff", "#7048e8", 4, "魔術道具", "可以變成任何一張牌的神奇卡片。"],
-  ["hourglass", "魔術沙漏", "hourglass", "#a9784d", "#ffd43b", 3, "魔術道具", "倒過來時間就會重新開始。"],
+  ["tophat", "魔術禮帽", "tophat", "#f8f9fa", "#1c7ed6", 2, "魔術道具", "白色禮帽，裡面不知道藏著什麼。"],
+  ["dove", "白鴿", "dove", "#ffffff", "#adb5bd", 1, "魔術道具", "魔術師的好夥伴，帶來和平與好消息。"],
+  ["redrose", "魔法紅玫瑰", "rose", "#e03131", "#2f9e44", 2, "魔術道具", "從手中變出來的玫瑰，送給最努力的人。"],
+  ["bluerose", "藍色玫瑰", "rose", "#1c7ed6", "#2f9e44", 4, "魔術道具", "代表「奇蹟」的藍色玫瑰。"],
+  ["aceofspades", "黑桃 A", "ace", "#ffffff", "#212529", 2, "魔術道具", "撲克牌裡最強的一張。"],
+  ["joker", "鬼牌", "joker", "#ffffff", "#7048e8", 3, "魔術道具", "可以變成任何一張牌的神奇卡片。"],
+  ["hourglass", "魔術沙漏", "hourglass", "#a9784d", "#ffd43b", 2, "魔術道具", "倒過來時間就會重新開始。"],
   ["whitefeather", "白色羽毛", "feather", "#f8f9fa", "#adb5bd", 1, "魔術道具", "輕飄飄的羽毛，是白鴿留下的禮物。"],
-  ["goldfeather", "金色羽毛", "feather", "#fcc419", "#e67700", 4, "魔術道具", "傳說中金色鳥兒的羽毛。"],
-  ["musicbox", "音樂盒", "musicbox", "#e599f7", "#fcc419", 3, "古董寶物", "打開就會響起溫柔的旋律。"],
-  ["bell", "魔法鈴鐺", "bell", "#fcc419", "#e03131", 2, "魔術道具", "搖一搖，好事就會發生。"],
-  ["mask", "化妝舞會面具", "mask", "#1c3d8f", "#fcc419", 3, "魔術道具", "戴上它，就能變成另一個人。"],
-  ["telescope", "黃銅望遠鏡", "telescope", "#c9a227", "#495057", 3, "古董寶物", "能看見遠方的星星和月亮。"],
-  ["compass", "星星指南針", "compass", "#c9a227", "#e03131", 3, "古董寶物", "永遠指向你最想去的地方。"],
+  ["goldfeather", "金色羽毛", "feather", "#fcc419", "#e67700", 3, "魔術道具", "傳說中金色鳥兒的羽毛。"],
+  ["musicbox", "音樂盒", "musicbox", "#e599f7", "#fcc419", 2, "古董寶物", "打開就會響起溫柔的旋律。"],
+  ["bell", "魔法鈴鐺", "bell", "#fcc419", "#e03131", 1, "魔術道具", "搖一搖，好事就會發生。"],
+  ["mask", "化妝舞會面具", "mask", "#1c3d8f", "#fcc419", 2, "魔術道具", "戴上它，就能變成另一個人。"],
+  ["telescope", "黃銅望遠鏡", "telescope", "#c9a227", "#495057", 1, "古董寶物", "能看見遠方的星星和月亮。"],
+  ["compass", "星星指南針", "compass", "#c9a227", "#e03131", 1, "古董寶物", "永遠指向你最想去的地方。"],
   ["wingbadge", "滑翔翼徽章", "wing", "#f8f9fa", "#1c7ed6", 4, "魔術道具", "完成很多次飛行的勇者才能得到。"],
-  ["map", "古老藏寶圖", "scroll", "#f3e9cf", "#e03131", 3, "古董寶物", "上面的紅色叉叉，就是寶藏的位置。"],
-  ["chest", "藏寶箱", "chest", "#a9784d", "#fcc419", 4, "古董寶物", "裡面裝滿了閃閃發亮的寶物。"],
-  ["chalice", "黃金聖杯", "chalice", "#fcc419", "#e03131", 4, "古董寶物", "古代國王用來慶祝勝利的杯子。"],
-  ["crystalball", "水晶球", "crystalball", "#d0ebff", "#7048e8", 4, "古董寶物", "據說能看見未來的自己。"],
-  ["candle", "月光燭台", "candle", "#c9a227", "#ffd43b", 2, "古董寶物", "在夜晚點亮書桌的小小燭光。"],
-  ["astrolabe", "星象儀", "compass", "#4263eb", "#fcc419", 4, "古董寶物", "能找到天上每一顆星星的位置。"],
-  ["shellbox", "貝殼寶盒", "shell", "#ffc9c9", "#fff0f6", 3, "古董寶物", "打開貝殼，裡面躺著一顆珍珠。"],
-  ["mermaidtear", "人魚之淚", "pearl", "#74c0fc", "#e7f5ff", 5, "寶石", "藍色的珍珠，是人魚送給勇敢孩子的禮物。"],
+  ["map", "古老藏寶圖", "scroll", "#f3e9cf", "#e03131", 1, "古董寶物", "上面的紅色叉叉，就是寶藏的位置。"],
+  ["chest", "藏寶箱", "chest", "#a9784d", "#fcc419", 2, "古董寶物", "裡面裝滿了閃閃發亮的寶物。"],
+  ["chalice", "黃金聖杯", "chalice", "#fcc419", "#e03131", 2, "古董寶物", "古代國王用來慶祝勝利的杯子。"],
+  ["crystalball", "水晶球", "crystalball", "#d0ebff", "#7048e8", 3, "古董寶物", "據說能看見未來的自己。"],
+  ["candle", "月光燭台", "candle", "#c9a227", "#ffd43b", 1, "古董寶物", "在夜晚點亮書桌的小小燭光。"],
+  ["astrolabe", "星象儀", "compass", "#4263eb", "#fcc419", 2, "古董寶物", "能找到天上每一顆星星的位置。"],
+  ["shellbox", "貝殼寶盒", "shell", "#ffc9c9", "#fff0f6", 1, "古董寶物", "打開貝殼，裡面躺著一顆珍珠。"],
+  ["mermaidtear", "人魚之淚", "pearl", "#74c0fc", "#e7f5ff", 4, "寶石", "藍色的珍珠，是人魚送給勇敢孩子的禮物。"],
   ["phoenix", "鳳凰之羽", "feather", "#ff6b6b", "#ffd43b", 5, "古董寶物", "不死鳥的羽毛，代表永不放棄。"],
-  ["dragoneye", "龍之眼", "cateye", "#37b24d", "#212529", 5, "寶石", "傳說中龍的眼睛化成的寶石。"],
-  ["snowcrystal", "雪花水晶", "snowflake", "#e7f5ff", "#74c0fc", 2, "寶石", "冬天第一片雪花變成的水晶。"],
-  ["trophy", "黃金獎盃", "trophy", "#fcc419", "#e67700", 4, "古董寶物", "頒給最努力的人的獎盃。"],
+  ["dragoneye", "龍之眼", "cateye", "#37b24d", "#212529", 4, "寶石", "傳說中龍的眼睛化成的寶石。"],
+  ["snowcrystal", "雪花水晶", "snowflake", "#e7f5ff", "#74c0fc", 1, "寶石", "冬天第一片雪花變成的水晶。"],
+  ["trophy", "黃金獎盃", "trophy", "#fcc419", "#e67700", 3, "古董寶物", "頒給最努力的人的獎盃。"],
   ["magicbook", "魔法書", "book", "#7048e8", "#fcc419", 4, "古董寶物", "寫滿了魔術祕密的古老書本。"],
-  ["timegem", "時之寶石", "hourglass", "#9775fa", "#e5dbff", 5, "寶石", "能讓時間變慢的神祕寶石。"],
+  ["timegem", "時之寶石", "hourglass", "#9775fa", "#e5dbff", 4, "寶石", "能讓時間變慢的神祕寶石。"],
   ["grandjewel", "月之大寶石", "grand", "#fcc419", "#4dabf7", 5, "寶石", "圖鑑最後一件傳說寶物。只有收集了全部寶物的人才能見到它。"]
 ];
 var TR = [], TR_BY = {};
@@ -1649,7 +1663,22 @@ var TR = [], TR_BY = {};
     TR_BY[t[0]] = TR[i];
   }
 })();
-var TR_HOW = { moonstone: '完成一次專注', cards: '書包全部收好', crown: '兌換一次獎勵' };
+var TR_HOW = { moonstone: '完成一次專注', cards: '書包全部收好', crown: '兌換一次商品', grandjewel: '收集滿其他 99 件寶物' };
+/* 稀有度：★1 普通、★2 少見、★3 稀有、★4 史詩、★5 傳說 */
+var RARITY = { 1: ['普通', '#868e96'], 2: ['少見', '#2f9e44'], 3: ['稀有', '#1c7ed6'], 4: ['史詩', '#7048e8'], 5: ['傳說', '#e67700'] };
+var FIXED_SRC = { moonstone: 1, cards: 1, crown: 1, grandjewel: 1 };   // 固定來源，不參加隨機分配
+var POOL = { 1: [], 2: [], 3: [], 4: [], 5: [] };
+(function () { for (var i = 0; i < TR.length; i++) if (!FIXED_SRC[TR[i].id]) POOL[TR[i].r].push(TR[i]); })();
+var HARD_TYPES = { '準時': 1, '限時挑戰': 1, '連續': 1 };
+function rarityTag(r) { return '<span class="rtag" style="background:' + RARITY[r][1] + '">' + new Array(r + 1).join('★') + ' ' + RARITY[r][0] + '</span>'; }
+/* 隨機掉落：優先給還沒收集到的 */
+function randomDrop(r) {
+  var pool = POOL[r], fresh = [], i;
+  for (i = 0; i < pool.length; i++) { var g = S.got && S.got[pool[i].id]; if (!g || !g.n) fresh.push(pool[i]); }
+  var from = fresh.length ? fresh : pool;
+  return from[Math.floor(Math.random() * from.length)];
+}
+function dropInfo(gem) { addTreasure(gem.id, 1); var g = S.got[gem.id]; return { gem: gem, first: g.n === 1, cnt: g.n }; }
 /* 寶物圖案：畫布 40×40，c = 主色、a = 副色 */
 function treasureArt(shape, c, a) {
   var W = '#ffffff', D = '#343a40', s = '';
@@ -1716,11 +1745,12 @@ function gemSvg(g, size, locked) {
     (locked ? '<g opacity="0.3">' + treasureArt(g.shape, '#495057', '#868e96') + '</g>' : treasureArt(g.shape, g.c, g.a)) + '</svg>';
 }
 /* 任務對應的寶物：試算表 Tasks 的「寶物編號」欄（1～100）；沒填就自動分配前 6 種寶石 */
+/* 任務的寶物：家長有指定就用指定的；沒有的話，一般任務配 ★1、準時／限時挑戰／連續配 ★2 */
 function taskGem(task) {
   if (task.treasure >= 1 && task.treasure <= TR.length) return TR[task.treasure - 1];
-  var h = 0, name = task.name || '';
+  var h = 0, name = task.name || '', pool = POOL[HARD_TYPES[task.type] ? 2 : 1];
   for (var i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) % 9973;
-  return TR[h % 6];
+  return pool[h % pool.length];
 }
 /* 取得紀錄：S.got[id] = { n: 次數, first: 第一次時間, log: [最近 10 次] } */
 function gotOf(id) {
@@ -1739,6 +1769,16 @@ function addTreasure(id, n) {
     if (!g.first) g.first = ts;
     g.log.push(ts);
     if (g.log.length > 10) g.log.shift();
+    if (id !== 'grandjewel' && !(S.got.grandjewel && S.got.grandjewel.n) && gotCount() >= TR.length - 1) {   // 集滿 99 件 → 月之大寶石
+      saveS();
+      addTreasure('grandjewel', 1);
+      setTimeout(function () {
+        celebrate(false);
+        kidSayText('不可思議……你收集了全部 99 件寶物！傳說中的「月之大寶石」，現在是你的了。對你而言，果然沒有不可能！',
+          { r: { gem: TR_BY.grandjewel, first: true, cnt: 1 }, c: [['gem:grandjewel', '看看月之大寶石'], ['thanks', '謝謝基德']] });
+      }, 1500);
+      return;
+    }
   } else if (g.n > 0) {
     g.n--;
     g.log.pop();
@@ -1764,10 +1804,15 @@ function gemHint(g) {
   if (TR_HOW[g.id]) return TR_HOW[g.id];
   var names = [];
   for (var i = 0; i < C.tasks.length; i++) if (taskGem(C.tasks[i]).id === g.id) names.push('「' + C.tasks[i].name + '」');
-  return names.length ? '完成' + names.join('、') : '預留給未來的新任務';
+  if (names.length) return '完成' + names.join('、');
+  if (g.r >= 4) return '完成特殊任務（段考、檢定考…）時有機會獲得' + (g.r === 5 ? '，分數越高機會越大' : '');
+  if (g.r === 3) return '加碼成功，或當天任務全部完成時，有機會掉落';
+  if (g.r === 2) return '每日任務全部完成時有機會掉落，或留給新的準時／挑戰／連續任務';
+  return '預留給未來的新任務';
 }
 function fmtTs(ts) { var m = /^(\d{4})-(\d{2})-(\d{2}) (\d{2}:\d{2})/.exec(ts || ''); return m ? m[1] + '/' + m[2] + '/' + m[3] + ' ' + m[4] : '—'; }
 var CATS = ['全部', '寶石', '飾品', '魔術道具', '古董寶物'], CAT = { f: '全部' };
+function rarityCount(r) { var n = 0, t = 0; for (var i = 0; i < TR.length; i++) if (TR[i].r === r) { t++; var g = S.got && S.got[TR[i].id]; if (g && g.n) n++; } return [n, t]; }
 /* ===== 收藏區：寶物圖鑑 ＋ 預告函月曆 ===== */
 var CTAB = 'gem';
 function collectTabs() {
@@ -1783,13 +1828,20 @@ function openCollect(tab) {
 function openCatalog() { openCollect('gem'); }
 function openMuseum() { openCollect('card'); }
 function catalogHtml() {
-  var h = '<div class="cats">', i;
+  var h = '<div class="rrow">', i;
+  gotOf('');
+  for (i = 5; i >= 1; i--) {
+    var rc = rarityCount(i);
+    h += '<span class="rsum' + (CAT.f === 'R' + i ? ' sel' : '') + '" data-act="catFilter" data-arg="R' + i + '" style="border-color:' + RARITY[i][1] + ';color:' + RARITY[i][1] + '">' +
+      new Array(i + 1).join('★') + '<b>' + RARITY[i][0] + '</b>' + rc[0] + '/' + rc[1] + '</span>';
+  }
+  h += '</div><div class="cats">';
   for (i = 0; i < CATS.length; i++) h += '<span class="cat' + (CAT.f === CATS[i] ? ' sel' : '') + '" data-act="catFilter" data-arg="' + CATS[i] + '">' + CATS[i] + '</span>';
   h += '</div><div class="tgrid">';
   for (i = 0; i < TR.length; i++) {
     var t = TR[i], g = gotOf(t.id), has = g && g.n > 0;
-    if (CAT.f !== '全部' && t.cat !== CAT.f) continue;
-    h += '<div class="tcell' + (has ? '' : ' lock') + '" data-act="treasure" data-arg="' + t.id + '"><small>No.' + ('00' + t.no).slice(-3) + '</small>' +
+    if (CAT.f.charAt(0) === 'R' ? t.r !== +CAT.f.slice(1) : (CAT.f !== '全部' && t.cat !== CAT.f)) continue;
+    h += '<div class="tcell r' + t.r + (has ? '' : ' lock') + '" data-act="treasure" data-arg="' + t.id + '"><small>No.' + ('00' + t.no).slice(-3) + '</small>' +
       gemSvg(t, 42, !has) + '<b>' + (has ? t.name : '？？？') + '</b>' + (has && g.n > 1 ? '<em>×' + g.n + '</em>' : '') + '</div>';
   }
   return h + '</div><div class="pend">點任何一件寶物，可以看介紹和取得紀錄。</div>';
@@ -1800,7 +1852,7 @@ function openTreasure(id) {
     var g = gotOf(id), has = g && g.n > 0, h = '<div class="ovh"><span class="x" data-act="catalog">← 收藏區</span><h2></h2><span class="x" data-act="close">關閉</span></div>';
     h += '<div class="tdetail"><div class="tbig">' + gemSvg(t, 130, !has) + '</div>' +
       '<div class="tno">No.' + ('00' + t.no).slice(-3) + '・' + t.cat + '</div>' +
-      '<div class="tname">' + (has ? t.name : '？？？') + '</div><div class="trare">' + new Array(t.r + 1).join('★') + '<span>' + new Array(6 - t.r).join('☆') + '</span></div>' +
+      '<div class="tname">' + (has ? t.name : '？？？') + '</div><div class="trare">' + rarityTag(t.r) + '</div>' +
       '<div class="tintro">' + (has ? esc(t.intro) : '還沒有取得這件寶物。<br>取得方式：' + esc(gemHint(t))) + '</div>';
     if (has) {
       h += '<div class="tlog"><div><b>第一次取得</b>' + fmtTs(g.first) + '</div><div><b>最近一次</b>' + fmtTs(g.log[g.log.length - 1]) + '</div>' +
@@ -2842,7 +2894,12 @@ function kidSayText(text, extra, now) {
 function rewardHtml(o) {
   var h = '<div class="rwd">';
   if (o.n) h += '<span class="rchip dia">' + SYM() + ' +' + o.n + (o.bonus ? '<small>（含加碼 ' + o.bonus + '）</small>' : '') + '</span>';
-  if (o.gem) h += '<span class="rchip gem">' + gemSvg(o.gem, 22) + ' ' + o.gem.name + (o.first ? '<small>新收藏！</small>' : '<small>×' + o.cnt + '</small>') + '</span>';
+  function chip(x, drop) {
+    return '<span class="rchip gem' + (drop ? ' drop' : '') + '" style="border-color:' + RARITY[x.gem.r][1] + '">' + gemSvg(x.gem, 22) + ' ' + x.gem.name +
+      '<small style="color:' + RARITY[x.gem.r][1] + '">' + new Array(x.gem.r + 1).join('★') + '</small>' + (x.first ? '<small>新收藏！</small>' : '<small>×' + x.cnt + '</small>') + '</span>';
+  }
+  if (o.gem) h += chip(o, false);
+  if (o.drops) for (var di = 0; di < o.drops.length; di++) h += chip(o.drops[di], true);
   h += '</div>';
   if (o.line) h += '<div class="rline">' + o.line + '</div>';
   return h;
@@ -3192,6 +3249,17 @@ var ACTS = {
     closeOv();
     renderTasks();
     var spr = { n: diff > 0 ? diff : 0, line: '「' + m.name + '」共獲得 ' + SYM() + ' ' + earned + (m.status === 'done' && diff ? '（這次修改 ' + (diff > 0 ? '補發' : '扣回') + ' ' + Math.abs(diff) + '）' : '') };
+    if (!S.spGot) S.spGot = {};
+    if (earned > 0 && !S.spGot[m.id]) {                 // 特殊任務：一定掉落 ★4／★5，分數越高越可能是 ★5
+      var full = {};
+      for (var fi = 0; fi < m.subjects.length; fi++) full[m.subjects[fi]] = m.mode === 'pass' ? 1 : m.full;
+      var best = missionReward(m, full) || earned, p5 = Math.min(0.6, 0.15 + 0.45 * earned / best);
+      var dr = dropInfo(randomDrop(Math.random() < p5 ? 5 : 4));
+      S.spGot[m.id] = dr.gem.id;
+      saveS();
+      spr.gem = dr.gem; spr.first = dr.first; spr.cnt = dr.cnt;
+      spr.line += '　🎁 特殊任務限定寶物！';
+    }
     if (earned > 0) { celebrate(false); kidSay('specialDone', earned, { r: spr, c: [['collect', '看收藏區'], ['shop', '去商店逛逛'], ['thanks', '謝謝基德']] }); }
     else kidSay('specialZero', null, { c: [['thanks', '謝謝基德']] });
   },
