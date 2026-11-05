@@ -735,7 +735,7 @@ var API_URL = 'https://script.google.com/macros/s/AKfycbxY-7ZoZfDN-pRjV-p0rnsqRY
 var API_KEY = 'change-me-1234';
 /* ======================================== */
 
-var APP_VERSION = '1105-v16';   // 每次更新都改這個，用來確認 iPad 載入的是新版
+var APP_VERSION = '1105-v17';   // 每次更新都改這個，用來確認 iPad 載入的是新版
 var WD = '日一二三四五六';
 var SPEND_CATS = ['零食', '文具', '玩具', '捐款', '其他'];
 var INCOME_CATS = ['零用錢', '紅包', '獎勵', '其他'];
@@ -826,7 +826,7 @@ var DEMO_DATA = {
   tasks: [{ name: '寫功課', days: '每天', stars: 2, type: '準時', cond: '20:00', bonus: 1 },
     { name: '刷牙挑戰', days: '每天', stars: 1, type: '限時挑戰', cond: '3', bonus: 1 },
     { name: '喝水', days: '每天', stars: 1, type: '次數', cond: '6' },
-    { name: '閱讀 20 分鐘', days: '每天', stars: 1, type: '連續', cond: '7', bonus: 3 },
+    { name: '閱讀 20 分鐘', days: '每天', stars: 1, type: '計時', cond: '20' },
     { name: '看卡通', days: '每天', stars: 1, type: '一般', pre: '寫功課' },
     { name: '專注 2 次', days: '每天', stars: 1, type: '專注', cond: '2' },
     { name: '整理房間', days: '每天', stars: 2, type: '一般', parent: true },
@@ -1060,18 +1060,19 @@ function pinnedReward() {
 }
 
 /* ===== 任務類型（怎麼完成）＋ 附加規則（解鎖條件、家長確認） ===== */
-var TASK_TYPES = ['一般', '準時', '限時挑戰', '時段打卡', '次數', '連續', '專注'];
+var TASK_TYPES = ['一般', '準時', '限時挑戰', '計時', '時段打卡', '次數', '連續', '專注'];
 var TYPE_DESC = {
   '一般': '點一下就完成',
   '準時': '在指定時間前完成，準時就多拿加碼',
   '限時挑戰': '小朋友點「開始」後倒數，時間內完成就多拿加碼',
+  '計時': '點「開始」計時，累積滿指定分鐘才能打勾（像閱讀 20 分鐘，中途可以暫停）',
   '時段打卡': '只有在指定的時間範圍內才能打勾',
   '次數': '要點滿指定次數才算完成（像喝水 6 杯）',
   '連續': '每天做，每連續做滿指定天數那天多拿加碼',
   '專注': '今天完成指定次數的蕃茄鐘專注，就自動打勾'
 };
 var BONUS_DESC = { '準時': '在截止時間前完成，額外再給的星數', '限時挑戰': '在限定分鐘內完成，額外再給的星數', '連續': '每連續完成滿指定天數，那一天額外再給的星數' };
-var TYPE_ICON = { '一般': '', '準時': '⏰', '限時挑戰': '⏱', '時段打卡': '🕒', '次數': '✚', '連續': '🔥', '專注': '🍅' };
+var TYPE_ICON = { '一般': '', '準時': '⏰', '限時挑戰': '⏱', '計時': '⏳', '時段打卡': '🕒', '次數': '✚', '連續': '🔥', '專注': '🍅' };
 var OLD_TYPE = { '截止': '準時', '挑戰': '限時挑戰', '時段': '時段打卡' };
 function normTask(t) {
   t.type = t.type || '一般';
@@ -1097,6 +1098,7 @@ function fmtMin(m) { return pad(Math.floor(m / 60)) + ':' + pad(m % 60); }
 function tstate() {
   var d = ymd(new Date());
   if (!S.tst || S.tst.date !== d) S.tst = { date: d, ch: {}, cnt: {}, grant: {} };
+  if (!S.tst.tm) S.tst.tm = {};
   return S.tst;
 }
 function findTask(name) { for (var i = 0; i < C.tasks.length; i++) if (C.tasks[i].name === name) return C.tasks[i]; return null; }
@@ -1108,6 +1110,15 @@ function streakOf(t) {
   var n = 0;
   while (set[ymd(d)]) { n++; d = addDays(d, -1); }
   return n;
+}
+/* 計時任務：累積的時間（暫停後可以接著算） */
+function tmGet(t) { var st = tstate(); if (!st.tm[t.name]) st.tm[t.name] = { acc: 0, s0: 0 }; return st.tm[t.name]; }
+function tmMs(o) { return (o.acc || 0) + (o.s0 ? (now() - o.s0) * TIME_SCALE : 0); }        // 換算成真實的毫秒
+function tmText(ms) { var sec = Math.floor(ms / 1000); return pad(Math.floor(sec / 60)) + ':' + pad(sec % 60); }
+function tmChip(o, mins) {
+  var ms = tmMs(o), goal = mins * 60000, ok = ms >= goal;
+  return (o.s0 ? '⏳ 計時中 ' : '⏸ 已累積 ') + tmText(ms) + ' / ' + pad(mins) + ':00' +
+    (ok ? '　✔ 時間到！點一下完成' : (o.s0 ? '　點一下暫停' : '　點一下繼續'));
 }
 function cdLeft(s0, mins) { return mins * 60000 / TIME_SCALE - (now() - s0); }
 function cdText(s0, mins) {
@@ -1140,6 +1151,15 @@ function taskInfo(t) {
       r.cls = cdLeft(s0, mins) < 0 ? 'late' : 'warn';
       r.bg = barBg(1 - cdLeft(s0, mins) / (mins * 60000 / TIME_SCALE), cdLeft(s0, mins) < 0);
     } else r.chip = '⏱ 點一下開始 ' + mins + ' 分鐘挑戰' + (t.bonus ? '　成功再 +' + t.bonus : '');
+  } else if (type === '計時') {
+    var gm = Number(c) || 20, o = (st.tm || {})[t.name];
+    if (done) r.chip = '⏳ 累積 ' + gm + ' 分鐘完成！';
+    else if (o && (o.s0 || o.acc)) {
+      var ms = tmMs(o);
+      r.chip = '<span data-tm="' + esc(t.name) + '" data-mins="' + gm + '">' + tmChip(o, gm) + '</span>';
+      r.cls = ms >= gm * 60000 ? '' : 'warn';
+      r.bg = barBg(ms / (gm * 60000), false);
+    } else r.chip = '⏳ 點一下開始計時，要滿 ' + gm + ' 分鐘';
   } else if (type === '時段打卡') {
     var pp = String(c).split(/[-~～到]/), a = parseHM(pp[0]), b = parseHM(pp[1]), m = nowMin();
     r.chip = '🕒 ' + (a >= 0 ? fmtMin(a) : '') + '–' + (b >= 0 ? fmtMin(b) : '') + ' 才能打卡';
@@ -1160,6 +1180,16 @@ function taskInfo(t) {
   return r;
 }
 function tickTasks() {
+  var tms = document.querySelectorAll('[data-tm]'), j;
+  for (j = 0; j < tms.length; j++) {
+    var tn = tms[j].getAttribute('data-tm'), tk = findTask(tn), gm = +tms[j].getAttribute('data-mins'), st0 = tstate(), o = st0.tm[tn];
+    if (!tk || !o) continue;
+    var ms = tmMs(o), trow = tms[j].parentNode.parentNode.parentNode;
+    tms[j].textContent = tmChip(o, gm);
+    tms[j].parentNode.className = 'tchip' + (ms >= gm * 60000 ? '' : ' warn');
+    if (trow && trow.className.indexOf('task') >= 0) trow.setAttribute('style', barBg(ms / (gm * 60000), false));
+    if (o.s0 && ms >= gm * 60000 && !o.said) { o.said = 1; saveS(); if (!kidSay('tmReach', gm)) toast('⏳ ' + gm + ' 分鐘到了！點一下完成'); }
+  }
   var els = document.querySelectorAll('[data-cd]');
   for (var i = 0; i < els.length; i++) {
     var s0 = +els[i].getAttribute('data-cd'), m = +els[i].getAttribute('data-mins'), l = cdLeft(s0, m), row = els[i].parentNode.parentNode.parentNode;
@@ -1172,6 +1202,7 @@ function completeTask(t, bonus, line, x) {
   var st = tstate(), n = (Number(t.stars) || 0) + (bonus || 0), ref = ymd(new Date()) + '|' + t.name;
   st.grant[t.name] = n;
   delete st.ch[t.name];
+  if (st.tm && st.tm[t.name]) { st.tm[t.name].acc = tmMs(st.tm[t.name]); st.tm[t.name].s0 = 0; }
   saveS();
   var gem = taskGem(t);
   addTreasure(gem.id, 1);
@@ -1231,6 +1262,7 @@ var TPL = [
   ['⏰ 寫功課 20:00 前', { name: '寫功課', type: '準時', cond: '20:00', stars: 2, bonus: 1, days: '平日' }],
   ['⏱ 刷牙 3 分鐘挑戰', { name: '刷牙挑戰', type: '限時挑戰', cond: '3', stars: 1, bonus: 1, days: '每天' }],
   ['⏱ 10 分鐘整理書包', { name: '整理書包', type: '限時挑戰', cond: '10', stars: 1, bonus: 1, days: '平日' }],
+  ['⏳ 閱讀 20 分鐘（計時）', { name: '閱讀 20 分鐘', type: '計時', cond: '20', stars: 1, days: '每天' }],
   ['🕒 早起打卡', { name: '早起打卡', type: '時段打卡', cond: '06:30-07:15', stars: 1, days: '平日' }],
   ['✚ 喝水 6 杯', { name: '喝水', type: '次數', cond: '6', stars: 1, days: '每天' }],
   ['🔥 連續閱讀 7 天', { name: '閱讀 20 分鐘', type: '連續', cond: '7', stars: 1, bonus: 3, days: '每天' }],
@@ -1265,6 +1297,7 @@ function condField() {
   var t = PF.type, h = '';
   if (t === '準時') h = '<label><span>截止時間</span><select name="cond">' + timeOpts(PF.cond, 5 * 60, 23 * 60 + 45) + '</select></label>';
   else if (t === '限時挑戰') h = '<label><span>限時</span><select name="cond">' + numOpts(PF.cond, [1, 2, 3, 5, 8, 10, 15, 20, 30, 45, 60], '分鐘') + '</select></label>';
+  else if (t === '計時') h = '<label><span>至少要</span><select name="cond">' + numOpts(PF.cond, [5, 10, 15, 20, 25, 30, 40, 45, 60, 90], '分鐘') + '</select></label>';
   else if (t === '時段打卡') h = '<label><span>開始</span><select name="cond">' + timeOpts(PF.cond, 5 * 60, 23 * 60 + 45) + '</select>' +
     '<span class="pgap">到</span><select name="c2">' + timeOpts(PF.c2, 5 * 60, 23 * 60 + 45) + '</select></label>';
   else if (t === '次數') h = '<label><span>次數</span><select name="cond">' + numOpts(PF.cond, [2, 3, 4, 5, 6, 7, 8, 10, 12, 15, 20], '次') + '</select></label>';
@@ -1276,6 +1309,7 @@ function taskSummary(t) {
   var c = '';
   if (t.type === '準時') c = t.cond + ' 前';
   else if (t.type === '限時挑戰') c = t.cond + ' 分鐘';
+  else if (t.type === '計時') c = '滿 ' + t.cond + ' 分鐘';
   else if (t.type === '時段打卡') c = t.cond;
   else if (t.type === '次數' || t.type === '專注') c = t.cond + ' 次';
   else if (t.type === '連續') c = '每 ' + t.cond + ' 天';
@@ -1735,7 +1769,7 @@ var RARITY = { 1: ['普通', '#868e96'], 2: ['少見', '#2f9e44'], 3: ['稀有',
 var FIXED_SRC = { moonstone: 1, cards: 1, crown: 1, grandjewel: 1 };   // 固定來源，不參加隨機分配
 var POOL = { 1: [], 2: [], 3: [], 4: [], 5: [] };
 (function () { for (var i = 0; i < TR.length; i++) if (!FIXED_SRC[TR[i].id]) POOL[TR[i].r].push(TR[i]); })();
-var HARD_TYPES = { '準時': 1, '限時挑戰': 1, '連續': 1 };
+var HARD_TYPES = { '準時': 1, '限時挑戰': 1, '計時': 1, '連續': 1 };
 function rarityTag(r) { return '<span class="rtag" style="background:' + RARITY[r][1] + '">' + new Array(r + 1).join('★') + ' ' + RARITY[r][0] + '</span>'; }
 /* 隨機掉落：優先給還沒收集到的 */
 function randomDrop(r) {
@@ -2961,6 +2995,11 @@ var KID_LINES = {
   taskLate: ["完成了！雖然超過時間，但有做完就很棒。下次早一點開始吧。", "時間過了一點，不過你沒有放棄，這很重要。", "完成！下次試試看先做最難的，就不會拖到時間了。", "有做完就值得肯定。明天我們挑戰準時，好嗎？", "慢了一點點，沒關係。魔術師也要練習很多次。", "完成任務！下次把時鐘當成對手，一起贏過它吧。", "雖然超時，但你堅持到最後，給你拍拍手。", "晚了一些，但完成比完美更重要。", "下次提早十分鐘開始，就能拿到加碼喔。", "任務完成！明天再來挑戰準時吧。", "遲到了一點，但保持撲克臉，明天再準時登場。", "怪盜也有失手的時候，重要的是下一次的表演。"],
   chStart: ["限時挑戰開始！目標：{x} 分鐘內完成！", "計時開始——讓我看看你的速度！", "挑戰開始！動作要快，但也要做好喔。", "預備——開始！時鐘已經在跑了。", "這是一場和時間的比賽，加油！", "挑戰啟動！我在旁邊幫你計時。", "開始！一流的怪盜，動作都很俐落。", "限時任務開始，Show Time！", "倒數開始，專心衝刺吧！", "時鐘開始轉動，看你的了！", "Ladies and gentlemen, it's show time！限時挑戰開始！", "保持撲克臉，動作要快——{x} 分鐘，開始！"],
   chWin: ["挑戰成功！只花了 {x}，比時間還快！", "太快了！我差點看不清你的動作。", "限時挑戰達成！加碼寶石到手。", "速度與品質兼具，完美！", "挑戰成功！這速度連滑翔翼都追不上。", "在時間內完成了，真有你的！", "漂亮！時鐘輸給你了。", "挑戰達成！下次能不能更快一點呢？", "成功！這就是專注的力量。", "贏了！帥氣地完成了挑戰。", "BINGO！挑戰成功，只花了 {x}。", "完美主義者的速度，就是這麼快！", "對我怪盜基德而言沒有不可能，對你也一樣！"],
+  tmStart: ["計時開始！目標：{x} 分鐘，慢慢看、好好讀。", "時鐘開始轉了，今晚的書就是你的寶藏。", "開始計時！讀書的時候，連怪盜也不會打擾你。", "Show Time！{x} 分鐘的閱讀之旅出發。", "好書配好時光——開始吧！", "計時啟動。翻開書頁，就像打開寶石箱一樣。"],
+  tmPause: ["先暫停，休息一下也可以。還差 {x} 分鐘喔。", "時間幫你存起來了，還差 {x} 分鐘，回來再點一下繼續。", "暫停！剛剛的時間都還在，不會不見。", "休息一下吧，還剩 {x} 分鐘，等你回來。"],
+  tmResume: ["繼續計時！還差 {x} 分鐘就達成了。", "歡迎回來！接著剛剛的時間繼續算。", "計時繼續，再 {x} 分鐘，寶石就是你的。"],
+  tmReach: ["{x} 分鐘到了！想多讀一點也可以，讀完再點一下完成。", "時間達標！你可以收工，也可以繼續看下去。", "叮！{x} 分鐘完成，隨時點一下就能拿寶石。", "了不起，一口氣累積了 {x} 分鐘！"],
+  tmDone: ["完成！一共累積了 {x}，真有耐心。", "時間任務達成，總共 {x}！", "這份專注，連名偵探都要佩服。", "讀完了！今天的你又多知道了一點秘密。", "累積 {x}，寶石到手！"],
   chLose: ["完成了！這次超過一點時間，下次一定可以。", "時間到了也沒放棄，很好！再練習幾次就會變快。", "完成！這次比時間慢了一點，明天再挑戰。", "有做完就是勝利。速度可以慢慢練。", "雖然超時，但你堅持到底，很棒。", "下次試試看先準備好東西再開始，會更快喔。", "完成任務！差一點點就成功了。", "沒關係，連魔術也要練習很多次才會成功。", "完成了！明天我們再跟時鐘比一次。", "慢慢來比較快——但下次我們一起試試看快一點！", "就算失手也要保持撲克臉，下次再來。", "一流的魔術，都是失敗很多次才練成的。", "好奇心再加上練習，下次一定能成功。"],
   locked: ["這項任務還沒開放喔，{x}。", "別急別急，時機還沒到。{x}", "這扇門還鎖著——{x}。", "要先完成條件才能打開這項任務喔。{x}", "一流的怪盜都很有耐心。{x}", "還不是時候，{x}。", "按照順序來，才是聰明的做法。{x}", "先別心急，{x}。", "這項任務被施了魔法，{x}。", "時機成熟才能出手，{x}。", "有些門還不能打開——{x}。", "就像潘多拉的盒子，時候未到就別急著打開。{x}"],
   streak: ["連續 {x} 天！這份堅持比任何寶石都珍貴。", "連續達成 {x} 天，加碼寶石送給你！", "{x} 天不間斷，你真的很厲害。", "連續紀錄 {x} 天！習慣就是這樣養成的。", "{x} 天連勝！我都想把你寫進預告函了。", "堅持了 {x} 天，了不起！", "連續 {x} 天的努力，終於開花結果了。", "這就是持之以恆的力量——{x} 天！", "{x} 天的連續紀錄，閃閃發亮。", "厲害！連續 {x} 天，繼續保持！", "BINGO！連續 {x} 天，連完美主義者都佩服。", "連續 {x} 天！對你來說，果然沒有不可能。"],
@@ -3257,6 +3296,21 @@ var ACTS = {
       }
       var ok = cdLeft(st.ch[t.name], mins) >= 0, sec = Math.round((now() - st.ch[t.name]) * TIME_SCALE / 1000);
       finish(function () { completeTask(t, ok ? b : 0, ok ? 'chWin' : 'chLose', Math.floor(sec / 60) + ' 分 ' + (sec % 60) + ' 秒'); });
+      return;
+    }
+    if (type === '計時') {
+      var gm = Number(t.cond) || 20, o = tmGet(t), ms = tmMs(o);
+      if (ms >= gm * 60000) {                                   // 時間夠了：完成（多讀的時間也記下來）
+        finish(function () { completeTask(t, 0, 'tmDone', tmText(tmMs(o)).replace(':', ' 分 ') + ' 秒'); });
+        return;
+      }
+      if (o.s0) {                                               // 計時中 → 暫停
+        o.acc = ms; o.s0 = 0; saveS(); renderTasks();
+        if (!kidSay('tmPause', Math.ceil((gm * 60000 - ms) / 60000))) toast('⏸ 暫停，還差 ' + Math.ceil((gm * 60000 - ms) / 60000) + ' 分鐘');
+        return;
+      }
+      o.s0 = now(); saveS(); renderTasks();                     // 開始／繼續
+      if (!kidSay(ms > 0 ? 'tmResume' : 'tmStart', ms > 0 ? Math.ceil((gm * 60000 - ms) / 60000) : gm)) toast('⏳ 開始計時！目標 ' + gm + ' 分鐘');
       return;
     }
     if (type === '準時') {
