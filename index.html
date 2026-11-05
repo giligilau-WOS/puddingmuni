@@ -618,6 +618,16 @@
   body.L-narrow .rpg-ava { width: 64px; height: 64px; }
   body.L-narrow .rpg-text { font-size: 18px; min-height: 52px; }
 
+  /* BONUS 加碼對話框 */
+  .rpg-box.bonus { border-color: #ffd43b; background: rgba(43,33,112,0.97); -webkit-animation: bglow 1.2s ease-in-out infinite alternate; animation: bglow 1.2s ease-in-out infinite alternate; }
+  @-webkit-keyframes bglow { from { border-color: #ffd43b; } to { border-color: #fff3bf; } }
+  @keyframes bglow { from { border-color: #ffd43b; } to { border-color: #fff3bf; } }
+  .rpg-badge { display: none; position: absolute; left: 50%; top: -20px; width: 180px; margin-left: -90px; text-align: center; background: #ffd43b; color: #1b1446;
+    font-weight: bold; font-size: 18px; border-radius: 14px; padding: 3px 0; -webkit-animation: bpop 0.6s ease-in-out infinite alternate; animation: bpop 0.6s ease-in-out infinite alternate; }
+  @-webkit-keyframes bpop { from { -webkit-transform: scale(1); } to { -webkit-transform: scale(1.08); } }
+  @keyframes bpop { from { transform: scale(1); } to { transform: scale(1.08); } }
+  .rpg-box.bonus .rline { color: #ffe066; font-weight: bold; }
+
   /* 對話框裡的獎勵與按鈕 */
   .rwd { margin-top: 6px; }
   .rchip { display: inline-block; margin: 0 6px 4px 0; padding: 3px 12px; border-radius: 14px; font-size: 18px; font-weight: bold; }
@@ -677,7 +687,7 @@
 <div id="ov"><div id="ovBox"></div></div>
 <div id="toast"></div>
 <div id="dim"></div>
-<div id="rpg"><div class="rpg-box"><img id="rpgAva" class="rpg-ava" alt="">
+<div id="rpg"><div id="rpgBadge" class="rpg-badge">✨ BONUS! ✨</div><div id="rpgBox" class="rpg-box"><img id="rpgAva" class="rpg-ava" alt="">
   <div class="rpg-main"><span class="rpg-name">怪盜基德</span><div id="rpgText" class="rpg-text"></div><div id="rpgExtra"></div></div>
   <div class="rpg-next">▼</div></div></div>
 <div id="demoBar"></div>
@@ -691,7 +701,7 @@ var API_URL = 'https://script.google.com/macros/s/AKfycbxY-7ZoZfDN-pRjV-p0rnsqRY
 var API_KEY = 'change-me-1234';
 /* ======================================== */
 
-var APP_VERSION = '1105-v14';   // 每次更新都改這個，用來確認 iPad 載入的是新版
+var APP_VERSION = '1105-v15';   // 每次更新都改這個，用來確認 iPad 載入的是新版
 var WD = '日一二三四五六';
 var SPEND_CATS = ['零食', '文具', '玩具', '捐款', '其他'];
 var INCOME_CATS = ['零用錢', '紅包', '獎勵', '其他'];
@@ -1134,14 +1144,36 @@ function completeTask(t, bonus, line, x) {
   starEvent(n, '完成：' + t.name + (bonus ? '（加碼 +' + bonus + '）' : ''), 'task', ref);
   var all = true, tl = todayTasks();
   for (var k = 0; k < tl.length; k++) if (!taskDone(tl[k].name)) all = false;
-  LAST_REWARD = gemReward(gem, n, bonus, progressLine());
-  var drops = [], today = ymd(new Date());
-  if (bonus > 0 && Math.random() < 0.25) drops.push(dropInfo(randomDrop(3)));               // 加碼成功：25% 掉落 ★3
-  if (all && S.allDrop !== today) { S.allDrop = today; saveS(); drops.push(dropInfo(randomDrop(Math.random() < 0.4 ? 3 : 2))); }   // 全部完成：一定掉落 ★2／★3
-  if (drops.length) { LAST_REWARD.drops = drops; LAST_REWARD.line += '　🎁 額外掉落了寶物！'; }
+  LAST_REWARD = gemReward(gem, n - (bonus || 0), 0, progressLine());     // 第一段：基本獎勵
+  var drops = [], today = ymd(new Date()), reasons = [];
+  if (bonus > 0) {
+    reasons.push(t.type === '準時' ? '準時完成' : (t.type === '限時挑戰' ? '在時間內完成挑戰' : (t.type === '連續' ? '連續完成 ' + (streakOf(t)) + ' 天' : '達成加碼條件')));
+    if (Math.random() < 0.25) drops.push(dropInfo(randomDrop(3)));                         // 加碼成功：25% 掉落 ★3
+  }
+  if (all && S.allDrop !== today) {                                                      // 全部完成：一定掉落 ★2／★3
+    S.allDrop = today; saveS();
+    drops.push(dropInfo(randomDrop(Math.random() < 0.4 ? 3 : 2)));
+    reasons.push('今天的任務全部完成');
+  }
+  LAST_BONUS = reasons.length ? { reason: reasons.join('，而且'), r: { n: bonus || 0, bonusTag: !!bonus, drops: drops, line: bonusLine(bonus, drops) } } : null;
+  var choices = [['next', '下一個任務！'], ['gem:' + gem.id, '看看寶物'], ['thanks', '謝謝基德']];
   if (all && kidOn()) showCard('new');
-  else if (!kidSay(line || 'task', x || gem.name, { r: LAST_REWARD, c: [['next', '下一個任務！'], ['gem:' + gem.id, '看看寶物'], ['thanks', '謝謝基德']] }))
-    toast('太棒了！+' + n + SYM() + (bonus ? '（含加碼 ' + bonus + '）' : '') + '・' + gem.name + (drops.length ? '・額外掉落 ' + drops[0].gem.name : ''));
+  else if (kidSay(line || 'task', x || gem.name, { r: LAST_REWARD, c: LAST_BONUS ? null : choices, quick: !!LAST_BONUS })) sayBonus(choices);
+  else toast('太棒了！+' + n + SYM() + (bonus ? '（含加碼 ' + bonus + '）' : '') + '・' + gem.name + (drops.length ? '・額外掉落 ' + drops[0].gem.name : ''));
+}
+var LAST_BONUS = null;
+function bonusLine(bonus, drops) {
+  var a = [];
+  if (bonus) a.push('加碼寶石 +' + bonus);
+  if (drops.length) a.push('額外掉落 ' + drops.length + ' 件寶物');
+  return '🎁 ' + a.join('、') + '！';
+}
+/* 第二段：BONUS 加碼獎勵 */
+function sayBonus(choices) {
+  if (!LAST_BONUS) return;
+  var b = LAST_BONUS;
+  LAST_BONUS = null;
+  kidSay('bonus', b.reason, { r: b.r, c: choices, bonus: true });
 }
 function uncompleteTask(t) {
   var st = tstate(), n = st.grant[t.name] || Number(t.stars) || 0, ref = ymd(new Date()) + '|' + t.name;
@@ -2854,6 +2886,7 @@ var KID_LINES = {
   unlock: ["新路線解鎖：{x}！下一次專注，就飛這條吧。", "恭喜！你解鎖了新航線：{x}。", "本週的努力換來新的天空——{x}，出發吧！", "新的目的地出現了：{x}。我已經迫不及待了。", "解鎖成功！{x}的夜景，一定很漂亮。", "你的專注打開了新的航線：{x}！", "新航線{x}已開通，滑翔翼隨時待命。", "厲害！連{x}的路線都被你解鎖了。", "{x}，等著我們吧！", "新的舞台：{x}。下一次專注就在那裡表演！", "BINGO！新航線開通：{x}！"],
   sleep: ["已經九點了。就算是怪盜，也需要充足的睡眠喔，晚安。", "月亮都爬到天空正中央了——該上床囉，明天見。", "今天的表演到此結束。晚安，好夢。", "早點睡，明天才有精神繼續閃閃發亮。", "熬夜不是紳士的作風喔。該睡覺了。", "把書包收好、刷好牙，就去睡吧。晚安。", "夜晚是我的工作時間，卻是你的休息時間。晚安！", "睡個好覺，夢裡也許會遇見滑翔翼喔。", "明天見！今晚的月亮會守護你的。", "該關燈囉。今天辛苦了，晚安。", "再見了，小魔術師。在宣告今天結束的鐘聲下，我們明天一定會再見面的。", "今晚的表演到此為止，好好睡吧——明天見。", "就算是神出鬼沒的怪盜，也要乖乖睡覺。晚安。"],
   bday: ["生日快樂，小布丁！今晚的月亮，是特地為你升起的。", "七月九日——全世界最重要的日子之一。小布丁，生日快樂！", "我原本想偷走一顆寶石，結果發現最閃亮的是今天的壽星。生日快樂！", "Ladies and Gentlemen，請為今天的主角小布丁鼓掌！", "又長大一歲了！願你今年的每一天，都像魔術一樣精彩。", "生日快樂！白鴿們都飛來幫你唱生日歌了。", "小布丁，生日快樂。今天的任務就是——好好被大家寵愛。", "許個願吧！這次換我幫你守護它。", "今天的預告函特別不一樣喔，記得完成任務去收下它。", "生日快樂！你是我見過最認真、最閃亮的小魔術師。", "生日快樂！今天的你，比任何寶石都閃亮——BINGO！", "Ladies and gentlemen，今天的主角是小布丁！生日快樂！"],
+  bonus: ["BONUS！因為你{x}，怪盜基德再送你額外的獎勵！", "等等——表演還沒結束！{x}，這是加碼獎勵！", "Ladies and gentlemen，加碼時間到！{x}，請收下！", "BINGO！{x}——完美主義者也要為你加分！", "對我怪盜基德而言沒有不可能，對你也是——{x}，加碼送上！", "帽子裡還藏著一份驚喜……{x}，加碼獎勵！", "{x}！這份加碼，是給一流表演者的掌聲。", "嘿，別急著走——{x}，還有 BONUS 喔！", "紳士說話算話：{x}，加碼寶石送到！", "月光為你多亮了一點：{x}，額外獎勵到手！"],
   moneyTip: ["理財小祕訣：買東西前先問自己——這是「需要」，還是「想要」？", "想要的東西，先等三天再決定。三天後還想要，才是真的想要。", "紳士的習慣：拿到零用錢，先存一部分，再花剩下的。", "小錢也會變大錢。每天省 10 元，一個月就有 300 元喔。", "買之前比一比價格，同樣的東西，聰明的人會買到更划算的。", "試試看把錢分成三份：存起來、花掉、分享給別人。", "把存錢目標寫下來，每天看一眼，就比較不會亂花。", "零食吃完就沒了，但存下來的錢，可以換到更大的夢想。", "朋友有的東西，不一定你也需要。不跟風，也是一種帥氣。", "記帳的人最厲害——因為你知道每一塊錢跑到哪裡去了。", "大目標可以拆成小目標，一步一步存，就一定到得了。", "借來的錢一定要還。守信用，是比寶石更珍貴的東西。", "好的東西可以用很久。買的時候想想：它能陪我多久？", "花錢買經驗也很棒，例如一本好書，或一次學習的機會。", "如果今天沒有花錢，那也是一種勝利喔。", "東西壞了先想想能不能修好，修好再用也很酷。", "等待的時間，會讓你更珍惜得到的東西。", "看到「限時特價」先冷靜。真正需要的東西，不怕等一下。", "存錢就像收集寶石，一顆一顆，最後會變成寶藏。", "錢是工具，不是目標。把它用在讓你和別人開心的地方吧。", "冰淇淋很冰，但也很甜；存錢一開始很辛苦，最後也會很甜。", "像潘多拉的盒子一樣，衝動購物前先停一下，想清楚再打開錢包。", "怪盜是不會說謊的：存下來的每一塊錢，都會守護你的夢想。"],
   specialDone: ["成績登記完成！這次一共拿到 {x} 顆寶石，努力有回報！", "了不起！{x} 顆寶石，是你認真準備換來的。", "考試辛苦了！{x} 顆寶石送給你。", "這份成績單，比任何寶石都閃亮——{x} 顆收下吧！", "準備考試的每一天都沒有白費，{x} 顆寶石到手！", "漂亮的成績！今晚的月亮也為你驕傲。", "{x} 顆寶石入庫！一流的實力，就是這樣練出來的。", "太棒了！下次的目標，我們一起再往上挑戰。", "辛苦了，好好休息一下吧。{x} 顆寶石是你的。", "成績出爐！你的努力，我都看在眼裡。", "BINGO！{x} 顆寶石到手，這份成績完美！", "對我怪盜基德而言沒有不可能——你用實力證明了！", "我是完美主義者，但這份成績，我給滿分。", "準備的每一天都沒有白費。{x} 顆寶石，收下吧！"],
   specialZero: ["這次沒有拿到寶石，但努力的過程一樣重要。下次一起加油！", "分數不是全部，願意面對結果的你很勇敢。", "這次差一點點，我們找出不會的地方，下次就會進步。", "一流的魔術師也失敗過很多次，重要的是再試一次。", "沒關係，這次的經驗就是下次的祕密武器。", "比起分數，我更在意你有沒有盡力——你有，對吧？", "下次的舞台，一定能更精彩。", "跌倒了就站起來，這才是真正的帥氣。", "我們把這次當作練習，下一次正式表演再發光！", "別灰心，月亮也有圓有缺，下次一定會更好。", "雖然結果不如預期，但記得——無論何時都要保持撲克臉。", "冰淇淋很冰，但它是甜的；這次的經驗，也會變成甜甜的收穫。", "怪盜也有失手的時候，下一次的舞台，我們一定會再見面。"],
@@ -2883,7 +2916,7 @@ function kidSay(kind, x, extra) {
 }
 function kidSayText(text, extra, now) {
   if (!kidOn()) return false;
-  var it = { t: text, r: extra && extra.r ? rewardHtml(extra.r) : '', c: extra && extra.c ? extra.c : null };
+  var it = { t: text, r: extra && extra.r ? rewardHtml(extra.r) : '', c: extra && extra.c ? extra.c : null, quick: extra && extra.quick, bonus: extra && extra.bonus };
   if (now) { RPG.queue = [it]; rpgNext(); return true; }       // 回應按鈕：馬上換成這一句
   RPG.queue.push(it);
   if (RPG.queue.length > 3) RPG.queue.shift();
@@ -2893,7 +2926,7 @@ function kidSayText(text, extra, now) {
 /* 對話框裡的獎勵明細 */
 function rewardHtml(o) {
   var h = '<div class="rwd">';
-  if (o.n) h += '<span class="rchip dia">' + SYM() + ' +' + o.n + (o.bonus ? '<small>（含加碼 ' + o.bonus + '）</small>' : '') + '</span>';
+  if (o.n) h += '<span class="rchip dia">' + SYM() + ' +' + o.n + (o.bonusTag ? '<small>加碼</small>' : (o.bonus ? '<small>（含加碼 ' + o.bonus + '）</small>' : '')) + '</span>';
   function chip(x, drop) {
     return '<span class="rchip gem' + (drop ? ' drop' : '') + '" style="border-color:' + RARITY[x.gem.r][1] + '">' + gemSvg(x.gem, 22) + ' ' + x.gem.name +
       '<small style="color:' + RARITY[x.gem.r][1] + '">' + new Array(x.gem.r + 1).join('★') + '</small>' + (x.first ? '<small>新收藏！</small>' : '<small>×' + x.cnt + '</small>') + '</span>';
@@ -2944,6 +2977,9 @@ function rpgNext() {
   RPG.full = t;
   RPG.cur = it;
   $('rpgExtra').innerHTML = '';
+  $('rpgBox').className = 'rpg-box' + (it.bonus ? ' bonus' : '');
+  $('rpgBadge').style.display = it.bonus ? 'block' : 'none';
+  if (it.bonus) beep(2, 0.12);
   var av = KID_IMG.avatars, k = Math.floor(Math.random() * av.length);   // 每次隨機換頭像
   if (k === RPG.lastAva) k = (k + 1) % av.length;
   RPG.lastAva = k;
@@ -2966,7 +3002,7 @@ function rpgExtra() {
   }
   $('rpgExtra').innerHTML = h;
   clearTimeout(RPG.timer);
-  RPG.timer = setTimeout(rpgNext, it.c ? 15000 : (it.r ? 8000 : 5000));
+  RPG.timer = setTimeout(rpgNext, it.c ? 15000 : (it.quick ? 3500 : (it.r ? 8000 : 5000)));
 }
 function rpgTap(e) {
   var el = e && e.target;
@@ -3343,7 +3379,11 @@ var ACTS = {
   closeCard: function (mode) {
     if (mode === 'view') { openCollect('card'); return; }
     closeOv();
-    if (mode === 'new') kidSay('taskAll', null, LAST_REWARD ? { r: LAST_REWARD, c: [['shop', '去商店逛逛'], ['gem:' + LAST_REWARD.gem.id, '看看寶物'], ['thanks', '謝謝基德']] } : null);
+    if (mode === 'new') {
+      var ch = LAST_REWARD ? [['shop', '去商店逛逛'], ['gem:' + LAST_REWARD.gem.id, '看看寶物'], ['thanks', '謝謝基德']] : null;
+      kidSay('taskAll', null, LAST_REWARD ? { r: LAST_REWARD, c: LAST_BONUS ? null : ch, quick: !!LAST_BONUS } : null);
+      sayBonus(ch);
+    }
   },
   viewCard: function (md) {
     var p = md.split('-'), y = new Date().getFullYear();
