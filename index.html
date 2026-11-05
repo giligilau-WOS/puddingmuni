@@ -200,6 +200,52 @@
   }
   .mbtn.out { background: #e8590c; } .mbtn.in { background: #2f9e44; }
 
+  /* 零用錢金庫（分頁） */
+  .mhead { display: flex; align-items: center; flex-shrink: 0; padding-right: 28px; }
+  .mhead h2 { flex: 1; margin-bottom: 4px; }
+  .mnav { width: 34px; height: 30px; display: flex; align-items: center; justify-content: center; font-size: 26px; color: #1c3d8f; border-radius: 8px; background: #edf2ff; line-height: 1; }
+  .mtitle { min-width: 100px; text-align: center; font-size: 14px; white-space: nowrap; font-weight: bold; color: #495057; }
+  .mbody { flex: 1; min-height: 0; display: flex; flex-direction: column; overflow: hidden; }
+  .slide-l { -webkit-animation: slidel 0.25s ease-out; animation: slidel 0.25s ease-out; }
+  .slide-r { -webkit-animation: slider 0.25s ease-out; animation: slider 0.25s ease-out; }
+  @-webkit-keyframes slidel { from { -webkit-transform: translateX(30px); opacity: 0; } to { -webkit-transform: none; opacity: 1; } }
+  @keyframes slidel { from { transform: translateX(30px); opacity: 0; } to { transform: none; opacity: 1; } }
+  @-webkit-keyframes slider { from { -webkit-transform: translateX(-30px); opacity: 0; } to { -webkit-transform: none; opacity: 1; } }
+  @keyframes slider { from { transform: translateX(-30px); opacity: 0; } to { transform: none; opacity: 1; } }
+  .mdots { text-align: center; height: 12px; flex-shrink: 0; }
+  .mdots i { display: inline-block; width: 7px; height: 7px; border-radius: 4px; background: #ced4da; margin: 0 3px; }
+  .mdots i.on { background: #1c3d8f; width: 16px; }
+  .mbal { display: flex; align-items: baseline; flex-shrink: 0; }
+  .mbal small { font-size: 14px; color: #7b8794; margin-right: 8px; }
+  .mbal #bal { font-size: 36px; }
+  .goalbox { background: #fff9db; border: 2px solid #fcc419; border-radius: 12px; padding: 6px 10px; margin: 4px 0; flex-shrink: 0; }
+  .gtop { display: flex; font-size: 16px; } .gtop b { margin-right: 6px; } .gtop span { margin-left: auto; font-weight: bold; color: #e67700; }
+  .gbar { position: relative; height: 20px; background: #ffe8a1; border-radius: 10px; overflow: hidden; margin: 4px 0 3px; }
+  .gbar i { display: block; height: 100%; background: #40c057; border-radius: 10px; }
+  .gbar span { position: absolute; left: 0; right: 0; top: 0; text-align: center; font-size: 13px; line-height: 20px; font-weight: bold; color: #2b2f33; }
+  .gsub { font-size: 13px; color: #6b5a12; } .gsub b { color: #e8590c; }
+  .rec { cursor: pointer; }
+  .tiles { display: flex; margin: 2px -3px 4px; flex-shrink: 0; }
+  .tiles div { flex: 1; margin: 0 3px; background: #f8f9fa; border-radius: 10px; text-align: center; padding: 4px 0; }
+  .tiles small { display: block; font-size: 13px; color: #7b8794; } .tiles b { font-size: 22px; }
+  .msub { font-size: 14px; color: #7b8794; margin: 2px 0; flex-shrink: 0; }
+  .cbar { display: flex; align-items: center; font-size: 15px; margin: 3px 0; }
+  .cbar span { width: 64px; overflow: hidden; white-space: nowrap; } .cbar b { width: 64px; text-align: right; color: #c92a2a; }
+  .cbar div { flex: 1; height: 14px; background: #f1f3f5; border-radius: 7px; overflow: hidden; } .cbar i { display: block; height: 100%; background: #ff8787; border-radius: 7px; }
+  .legend { font-size: 14px; color: #495057; flex-shrink: 0; margin-bottom: 2px; }
+  .lg { display: inline-block; width: 12px; height: 12px; border-radius: 3px; vertical-align: middle; }
+  .lg.in { background: #40c057; } .lg.out { background: #fa5252; }
+  .mchart { flex: 1; min-height: 80px; }
+  .cgrid { stroke: #e9ecef; stroke-width: 1; } .caxis { font-size: 10px; fill: #868e96; }
+  .cin { fill: #40c057; } .cout { fill: #fa5252; }
+  .cline { fill: none; stroke: #1c7ed6; stroke-width: 2.5; stroke-linejoin: round; } .carea { fill: #1c7ed6; opacity: 0.12; } .cdot { fill: #1c7ed6; }
+  .cgoal { stroke: #f59f00; stroke-width: 1.5; stroke-dasharray: 4 3; }
+  .advice { overflow-y: auto; -webkit-overflow-scrolling: touch; }
+  .adv { display: flex; align-items: flex-start; font-size: 15px; line-height: 1.45; margin-bottom: 5px; }
+  .adv span { width: 26px; flex-shrink: 0; } .adv p { margin: 0; }
+  .recd { font-size: 17px; line-height: 1.9; } .recd b { display: inline-block; width: 60px; color: #7b8794; }
+  .okbtn.delbtn, body.th-kid .okbtn.delbtn, body.th-candy .okbtn.delbtn, body.th-ocean .okbtn.delbtn, body.th-forest .okbtn.delbtn, body.th-space .okbtn.delbtn { background: #e03131; }
+
   /* 彈出視窗 */
   #ov { display: none; position: fixed; left: 0; top: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.45); z-index: 10; }
   #ovBox {
@@ -519,7 +565,7 @@ var API_URL = 'https://script.google.com/macros/s/AKfycbxY-7ZoZfDN-pRjV-p0rnsqRY
 var API_KEY = 'change-me-1234';
 /* ======================================== */
 
-var APP_VERSION = '1105-v5';   // 每次更新都改這個，用來確認 iPad 載入的是新版
+var APP_VERSION = '1105-v6';   // 每次更新都改這個，用來確認 iPad 載入的是新版
 var WD = '日一二三四五六';
 var SPEND_CATS = ['零食', '文具', '玩具', '捐款', '其他'];
 var INCOME_CATS = ['零用錢', '紅包', '獎勵', '其他'];
@@ -637,6 +683,17 @@ var S = lsGet(K('pp_state'), DEMO ? { theme: 'kid', font: 'naikai', pomoStyle: '
   if (!S.font) S.font = 'huninn';
   if (!S.pomoStyle) S.pomoStyle = 'pie';
   if (!S.bag) S.bag = {};
+  if (DEMO && !C.ledger) {                    // 模擬資料：過去 45 天的收支
+    var L = [], d0 = midnight(new Date()), bal = 0, items = [['收入', '每週零用錢', 150, 7], ['支出', '零食', 25, 5], ['支出', '文具', 40, 9], ['支出', '玩具', 120, 20], ['收入', '獎勵', 50, 11], ['支出', '捐款', 20, 15]];
+    for (var dd = 45; dd >= 0; dd--) {
+      var day = new Date(d0.getTime()); day.setDate(day.getDate() - dd);
+      for (var q = 0; q < items.length; q++) if ((45 - dd) % items[q][3] === 0) {
+        L.push({ id: 'demo' + dd + '_' + q, date: ymd(day), type: items[q][0], desc: items[q][1], amt: items[q][2], src: 'iPad' });
+        bal += items[q][0] === '支出' ? -items[q][2] : items[q][2];
+      }
+    }
+    C.ledger = L; C.ledgerBalance = bal;
+  }
 })();
 function saveOut() { lsSet(K('pp_outbox'), OUT); }
 function saveS() { lsSet(K('pp_state'), S); }
@@ -673,15 +730,32 @@ function applyLocal(e) {
       if (C.date !== today) { C.date = today; C.taskNet = {}; }
       C.taskNet[nm] = (C.taskNet[nm] || 0) + (e.type === 'task' ? 1 : -1);
     }
-  } else {
+  } else if (e.kind === 'ledger') {
     C.ledgerBalance = (Number(C.ledgerBalance) || 0) + (e.type === '支出' ? -e.amt : e.amt);
-    C.ledgerRecent.unshift({ date: e.date, type: e.type, desc: e.desc, amt: e.amt });
-    C.ledgerRecent = C.ledgerRecent.slice(0, 5);
+    if (!C.ledger) C.ledger = [];
+    C.ledger.push({ id: e.id, date: e.date, type: e.type, desc: e.desc, amt: e.amt, src: e.src || 'iPad' });
+  }
+  lsSet(K('pp_cache'), C);
+}
+/* 修正記帳：先在本機套用，再上傳給試算表 */
+function signed(r) { return r.type === '支出' ? -Number(r.amt) : Number(r.amt); }
+function applyFix(e) {
+  var L = C.ledger || [];
+  for (var i = 0; i < L.length; i++) {
+    if (L[i].id !== e.target) continue;
+    C.ledgerBalance = (Number(C.ledgerBalance) || 0) - signed(L[i]);
+    if (e.op === 'delete') L.splice(i, 1);
+    else {
+      L[i].type = e.type; L[i].desc = e.desc; L[i].amt = e.amt;
+      C.ledgerBalance += signed(L[i]);
+    }
+    break;
   }
   lsSet(K('pp_cache'), C);
 }
 function addEvent(e) {
   e.id = e.id || uid();
+  if (e.kind === 'ledgerFix') { applyFix(e); if (DEMO) { renderAll(); return; } }
   if (DEMO) { applyLocal(e); renderAll(); return; }
   OUT.push(e);
   saveOut();
@@ -1565,27 +1639,213 @@ function renderSched() {
   fitSched();
 }
 
-function renderMoney() {
-  var bal = balance(), cfg = C.config;
-  var h = '<h2>' + ic(3) + '零用錢金庫</h2><div class="mtop"><div id="bal">$' + money(bal) + '</div>';
-  if (cfg.goalAmount > 0) {
-    var p = pct(bal, cfg.goalAmount);
-    h += '<div class="goal">' + esc(cfg.goalName || '存錢目標') + '：$' + money(cfg.goalAmount) + '（' + p + '%）' +
-      '<div class="bar"><i style="width:' + p + '%"></i></div></div>';
+/* ===== 零用錢金庫：可以左右滑動的 6 頁 ===== */
+var MPAGES = ['總覽', '收入', '支出', '收支比較', '資產變化', '理財小教室'];
+function ledgerAll() {
+  var L = [], src = C.ledger || C.ledgerRecent || [], i;
+  for (i = 0; i < src.length; i++) {
+    L.push({ id: src[i].id || '', date: String(src[i].date || '').slice(0, 10), type: src[i].type === '支出' ? '支出' : '收入',
+      desc: src[i].desc, amt: Number(src[i].amt) || 0, src: src[i].src || '', pend: false });
   }
-  h += '</div><div class="recent">';
-  var rows = [];
-  for (var i = OUT.length - 1; i >= 0; i--) if (OUT[i].kind === 'ledger') rows.push({ e: OUT[i], pend: true });
-  for (i = 0; i < C.ledgerRecent.length; i++) rows.push({ e: C.ledgerRecent[i], pend: false });
-  if (!rows.length) h += '<div class="empty">還沒有紀錄</div>';
-  for (i = 0; i < rows.length && i < 4; i++) {
-    var e = rows[i].e, dd = parseYmd(e.date), isOut = e.type === '支出';
-    h += '<div class="rec"><span class="rd">' + (dd ? (dd.getMonth() + 1) + '/' + dd.getDate() : '') + '</span>' +
-      '<span class="rt">' + esc(e.desc) + (rows[i].pend ? ' <span class="pend">待上傳</span>' : '') + '</span>' +
-      '<span class="ra ' + (isOut ? 'minus' : 'plus') + '">' + (isOut ? '-' : '+') + money(e.amt) + '</span></div>';
+  for (i = 0; i < OUT.length; i++) {
+    var e = OUT[i];
+    if (e.kind === 'ledger') L.push({ id: e.id, date: e.date, type: e.type, desc: e.desc, amt: e.amt, src: 'iPad', pend: true });
   }
+  return L;
+}
+function findRec(id) { var L = ledgerAll(); for (var i = 0; i < L.length; i++) if (L[i].id === id) return L[i]; return null; }
+function sumWhere(L, type, from, to) {
+  var t = 0;
+  for (var i = 0; i < L.length; i++) if (L[i].type === type && L[i].date >= from && L[i].date <= to) t += L[i].amt;
+  return t;
+}
+function addDays(d, n) { var x = new Date(d.getTime()); x.setDate(x.getDate() + n); return x; }
+function periods() {
+  var t = new Date(), today = ymd(t);
+  return { today: today, week: weekKey(), month: today.slice(0, 8) + '01' };
+}
+/* 過去 n 天，每天結束時的存款 */
+function balanceHistory(n) {
+  var L = ledgerAll(), bal = balance(), out = [], t0 = midnight(new Date());
+  for (var k = 0; k < n; k++) {
+    var day = ymd(addDays(t0, -k)), after = 0;
+    for (var i = 0; i < L.length; i++) if (L[i].date > day) after += signed(L[i]);
+    out.unshift({ d: day, v: bal - after });
+  }
+  return out;
+}
+function avgDailySave(days) {
+  var h = balanceHistory(days + 1);
+  return (h[h.length - 1].v - h[0].v) / days;
+}
+function recRow(r) {
+  var dd = parseYmd(r.date), isOut = r.type === '支出';
+  return '<div class="rec" data-act="rec" data-arg="' + esc(r.id) + '"><span class="rd">' + (dd ? (dd.getMonth() + 1) + '/' + dd.getDate() : '') + '</span>' +
+    '<span class="rt">' + esc(r.desc) + (r.pend ? ' <span class="pend">待上傳</span>' : '') + '</span>' +
+    '<span class="ra ' + (isOut ? 'minus' : 'plus') + '">' + (isOut ? '-' : '+') + money(r.amt) + '</span></div>';
+}
+function tiles(L, type) {
+  var P = periods(), cls = type === '支出' ? 'minus' : 'plus';
+  return '<div class="tiles"><div><small>今天</small><b class="' + cls + '">$' + money(sumWhere(L, type, P.today, P.today)) + '</b></div>' +
+    '<div><small>本週</small><b class="' + cls + '">$' + money(sumWhere(L, type, P.week, P.today)) + '</b></div>' +
+    '<div><small>本月</small><b class="' + cls + '">$' + money(sumWhere(L, type, P.month, P.today)) + '</b></div></div>';
+}
+function goalInfo() {
+  var cfg = C.config, bal = balance();
+  if (!(cfg.goalAmount > 0)) return null;
+  var left = Math.max(0, cfg.goalAmount - Math.max(0, bal)), avg = avgDailySave(30), eta = '';
+  if (!left) eta = '已經達成目標了！';
+  else if (avg > 0) eta = '照最近的速度，大約 ' + Math.ceil(left / avg) + ' 天後達成';
+  else eta = '最近存款沒有增加，加油！';
+  return { name: cfg.goalName || '存錢目標', amt: cfg.goalAmount, p: pct(bal, cfg.goalAmount), left: left, eta: eta };
+}
+function moneyPage(pg) {
+  var L = ledgerAll(), h = '', i, n;
+  if (pg === 0) {
+    var g = goalInfo();
+    h += '<div class="mbal"><small>目前存款</small><b id="bal">$' + money(balance()) + '</b></div>';
+    if (g) {
+      h += '<div class="goalbox"><div class="gtop">🎯 存錢目標：<b>' + esc(g.name) + '</b><span>$' + money(g.amt) + '</span></div>' +
+        '<div class="gbar"><i style="width:' + g.p + '%"></i><span>' + g.p + '%</span></div>' +
+        '<div class="gsub">' + (g.left ? '還差 <b>$' + money(g.left) + '</b>・' : '') + g.eta + '</div></div>';
+    }
+    h += '<div class="recent">';
+    for (i = L.length - 1, n = 0; i >= 0 && n < 3; i--, n++) h += recRow(L[i]);
+    if (!L.length) h += '<div class="empty">還沒有紀錄</div>';
+    return h + '</div>';
+  }
+  if (pg === 1 || pg === 2) {
+    var type = pg === 1 ? '收入' : '支出';
+    h += tiles(L, type);
+    if (pg === 2) {                                   // 本月花在哪裡
+      var P = periods(), cat = {}, tot = 0, keys = [];
+      for (i = 0; i < L.length; i++) if (L[i].type === '支出' && L[i].date >= P.month) { cat[L[i].desc] = (cat[L[i].desc] || 0) + L[i].amt; tot += L[i].amt; }
+      for (var k in cat) if (cat.hasOwnProperty(k)) keys.push(k);
+      keys.sort(function (a, b) { return cat[b] - cat[a]; });
+      h += '<div class="msub">本月花在哪裡</div>';
+      if (!keys.length) h += '<div class="empty">這個月還沒有花錢 👍</div>';
+      for (i = 0; i < keys.length && i < 4; i++) {
+        h += '<div class="cbar"><span>' + esc(keys[i]) + '</span><div><i style="width:' + pct(cat[keys[i]], cat[keys[0]]) + '%"></i></div><b>$' + money(cat[keys[i]]) + '</b></div>';
+      }
+      return h;
+    }
+    h += '<div class="msub">最近的收入</div><div class="recent">';
+    for (i = L.length - 1, n = 0; i >= 0 && n < 4; i--) if (L[i].type === type) { h += recRow(L[i]); n++; }
+    if (!n) h += '<div class="empty">還沒有收入紀錄</div>';
+    return h + '</div>';
+  }
+  if (pg === 3) return '<div class="legend"><span class="lg in"></span>收入　<span class="lg out"></span>支出　（最近 6 週）</div><div id="mchart" class="mchart"></div>';
+  if (pg === 4) {
+    var hist = balanceHistory(30), d = hist[hist.length - 1].v - hist[0].v;
+    return '<div class="legend">30 天前 $' + money(hist[0].v) + ' → 今天 $' + money(hist[hist.length - 1].v) +
+      '　<b class="' + (d >= 0 ? 'plus' : 'minus') + '">' + (d >= 0 ? '+' : '') + money(d) + '</b></div><div id="mchart" class="mchart"></div>';
+  }
+  return '<div class="advice">' + adviceList().join('') + '</div>';
+}
+/* 理財小教室：依照記帳資料給建議 */
+function adviceList() {
+  var L = ledgerAll(), P = periods(), out = [], inc = sumWhere(L, '收入', P.month, P.today), exp = sumWhere(L, '支出', P.month, P.today);
+  if (!inc && !exp) out.push(['📒', '這個月還沒有記帳紀錄。記帳是理財的第一步喔！']);
+  else if (inc > 0) {
+    var rate = Math.round((inc - exp) / inc * 100);
+    if (rate >= 50) out.push(['🏆', '這個月存下了收入的 ' + rate + '%，非常厲害！']);
+    else if (rate >= 0) out.push(['💡', '這個月存下了 ' + rate + '%。試試看拿到錢先存一半，再花剩下的。']);
+    else out.push(['⚠️', '這個月花的比收入多 $' + money(exp - inc) + '。下個月試試「先存再花」。']);
+  } else out.push(['⚠️', '這個月只有支出、沒有收入，要小心存款越來越少喔。']);
+  var cat = {}, top = '', topv = 0;
+  for (var i = 0; i < L.length; i++) if (L[i].type === '支出' && L[i].date >= P.month) cat[L[i].desc] = (cat[L[i].desc] || 0) + L[i].amt;
+  for (var k in cat) if (cat.hasOwnProperty(k) && cat[k] > topv) { top = k; topv = cat[k]; }
+  if (top) out.push(['🔍', '這個月最多花在「' + top + '」，共 $' + money(topv) + '（佔支出 ' + pct(topv, exp) + '%）。']);
+  var g = goalInfo();
+  if (g) out.push(['🎯', g.left ? '離「' + g.name + '」還差 $' + money(g.left) + '。' + g.eta + (/[！。]$/.test(g.eta) ? '' : '。') : '恭喜！「' + g.name + '」的錢已經存夠了！']);
+  var last = '';
+  for (i = L.length - 1; i >= 0; i--) if (L[i].type === '支出') { last = L[i].date; break; }
+  var days = last ? dayDiff(parseYmd(last), new Date()) : 0;
+  if (days >= 2) out.push(['🌟', '已經連續 ' + days + ' 天沒有花錢了，真會存錢！']);
+  var tips = KID_LINES.moneyTip;
+  out.push(['🎩', tips[new Date().getDate() % tips.length]]);
+  var h = [];
+  for (i = 0; i < out.length; i++) h.push('<div class="adv"><span>' + out[i][0] + '</span><p>' + esc(out[i][1]) + '</p></div>');
+  return h;
+}
+/* 圖表依卡片實際大小繪製 */
+function drawMoneyChart(pg) {
+  var el = $('mchart');
+  if (!el) return;
+  var W = el.clientWidth || 300, H = el.clientHeight || 140, g = '', i;
+  if (H < 80) H = 80;
+  var L = ledgerAll(), padL = 34, padB = 18, cw = W - padL - 6, ch = H - padB - 8;
+  function y(v, max, min) { return 8 + ch - (v - min) / ((max - min) || 1) * ch; }
+  if (pg === 3) {
+    var mon = parseYmd(weekKey()), data = [], max = 1;
+    for (var w = 5; w >= 0; w--) {
+      var st = addDays(mon, -7 * w), en = addDays(st, 6), a = sumWhere(L, '收入', ymd(st), ymd(en)), b = sumWhere(L, '支出', ymd(st), ymd(en));
+      data.push([st, a, b]);
+      max = Math.max(max, a, b);
+    }
+    var bw = cw / 6;
+    for (i = 0; i <= 2; i++) { var gy = y(max * i / 2, max, 0); g += '<line x1="' + padL + '" y1="' + gy + '" x2="' + (W - 4) + '" y2="' + gy + '" class="cgrid"/><text x="' + (padL - 4) + '" y="' + (gy + 4) + '" class="caxis" text-anchor="end">' + Math.round(max * i / 2) + '</text>'; }
+    for (i = 0; i < 6; i++) {
+      var x0 = padL + i * bw + bw * 0.15, bwi = bw * 0.33;
+      g += '<rect x="' + x0.toFixed(1) + '" y="' + y(data[i][1], max, 0).toFixed(1) + '" width="' + bwi.toFixed(1) + '" height="' + (8 + ch - y(data[i][1], max, 0)).toFixed(1) + '" class="cin" rx="2"/>' +
+        '<rect x="' + (x0 + bwi + 2).toFixed(1) + '" y="' + y(data[i][2], max, 0).toFixed(1) + '" width="' + bwi.toFixed(1) + '" height="' + (8 + ch - y(data[i][2], max, 0)).toFixed(1) + '" class="cout" rx="2"/>' +
+        '<text x="' + (padL + i * bw + bw / 2).toFixed(1) + '" y="' + (H - 4) + '" class="caxis" text-anchor="middle">' + (i === 5 ? '本週' : (data[i][0].getMonth() + 1) + '/' + data[i][0].getDate()) + '</text>';
+    }
+  } else {
+    var hist = balanceHistory(30), mx = -1e9, mn = 1e9;
+    for (i = 0; i < hist.length; i++) { mx = Math.max(mx, hist[i].v); mn = Math.min(mn, hist[i].v); }
+    if (mn > 0) mn = 0;
+    if (mx === mn) mx = mn + 100;
+    var pts = [], step = cw / (hist.length - 1);
+    for (i = 0; i < hist.length; i++) pts.push((padL + i * step).toFixed(1) + ',' + y(hist[i].v, mx, mn).toFixed(1));
+    for (i = 0; i <= 2; i++) { var v = mn + (mx - mn) * i / 2, yy = y(v, mx, mn); g += '<line x1="' + padL + '" y1="' + yy + '" x2="' + (W - 4) + '" y2="' + yy + '" class="cgrid"/><text x="' + (padL - 4) + '" y="' + (yy + 4) + '" class="caxis" text-anchor="end">' + Math.round(v) + '</text>'; }
+    var gl = C.config.goalAmount;
+    if (gl > 0 && gl <= mx) { var gy2 = y(gl, mx, mn); g += '<line x1="' + padL + '" y1="' + gy2 + '" x2="' + (W - 4) + '" y2="' + gy2 + '" class="cgoal"/><text x="' + (W - 6) + '" y="' + (gy2 - 3) + '" class="caxis" text-anchor="end">目標</text>'; }
+    g += '<polygon points="' + padL + ',' + (8 + ch) + ' ' + pts.join(' ') + ' ' + (padL + cw) + ',' + (8 + ch) + '" class="carea"/><polyline points="' + pts.join(' ') + '" class="cline"/>' +
+      '<circle cx="' + (padL + cw) + '" cy="' + y(hist[hist.length - 1].v, mx, mn).toFixed(1) + '" r="4" class="cdot"/>' +
+      '<text x="' + padL + '" y="' + (H - 4) + '" class="caxis">30 天前</text><text x="' + (W - 6) + '" y="' + (H - 4) + '" class="caxis" text-anchor="end">今天</text>';
+  }
+  el.innerHTML = '<svg width="' + W + '" height="' + H + '" viewBox="0 0 ' + W + ' ' + H + '">' + g + '</svg>';
+}
+function renderMoney(dir) {
+  var pg = S.mpage || 0;
+  if (pg < 0 || pg >= MPAGES.length) pg = 0;
+  var h = '<div class="mhead"><h2>' + ic(3) + '零用錢金庫</h2><span class="mnav" data-act="mpage" data-arg="-1">‹</span>' +
+    '<span class="mtitle">' + MPAGES[pg] + '</span><span class="mnav" data-act="mpage" data-arg="1">›</span></div>' +
+    '<div class="mbody' + (dir ? (dir > 0 ? ' slide-l' : ' slide-r') : '') + '">' + moneyPage(pg) + '</div><div class="mdots">';
+  for (var i = 0; i < MPAGES.length; i++) h += '<i' + (i === pg ? ' class="on"' : '') + '></i>';
   h += '</div><div class="mrow"><div class="mbtn out" data-act="spend">記支出</div><div class="mbtn in" data-act="income">記收入 🔒</div></div>';
   $('cMoney').innerHTML = h;
+  if (pg === 3 || pg === 4) drawMoneyChart(pg);
+}
+function flipMoney(d) {
+  S.mpage = ((S.mpage || 0) + d + MPAGES.length) % MPAGES.length;
+  saveS();
+  renderMoney(d);
+}
+/* 點一筆紀錄：看詳細、需要家長密碼才能修改 */
+function openRecord(id) {
+  var r = findRec(id);
+  if (!r) return;
+  openOv(function () {
+    var h = ovHead('記帳紀錄') + '<div class="recd"><div><b>日期</b>' + esc(r.date) + '</div><div><b>收支</b><span class="' + (r.type === '支出' ? 'minus' : 'plus') + '">' + r.type + '</span></div>' +
+      '<div><b>項目</b>' + esc(r.desc) + '</div><div><b>金額</b>$' + money(r.amt) + '</div><div><b>來源</b>' + esc(r.src || (r.pend ? 'iPad（待上傳）' : '')) + '</div></div>';
+    if (!r.id) return h + '<div class="pend" style="margin-top:8px">這筆是舊紀錄，請先按「同步」一次，就可以修改了。</div>';
+    return h + '<div class="okbtn" data-act="recEdit" data-arg="' + esc(r.id) + '">✏️ 記錯了，要修改（需要家長密碼）</div>';
+  });
+}
+function fixRecord(r, op, type, desc, amt) {
+  var i;
+  if (r.pend) {                                         // 還沒上傳：直接改待上傳的那一筆
+    for (i = 0; i < OUT.length; i++) if (OUT[i].id === r.id) {
+      if (op === 'delete') OUT.splice(i, 1);
+      else { OUT[i].type = type; OUT[i].desc = desc; OUT[i].amt = amt; }
+      break;
+    }
+    saveOut();
+    renderAll();
+  } else addEvent({ kind: 'ledgerFix', op: op, target: r.id, type: type, desc: desc, amt: amt });
+  if (!kidSay('fix')) toast(op === 'delete' ? '已刪除這筆紀錄' : '已修改');
 }
 
 function renderAll() { renderTop(); renderTasks(); renderPomo(); renderSched(); renderMoney(); renderSync(); }
@@ -1631,13 +1891,18 @@ function askPin(title, cb) {
 
 /* 記帳 */
 var KP = { type: '支出', amt: '', cat: '' };
-function openKeypad(type) {
-  KP = { type: type, amt: '', cat: '' };
+function openKeypad(type, rec) {
+  KP = { type: type, amt: rec ? String(rec.amt) : '', cat: rec ? rec.desc : '', edit: rec || null };
   openOv(function () {
-    var cats = KP.type === '支出' ? SPEND_CATS : INCOME_CATS, h = ovHead('記' + KP.type);
+    var cats = (KP.type === '支出' ? SPEND_CATS : INCOME_CATS).slice(0), h = ovHead(KP.edit ? '修改記帳' : '記' + KP.type);
+    if (KP.cat && cats.indexOf(KP.cat) < 0) cats.push(KP.cat);
+    if (KP.edit) h += '<div class="cats"><span class="cat' + (KP.type === '支出' ? ' sel' : '') + '" data-act="kptype" data-arg="支出">支出</span>' +
+      '<span class="cat' + (KP.type === '收入' ? ' sel' : '') + '" data-act="kptype" data-arg="收入">收入</span></div>';
     h += '<div class="amt ' + (KP.type === '支出' ? 'minus' : 'plus') + '">$' + (KP.amt || '0') + '</div><div class="cats">';
-    for (var i = 0; i < cats.length; i++) h += '<span class="cat' + (KP.cat === cats[i] ? ' sel' : '') + '" data-act="cat" data-arg="' + cats[i] + '">' + cats[i] + '</span>';
-    return h + '</div>' + keypad('kp') + '<div class="okbtn" data-act="kpok">確定記帳</div>';
+    for (var i = 0; i < cats.length; i++) h += '<span class="cat' + (KP.cat === cats[i] ? ' sel' : '') + '" data-act="cat" data-arg="' + esc(cats[i]) + '">' + esc(cats[i]) + '</span>';
+    h += '</div>' + keypad('kp');
+    if (KP.edit) return h + '<div class="okbtn" data-act="kpok">儲存修改</div><div class="okbtn delbtn" data-act="kpdel">刪除這筆</div>';
+    return h + '<div class="okbtn" data-act="kpok">確定記帳</div>';
   });
 }
 
@@ -1783,6 +2048,8 @@ var KID_LINES = {
   unlock: ["新路線解鎖：{x}！下一次專注，就飛這條吧。", "恭喜！你解鎖了新航線：{x}。", "本週的努力換來新的天空——{x}，出發吧！", "新的目的地出現了：{x}。我已經迫不及待了。", "解鎖成功！{x}的夜景，一定很漂亮。", "你的專注打開了新的航線：{x}！", "新航線{x}已開通，滑翔翼隨時待命。", "厲害！連{x}的路線都被你解鎖了。", "{x}，等著我們吧！", "新的舞台：{x}。下一次專注就在那裡表演！"],
   sleep: ["已經九點了。就算是怪盜，也需要充足的睡眠喔，晚安。", "月亮都爬到天空正中央了——該上床囉，明天見。", "今天的表演到此結束。晚安，好夢。", "早點睡，明天才有精神繼續閃閃發亮。", "熬夜不是紳士的作風喔。該睡覺了。", "把書包收好、刷好牙，就去睡吧。晚安。", "夜晚是我的工作時間，卻是你的休息時間。晚安！", "睡個好覺，夢裡也許會遇見滑翔翼喔。", "明天見！今晚的月亮會守護你的。", "該關燈囉。今天辛苦了，晚安。"],
   bday: ["生日快樂，小布丁！今晚的月亮，是特地為你升起的。", "七月九日——全世界最重要的日子之一。小布丁，生日快樂！", "我原本想偷走一顆寶石，結果發現最閃亮的是今天的壽星。生日快樂！", "Ladies and Gentlemen，請為今天的主角小布丁鼓掌！", "又長大一歲了！願你今年的每一天，都像魔術一樣精彩。", "生日快樂！白鴿們都飛來幫你唱生日歌了。", "小布丁，生日快樂。今天的任務就是——好好被大家寵愛。", "許個願吧！這次換我幫你守護它。", "今天的預告函特別不一樣喔，記得完成任務去收下它。", "生日快樂！你是我見過最認真、最閃亮的小魔術師。"],
+  moneyTip: ["理財小祕訣：買東西前先問自己——這是「需要」，還是「想要」？", "想要的東西，先等三天再決定。三天後還想要，才是真的想要。", "紳士的習慣：拿到零用錢，先存一部分，再花剩下的。", "小錢也會變大錢。每天省 10 元，一個月就有 300 元喔。", "買之前比一比價格，同樣的東西，聰明的人會買到更划算的。", "試試看把錢分成三份：存起來、花掉、分享給別人。", "把存錢目標寫下來，每天看一眼，就比較不會亂花。", "零食吃完就沒了，但存下來的錢，可以換到更大的夢想。", "朋友有的東西，不一定你也需要。不跟風，也是一種帥氣。", "記帳的人最厲害——因為你知道每一塊錢跑到哪裡去了。", "大目標可以拆成小目標，一步一步存，就一定到得了。", "借來的錢一定要還。守信用，是比寶石更珍貴的東西。", "好的東西可以用很久。買的時候想想：它能陪我多久？", "花錢買經驗也很棒，例如一本好書，或一次學習的機會。", "如果今天沒有花錢，那也是一種勝利喔。", "東西壞了先想想能不能修好，修好再用也很酷。", "等待的時間，會讓你更珍惜得到的東西。", "看到「限時特價」先冷靜。真正需要的東西，不怕等一下。", "存錢就像收集寶石，一顆一顆，最後會變成寶藏。", "錢是工具，不是目標。把它用在讓你和別人開心的地方吧。"],
+  fix: ["修正好了！誠實面對錯誤，是紳士的美德。", "帳本更新完成。記錯沒關係，願意改正才是最厲害的。", "修正完畢！連最厲害的魔術師，也會重新檢查道具。", "改好了。清清楚楚的帳本，才能守護你的寶藏。", "修正成功！犯錯不可怕，假裝沒看到才可怕。", "帳目已經對好了。謝謝爸爸媽媽幫忙確認喔。", "很好，錯誤被抓出來了——你比偵探還細心。", "修正完成！下次記帳時，再多看一眼金額就好。", "帳本恢復正確了，這樣存錢目標也算得準。", "改正錯誤的勇氣，比任何寶石都閃亮。"],
   spend: ["記下來了：{x}。好的魔術師都會管好自己的道具費。", "{x}已記帳。花錢之前想一想，是紳士的好習慣。", "收支記錄完成！清楚的帳本，是聰明人的祕密。", "記好了：{x}。花得開心，也要花得值得。", "這筆{x}，記得好好珍惜買到的東西喔。", "帳本更新完畢。連我都很少記得這麼仔細。", "記帳完成！知道錢去哪裡，才能存到想要的寶物。", "{x}，記下來了。下一個目標，記得慢慢存喔。", "支出記好了！管理零用錢，也是一種魔術。", "很好，每一筆都記清楚，才是真正的高手。"],
   income: ["收入入帳：{x}！你的金庫又變大了。", "{x}進帳！離存錢目標又近了一步。", "記下來了：{x}。這可是你的寶藏喔。", "金庫進帳！要好好守護這筆財寶。", "收入記好了！聰明的人會先存起來。", "{x}，入庫完成。連我都想來偷看一眼。", "財寶增加了！存錢罐正在對你微笑。", "進帳成功！照這個速度，目標很快就到了。", "收好這筆{x}吧，慢慢累積就會變成大寶石。", "收入記帳完成！你的金庫，由我來守護。"]
 };
@@ -2059,11 +2326,26 @@ var ACTS = {
     var amt = parseInt(KP.amt, 10) || 0;
     if (!amt) { toast('請輸入金額'); return; }
     if (!KP.cat) { toast('請選一個項目'); return; }
+    if (KP.edit) { var r = KP.edit; closeOv(); fixRecord(r, 'edit', KP.type, KP.cat, amt); return; }
     if (KP.type === '支出' && amt > balance()) { toast('餘額不夠喔'); return; }
     closeOv();
     ledgerEvent(KP.type, KP.cat, amt);
     if (!kidSay(KP.type === '支出' ? 'spend' : 'income', KP.cat + ' $' + amt)) toast('已記' + KP.type + ' $' + amt);
+    if (KP.type === '支出') kidSay('moneyTip');
   },
+  kpdel: function () {
+    if (!confirm('確定要刪除這筆紀錄嗎？')) return;
+    var r = KP.edit;
+    closeOv();
+    fixRecord(r, 'delete', r.type, r.desc, r.amt);
+  },
+  kptype: function (t) { KP.type = t; refreshOv(); },
+  rec: function (id) { openRecord(id); },
+  recEdit: function (id) {
+    var r = findRec(id);
+    if (r) askPin('修改記帳', function () { openKeypad(r.type, r); });
+  },
+  mpage: function (d) { flipMoney(+d); },
   pin: function (k) {
     PIN.buf = typeKey(PIN.buf, k, 4);
     PIN.msg = '';
@@ -2174,6 +2456,17 @@ function tick() {
 
 $('app').addEventListener('click', onTap, false);
 $('rpg').addEventListener('click', rpgTap, false);
+/* 零用錢卡片左右滑動 */
+(function () {
+  var sx = null, sy = 0, card = $('cMoney');
+  card.addEventListener('touchstart', function (e) { sx = e.touches[0].clientX; sy = e.touches[0].clientY; }, false);
+  card.addEventListener('touchend', function (e) {
+    if (sx === null) return;
+    var dx = e.changedTouches[0].clientX - sx, dy = e.changedTouches[0].clientY - sy;
+    sx = null;
+    if (Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy) * 1.5) flipMoney(dx < 0 ? 1 : -1);
+  }, false);
+})();
 $('rpgAva').src = KID_IMG.avatars[0];
 if (DEMO) {
   var db = $('demoBar');
