@@ -282,6 +282,33 @@
   .pform input, .pform select { flex: 1; min-width: 0; font-size: 17px; padding: 7px 8px; border: 1px solid #ced4da; border-radius: 8px; background: #fff; color: #1f2933; }
   .phint { font-size: 13px; color: #e8590c; margin: 0 0 2px 84px; }
 
+  /* 任務進度、商店、收藏區 */
+  .tprog { position: relative; height: 16px; background: #e9ecef; border-radius: 8px; overflow: hidden; margin: 0 0 6px; flex-shrink: 0; }
+  .tprog i { display: block; height: 100%; background: #40c057; border-radius: 8px; }
+  .tprog span { position: absolute; left: 0; right: 0; top: 0; text-align: center; font-size: 11px; line-height: 16px; font-weight: bold; color: #2b2f33; }
+  .sbtns { display: flex; margin: 0 -3px 4px; flex-shrink: 0; }
+  .sbtn { flex: 1; margin: 0 3px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 17px; font-weight: bold; }
+  .sbtn b { margin-left: 8px; font-size: 15px; padding: 2px 8px; border-radius: 10px; background: rgba(255,255,255,0.7); }
+  .sbtn.shop { background: #fff4e6; color: #d9480f; border: 2px solid #ffc078; }
+  .sbtn.coll { background: #edf2ff; color: #364fc7; border: 2px solid #bac8ff; }
+  .shophave { text-align: center; font-size: 17px; margin: 0 0 6px; } .shophave b { font-size: 24px; color: #e8590c; }
+  .pgrid { display: flex; flex-wrap: wrap; margin: 4px -3px 0; }
+  .pcard { width: calc(33.33% - 6px); margin: 3px; border: 2px solid #e9ecef; border-radius: 12px; text-align: center; padding: 6px 4px; background: #fff; }
+  .pcard.ok { border-color: #ffc078; background: #fff9f2; }
+  .pcard b { display: block; font-size: 14px; line-height: 1.25; height: 36px; overflow: hidden; }
+  .picon { display: block; font-size: 30px; line-height: 1.2; } .picon.big { font-size: 64px; }
+  .pprice { display: block; font-size: 14px; color: #e8590c; font-weight: bold; }
+  .pbuy { display: inline-block; margin-top: 3px; font-size: 13px; padding: 2px 10px; border-radius: 10px; background: #e9ecef; color: #868e96; }
+  .pcard.ok .pbuy { background: #fd7e14; color: #fff; }
+  .coupon { display: flex; align-items: center; padding: 6px 8px; margin: 3px 0; border: 2px dashed #fab005; border-radius: 10px; background: #fff9db; }
+  .cicon { font-size: 26px; margin-right: 8px; } .cname { flex: 1; font-size: 16px; } .cname small { display: block; font-size: 12px; color: #868e96; }
+  .ctabs { display: flex; margin-bottom: 6px; }
+  .ctab { flex: 1; text-align: center; padding: 9px 0; border-radius: 10px; background: #f1f3f5; margin: 0 3px; font-size: 16px; }
+  .ctab.sel { background: #1c3d8f; color: #fff; font-weight: bold; }
+  .tcell em { display: block; font-style: normal; font-size: 11px; color: #e8590c; }
+  .sicon { font-size: 20px; margin-right: 6px; }
+  .psel { font-size: 15px; padding: 4px; margin-right: 8px; border: 1px solid #ced4da; border-radius: 8px; background: #fff; }
+
   /* 彈出視窗 */
   #ov { display: none; position: fixed; left: 0; top: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.45); z-index: 10; }
   #ovBox {
@@ -613,7 +640,7 @@ var API_URL = 'https://script.google.com/macros/s/AKfycbxY-7ZoZfDN-pRjV-p0rnsqRY
 var API_KEY = 'change-me-1234';
 /* ======================================== */
 
-var APP_VERSION = '1105-v8';   // 每次更新都改這個，用來確認 iPad 載入的是新版
+var APP_VERSION = '1105-v9';   // 每次更新都改這個，用來確認 iPad 載入的是新版
 var WD = '日一二三四五六';
 var SPEND_CATS = ['零食', '文具', '玩具', '捐款', '其他'];
 var INCOME_CATS = ['零用錢', '紅包', '獎勵', '其他'];
@@ -1127,7 +1154,7 @@ function taskSummary(t) {
 }
 function openParent() {
   openOv(function () {
-    var list = C.tasksAll || C.tasks, h = ovHead('👪 家長設定・任務管理'), i;
+    var list = C.tasksAll || C.tasks, h = ovHead('👪 家長設定') + '<div class="okbtn" data-act="shopAdmin" style="margin:0 0 6px">🛍 商店管理（價格、上下架）</div>', i;
     h += '<div class="ovsub">目前的任務（開關＝今天出不出現；✏️ 可以修改）</div>';
     for (i = 0; i < list.length; i++) {
       var t = list[i], on = t.on !== false, g = taskGem(t);
@@ -1184,10 +1211,9 @@ function renderTasks() {
   doneN = all.length - list.length;
   for (i = 0; i < all.length; i++) if (taskDone(all[i].name)) list.push(all[i]);    // 完成的沉到最下面
   var h = '<h2 class="th2">' + ic(0) + '今日任務' + (all.length ? '<span class="tcount' + (doneN === all.length ? ' alldone' : '') + '">完成 ' + doneN + ' / ' + all.length + '</span>' : '') + '</h2>';
-  h += '<div class="starbar" data-act="rewards"><div class="sbtop"><span class="sbnum">' + SYM() + ' ' + total + '</span>';
-  h += '<span class="sbgoal">' + (rw ? '目標：' + esc(rw.name) + '（' + rw.stars + SYM() + '）　' + (isKid() ? '點我進展示館' : '點我兌換') : '點我看獎勵') + '</span></div>';
-  if (rw) h += '<div class="bar"><i style="width:' + pct(total, rw.stars) + '%"></i></div>';
-  h += '</div><div class="list">';
+  if (all.length) h += '<div class="tprog"><i style="width:' + pct(doneN, all.length) + '%"></i><span>' + pct(doneN, all.length) + '%</span></div>';
+  h += '<div class="sbtns"><div class="sbtn shop" data-act="shop">🛍 商店<b>' + SYM() + ' ' + total + '</b></div>' +
+    '<div class="sbtn coll" data-act="collect">🏆 收藏區<b>' + gotCount() + ' 件</b></div></div><div class="list">';
   if (!list.length) h += '<div class="empty">' + (C.tasks.length ? '今天沒有任務，好好休息！' : '尚未同步任務資料') + '</div>';
   for (i = 0; i < list.length; i++) {
     var done = taskDone(list[i].name), inf = taskInfo(list[i]);
@@ -1687,24 +1713,36 @@ function gemHint(g) {
 }
 function fmtTs(ts) { var m = /^(\d{4})-(\d{2})-(\d{2}) (\d{2}:\d{2})/.exec(ts || ''); return m ? m[1] + '/' + m[2] + '/' + m[3] + ' ' + m[4] : '—'; }
 var CATS = ['全部', '寶石', '飾品', '魔術道具', '古董寶物'], CAT = { f: '全部' };
-function openCatalog() {
-  openOv(function () {
-    var h = '<div class="ovh"><span class="x" data-act="rewards">← 展示館</span><h2 style="text-align:center">寶物圖鑑（' + gotCount() + ' / ' + TR.length + '）</h2><span class="x" data-act="close">關閉</span></div><div class="cats">';
-    for (var i = 0; i < CATS.length; i++) h += '<span class="cat' + (CAT.f === CATS[i] ? ' sel' : '') + '" data-act="catFilter" data-arg="' + CATS[i] + '">' + CATS[i] + '</span>';
-    h += '</div><div class="tgrid">';
-    for (i = 0; i < TR.length; i++) {
-      var t = TR[i], g = gotOf(t.id), has = g && g.n > 0;
-      if (CAT.f !== '全部' && t.cat !== CAT.f) continue;
-      h += '<div class="tcell' + (has ? '' : ' lock') + '" data-act="treasure" data-arg="' + t.id + '"><small>No.' + ('00' + t.no).slice(-3) + '</small>' +
-        gemSvg(t, 42, !has) + '<b>' + (has ? t.name : '？？？') + '</b></div>';
-    }
-    return h + '</div>';
-  });
+/* ===== 收藏區：寶物圖鑑 ＋ 預告函月曆 ===== */
+var CTAB = 'gem';
+function collectTabs() {
+  return '<div class="ovh"><h2>🏆 收藏區</h2><span class="x" data-act="close">關閉</span></div><div class="ctabs">' +
+    '<span class="ctab' + (CTAB === 'gem' ? ' sel' : '') + '" data-act="ctab" data-arg="gem">💎 寶物圖鑑 ' + gotCount() + '/' + TR.length + '</span>' +
+    '<span class="ctab' + (CTAB === 'card' ? ' sel' : '') + '" data-act="ctab" data-arg="card">📜 預告函 ' + cardCount() + '/366</span></div>';
+}
+function cardCount() { var c = S.cards || [], got = {}, n = 0; for (var i = 0; i < c.length; i++) if (!got[c[i].slice(5)]) { got[c[i].slice(5)] = 1; n++; } return n; }
+function openCollect(tab) {
+  if (tab) CTAB = tab;
+  openOv(function () { return collectTabs() + (CTAB === 'gem' ? catalogHtml() : calendarHtml()); });
+}
+function openCatalog() { openCollect('gem'); }
+function openMuseum() { openCollect('card'); }
+function catalogHtml() {
+  var h = '<div class="cats">', i;
+  for (i = 0; i < CATS.length; i++) h += '<span class="cat' + (CAT.f === CATS[i] ? ' sel' : '') + '" data-act="catFilter" data-arg="' + CATS[i] + '">' + CATS[i] + '</span>';
+  h += '</div><div class="tgrid">';
+  for (i = 0; i < TR.length; i++) {
+    var t = TR[i], g = gotOf(t.id), has = g && g.n > 0;
+    if (CAT.f !== '全部' && t.cat !== CAT.f) continue;
+    h += '<div class="tcell' + (has ? '' : ' lock') + '" data-act="treasure" data-arg="' + t.id + '"><small>No.' + ('00' + t.no).slice(-3) + '</small>' +
+      gemSvg(t, 42, !has) + '<b>' + (has ? t.name : '？？？') + '</b>' + (has && g.n > 1 ? '<em>×' + g.n + '</em>' : '') + '</div>';
+  }
+  return h + '</div><div class="pend">點任何一件寶物，可以看介紹和取得紀錄。</div>';
 }
 function openTreasure(id) {
   var t = TR_BY[id];
   openOv(function () {
-    var g = gotOf(id), has = g && g.n > 0, h = '<div class="ovh"><span class="x" data-act="catalog">← 圖鑑</span><h2></h2><span class="x" data-act="close">關閉</span></div>';
+    var g = gotOf(id), has = g && g.n > 0, h = '<div class="ovh"><span class="x" data-act="catalog">← 收藏區</span><h2></h2><span class="x" data-act="close">關閉</span></div>';
     h += '<div class="tdetail"><div class="tbig">' + gemSvg(t, 130, !has) + '</div>' +
       '<div class="tno">No.' + ('00' + t.no).slice(-3) + '・' + t.cat + '</div>' +
       '<div class="tname">' + (has ? t.name : '？？？') + '</div><div class="trare">' + new Array(t.r + 1).join('★') + '<span>' + new Array(6 - t.r).join('☆') + '</span></div>' +
@@ -1719,26 +1757,13 @@ function openTreasure(id) {
   });
 }
 var CALM = null;   // 月曆目前顯示的年月
-function openMuseum() {
-  openOv(function () {
-    var h = ovHead('💎 寶石展示館（可用寶石 ' + starTotal() + '）'), recent = [], i;
-    gotOf('');
-    for (i = 0; i < TR.length; i++) { var g = S.got[TR[i].id]; if (g && g.n > 0) recent.push([g.log[g.log.length - 1] || '', TR[i]]); }
-    recent.sort(function (x, y) { return x[0] < y[0] ? 1 : -1; });
-    h += '<div class="ovsub">寶物圖鑑（已收集 ' + recent.length + ' / ' + TR.length + ' 件）</div><div class="mus">';
-    for (i = 0; i < recent.length && i < 6; i++) {
-      var t = recent[i][1];
-      h += '<div class="case" data-act="treasure" data-arg="' + t.id + '">' + gemSvg(t, 44) + '<b>' + t.name + '</b><small>× ' + S.got[t.id].n + '</small></div>';
-    }
-    if (!recent.length) h += '<span class="pend">完成任務就能收集寶物！</span>';
-    h += '</div><div class="okbtn" data-act="catalog">📖 打開寶物圖鑑</div><div class="mus">';
-    h += '</div>';
-    var cards = S.cards || [], got = {}, n = 0;
-    for (i = 0; i < cards.length; i++) if (!got[cards[i].slice(5)]) { got[cards[i].slice(5)] = 1; n++; }
+function calendarHtml() {
+  var cards = S.cards || [], got = {}, n = 0, i, h = '';
+  for (i = 0; i < cards.length; i++) if (!got[cards[i].slice(5)]) { got[cards[i].slice(5)] = 1; n++; }
     if (!CALM) { var nd = new Date(); CALM = { y: nd.getFullYear(), m: nd.getMonth() }; }
     var first = new Date(CALM.y, CALM.m, 1), dim = new Date(CALM.y, CALM.m + 1, 0).getDate(), off = first.getDay(), mn = 0, dd, today = ymd(new Date());
     for (dd = 1; dd <= dim; dd++) if (got[pad(CALM.m + 1) + '-' + pad(dd)]) mn++;
-    h += '</div><div class="ovsub">預告函月曆（全年已收集 ' + n + ' / 366 天）</div><div class="mcal">' +
+    h += '<div class="mcal">' +
       '<div class="mcalh"><span class="mnav" data-act="calm" data-arg="-1">‹</span><div><b>' + CALM.y + ' 年 ' + (CALM.m + 1) + ' 月</b>' +
       '<small>本月收集 ' + mn + ' / ' + dim + ' 天</small></div><span class="mnav" data-act="calm" data-arg="1">›</span></div><div class="mcalg">';
     for (i = 0; i < 7; i++) h += '<span class="mcw">' + WD.charAt(i) + '</span>';
@@ -1748,9 +1773,7 @@ function openMuseum() {
       h += '<span class="mcd' + (has ? ' on' : '') + (sp ? ' sp' : '') + (ymd(dt) === today ? ' today' : '') + '"' + (has ? ' data-act="viewCard" data-arg="' + md + '"' : '') + '>' +
         dd + '<i>' + (has ? '🎩' : (sp ? '★' : '')) + '</i></span>';
     }
-    return h + '</div></div><div class="pend">藍色＝已收到（點一下可以重看）・金色框＝節日或生日特別版・左右滑動可以換月份</div>' +
-      '<div class="ovsub">用寶石兌換獎勵</div>' + rewardRows();
-  });
+    return h + '</div></div><div class="pend">藍色＝已收到（點一下可以重看）・金色框＝節日或生日特別版・左右滑動可以換月份</div>';
 }
 /* 預告函：一年 366 天，每天一張不同的內容（節日與生日有專屬版本） */
 var CARD_MONTH = {"1": ["一月的寒風吹過屋頂", "新年的月光乾淨明亮", "冬夜的星星特別清楚", "一月的窗上結著薄霜", "裹著圍巾的月亮探出頭", "寒冬的夜空一片寧靜", "一月的晚風帶著年味", "冷冷的冬夜裡月光正好"], "2": ["二月的梅花悄悄綻放", "早春的月光帶點寒意", "二月的夜空掛著彎月", "春節的燈籠還沒收起", "二月的晚風開始變暖", "冬天的尾巴輕輕搖晃", "二月的星星眨著眼睛", "梅香飄過寧靜的夜晚"], "3": ["三月的春風吹開花苞", "春雨過後月光格外清新", "三月的夜空帶著花香", "櫻花開始在月下飄落", "三月的晚風輕輕柔柔", "春天的第一聲雷剛剛走遠", "三月的月亮像一顆珍珠", "新芽在月光下伸懶腰"], "4": ["四月的春雨滴滴答答", "杜鵑花在月光下盛開", "四月的夜空清澈透明", "春天的晚風帶著青草香", "四月的月亮掛在樹梢", "雨後的星星特別閃亮", "四月的蛙鳴陪著月光", "春夜的空氣暖暖的"], "5": ["五月的桐花像雪花飄落", "初夏的月光柔和溫暖", "五月的夜空有螢火蟲", "梅雨前的晚風悶悶的", "五月的月亮又大又亮", "夏天的腳步悄悄靠近", "五月的星空熱鬧非凡", "微風吹動窗邊的窗簾"], "6": ["六月的梅雨終於停了", "初夏的蟬聲開始響起", "六月的月光照著荷花", "夏夜的晚風帶來涼意", "六月的星星像撒了一地的糖", "畢業季的鳳凰花正紅", "六月的夜空高高的", "夏天的第一個晚上真舒服"], "7": ["七月的夜晚蟬聲漸歇", "盛夏的月光照亮屋頂", "七月的星空格外遼闊", "夏夜的西瓜還冰冰涼涼", "七月的晚風吹過稻田", "螢火蟲在月下跳舞", "七月的月亮笑得燦爛", "炎熱的白天終於過去"], "8": ["八月的夜空流星劃過", "盛夏的晚風帶著海味", "八月的月亮又圓又亮", "夏天的煙火剛剛結束", "八月的星星特別多", "颱風過後夜空清澈", "八月的蟲鳴好熱鬧", "暑假的夜晚長長的"], "9": ["九月的秋風輕輕吹起", "開學後的月光格外明亮", "九月的夜空掛著圓月", "秋天的第一片落葉飄下", "九月的晚風涼涼的", "桂花香在月光下飄散", "九月的星星安安靜靜", "新學期的夜晚充滿希望"], "10": ["十月的秋高氣爽", "楓葉在月光下慢慢變紅", "十月的夜空乾淨清澈", "秋天的晚風帶著果香", "十月的月亮掛得好高", "南瓜燈在遠方亮起", "十月的星星閃閃爍爍", "涼爽的秋夜最適合飛行"], "11": ["十一月的落葉輕輕飄下", "深秋的月光帶點涼意", "十一月的夜空格外安靜", "晚風吹過金黃的銀杏", "十一月的月亮清清冷冷", "秋天的最後一場雨剛停", "十一月的星空像一片海", "厚外套的季節來臨了"], "12": ["十二月的寒風呼呼吹", "冬夜的月光潔白如雪", "十二月的夜空掛滿星星", "聖誕燈在遠方閃爍", "十二月的晚風冷冰冰", "一年的尾聲悄悄來到", "十二月的月亮特別溫柔", "冬至的湯圓還暖暖的"]};
@@ -2222,6 +2245,145 @@ function openKeypad(type, rec) {
   });
 }
 
+/* ===== 怪盜商店：50 種預設商品 ＋ 家長在試算表 Rewards 自訂的商品 ===== */
+var PRODUCTS = [
+  ["p01", "📺", "看卡通 30 分鐘", 15, "娛樂時間", 0, "選一部喜歡的卡通，好好看 30 分鐘。"],
+  ["p02", "🎮", "玩遊戲 20 分鐘", 20, "娛樂時間", 0, "平板或遊戲機都可以，時間到要自己停喔。"],
+  ["p03", "🎥", "看一部電影", 40, "娛樂時間", 0, "在家看一部完整的電影。"],
+  ["p04", "🎬", "家庭電影之夜選片權", 35, "娛樂時間", 0, "今晚全家看什麼電影，由你決定！"],
+  ["p05", "🌙", "週末晚睡 30 分鐘", 25, "娛樂時間", 0, "週五或週六可以晚 30 分鐘睡覺。"],
+  ["p06", "📚", "多聽一本故事", 8, "娛樂時間", 0, "睡前故事加一本。"],
+  ["p07", "🎤", "唱一首卡拉 OK", 10, "娛樂時間", 0, "點一首喜歡的歌，大聲唱出來！"],
+  ["p08", "🎲", "玩桌遊一局", 12, "娛樂時間", 0, "找家人一起玩一局桌遊。"],
+  ["p09", "🕐", "自由時間 1 小時", 45, "娛樂時間", 0, "一小時想做什麼都可以（安全範圍內）。"],
+  ["p10", "📡", "多看一集節目", 12, "娛樂時間", 0, "喜歡的節目可以多看一集。"],
+  ["p11", "🍦", "冰淇淋一支", 20, "美食點心", 0, "挑一支喜歡口味的冰淇淋。"],
+  ["p12", "🍬", "選一種零食", 12, "美食點心", 0, "去商店挑一包喜歡的零食。"],
+  ["p13", "🍹", "一杯飲料", 18, "美食點心", 0, "喝一杯喜歡的飲料。"],
+  ["p14", "🍕", "披薩晚餐", 60, "美食點心", 0, "全家一起吃披薩！"],
+  ["p15", "🍛", "決定今天的晚餐", 30, "美食點心", 0, "今天晚餐吃什麼，由你來決定。"],
+  ["p16", "🍩", "甜甜圈一個", 15, "美食點心", 0, "選一個喜歡的甜甜圈。"],
+  ["p17", "🍞", "早餐吃鬆餅", 25, "美食點心", 0, "週末早餐來點鬆餅。"],
+  ["p18", "🌽", "爆米花", 10, "美食點心", 0, "看電影時配一包爆米花。"],
+  ["p19", "🍰", "蛋糕一塊", 22, "美食點心", 0, "挑一塊喜歡的蛋糕。"],
+  ["p20", "🍣", "壽司大餐", 70, "美食點心", 0, "全家一起去吃壽司。"],
+  ["p21", "🌳", "去公園玩", 20, "外出活動", 0, "去公園跑跑跳跳。"],
+  ["p22", "🚲", "騎腳踏車兜風", 25, "外出活動", 0, "和家人一起騎腳踏車。"],
+  ["p23", "📖", "去圖書館", 15, "外出活動", 0, "去圖書館借喜歡的書。"],
+  ["p24", "🏊", "去游泳", 45, "外出活動", 0, "去游泳池玩水。"],
+  ["p25", "🐘", "去動物園", 120, "外出活動", 0, "去動物園看動物！"],
+  ["p26", "🎢", "去遊樂園", 250, "外出活動", 0, "夢想級獎勵：遊樂園一日遊！"],
+  ["p27", "⛺", "露營一晚", 200, "外出活動", 0, "全家一起去露營看星星。"],
+  ["p28", "🌊", "去海邊", 150, "外出活動", 0, "去海邊踏浪撿貝殼。"],
+  ["p29", "🎦", "去電影院", 100, "外出活動", 0, "去電影院看大螢幕。"],
+  ["p30", "📕", "去書店買一本書", 60, "外出活動", 0, "在書店挑一本自己喜歡的書。"],
+  ["p31", "🌟", "貼紙一張", 5, "小禮物", 0, "一張可愛的貼紙。"],
+  ["p32", "📝", "新的筆", 8, "小禮物", 0, "一支新的鉛筆或原子筆。"],
+  ["p33", "🎨", "一盒彩色筆", 30, "小禮物", 0, "畫畫用的彩色筆。"],
+  ["p34", "📗", "一本漫畫", 50, "小禮物", 0, "選一本喜歡的漫畫。"],
+  ["p35", "🎴", "拼圖一盒", 60, "小禮物", 0, "挑戰一盒拼圖。"],
+  ["p36", "🚗", "小玩具一個", 70, "小禮物", 0, "選一個小玩具。"],
+  ["p37", "🎀", "書包吊飾", 25, "小禮物", 0, "掛在書包上的可愛吊飾。"],
+  ["p38", "🎁", "神祕禮物", 100, "小禮物", 0, "爸爸媽媽準備的神祕驚喜！"],
+  ["p39", "🙅", "免做一次家事", 30, "特權", 0, "可以跳過一次家事。"],
+  ["p40", "👑", "當一天小老闆", 80, "特權", 0, "週末某一天的行程由你安排。"],
+  ["p41", "🛀", "自己決定洗澡時間", 10, "特權", 0, "今天什麼時候洗澡，自己決定。"],
+  ["p42", "💤", "跟爸媽一起睡", 25, "特權", 0, "今晚可以跟爸爸媽媽一起睡。"],
+  ["p43", "💕", "擁抱券", 3, "特權", 0, "隨時可以兌換一個大擁抱。"],
+  ["p44", "🏠", "免整理房間一次", 40, "特權", 0, "這次房間由爸媽幫忙整理。"],
+  ["p45", "🎪", "選擇週末活動", 50, "特權", 0, "這個週末去哪裡玩，由你提案。"],
+  ["p46", "👫", "和朋友玩一下午", 90, "特權", 0, "邀朋友來玩，或去朋友家玩。"],
+  ["p47", "💰", "零用錢 10 元", 5, "零用錢", 10, "換成 10 元，自動存進零用錢金庫。"],
+  ["p48", "💵", "零用錢 50 元", 22, "零用錢", 50, "換成 50 元，自動存進零用錢金庫。"],
+  ["p49", "💴", "零用錢 100 元", 42, "零用錢", 100, "換成 100 元，自動存進零用錢金庫。"],
+  ["p50", "🐷", "存錢罐加碼 20 元", 9, "零用錢", 20, "存錢目標加碼 20 元！"]
+];
+var SHOP_CATS = ['全部', '買得起', '娛樂時間', '美食點心', '外出活動', '小禮物', '特權', '零用錢', '家長特製'];
+var SHOPF = { f: '全部' };
+function prodAll(includeOff) {
+  var out = [], ov = C.shop || {}, i;
+  for (i = 0; i < PRODUCTS.length; i++) {
+    var q = PRODUCTS[i], o = ov[q[0]] || {};
+    var item = { id: q[0], icon: q[1], name: q[2], price: o.price || q[3], base: q[3], cat: q[4], money: q[5], desc: q[6], on: o.on !== false };
+    if (item.on || includeOff) out.push(item);
+  }
+  for (i = 0; i < C.rewards.length; i++) {
+    var r = C.rewards[i];
+    out.push({ id: 'r' + i, icon: '🎁', name: r.name, price: r.stars, cat: '家長特製', money: r.money || 0, desc: '爸爸媽媽特別準備的獎勵。', on: true, custom: true });
+  }
+  return out;
+}
+function findProd(id) { var a = prodAll(true); for (var i = 0; i < a.length; i++) if (a[i].id === id) return a[i]; return null; }
+function openShop() {
+  openOv(function () {
+    var have = starTotal(), h = '<div class="ovh"><h2>🛍 怪盜商店</h2><span class="x" data-act="close">關閉</span></div>' +
+      '<div class="shophave">你現在有 <b>' + SYM() + ' ' + have + '</b></div>', i;
+    var cps = [];
+    for (i = 0; i < (S.coupons || []).length; i++) if (!S.coupons[i].used) cps.push(S.coupons[i]);
+    if (cps.length) {
+      h += '<div class="ovsub">🎟 我的兌換券（請爸爸媽媽兌現後按「已使用」）</div>';
+      for (i = 0; i < cps.length; i++) {
+        h += '<div class="coupon"><span class="cicon">' + cps[i].icon + '</span><span class="cname">' + esc(cps[i].name) + '<small>' + fmtTs(cps[i].ts) + ' 兌換</small></span>' +
+          '<span class="rbtn" data-act="useCoupon" data-arg="' + cps[i].id + '">已使用</span></div>';
+      }
+    }
+    h += '<div class="cats">';
+    for (i = 0; i < SHOP_CATS.length; i++) h += '<span class="cat' + (SHOPF.f === SHOP_CATS[i] ? ' sel' : '') + '" data-act="shopCat" data-arg="' + SHOP_CATS[i] + '">' + SHOP_CATS[i] + '</span>';
+    h += '</div><div class="pgrid">';
+    var list = prodAll(false), n = 0;
+    for (i = 0; i < list.length; i++) {
+      var q = list[i], ok = have >= q.price;
+      if (SHOPF.f === '買得起' ? !ok : (SHOPF.f !== '全部' && q.cat !== SHOPF.f)) continue;
+      n++;
+      h += '<div class="pcard' + (ok ? ' ok' : '') + '" data-act="prod" data-arg="' + q.id + '"><span class="picon">' + q.icon + '</span><b>' + esc(q.name) + '</b>' +
+        '<span class="pprice">' + SYM() + ' ' + q.price + '</span><span class="pbuy">' + (ok ? '兌換' : '還差 ' + (q.price - have)) + '</span></div>';
+    }
+    if (!n) h += '<div class="empty">這一類目前沒有商品</div>';
+    return h + '</div><div class="pend">兌換時需要家長密碼。實際的獎勵，請和爸爸媽媽一起兌現。</div>';
+  });
+}
+function openProd(id) {
+  var q = findProd(id);
+  if (!q) return;
+  openOv(function () {
+    var have = starTotal(), ok = have >= q.price;
+    return '<div class="ovh"><span class="x" data-act="shop">← 商店</span><h2></h2><span class="x" data-act="close">關閉</span></div>' +
+      '<div class="tdetail"><div class="picon big">' + q.icon + '</div><div class="tname">' + esc(q.name) + '</div><div class="tno">' + q.cat + '</div>' +
+      '<div class="tintro">' + esc(q.desc) + (q.money ? '<br>兌換後會自動存入零用錢 $' + q.money + '。' : '') + '</div>' +
+      '<div class="shophave">價格 <b>' + SYM() + ' ' + q.price + '</b>　你有 ' + SYM() + ' ' + have + '</div></div>' +
+      (ok ? '<div class="okbtn" data-act="buy" data-arg="' + q.id + '">兌換（需要家長密碼）</div>' : '<div class="okbtn graybtn">還差 ' + SYM() + ' ' + (q.price - have) + '，再加油！</div>');
+  });
+}
+/* 家長的商店管理：調整價格、上下架 */
+var SADM = { f: '娛樂時間' };
+function openShopAdmin() {
+  openOv(function () {
+    var h = '<div class="ovh"><span class="x" data-act="parentBack">← 家長設定</span><h2>🛍 商店管理</h2><span class="x" data-act="close">關閉</span></div><div class="cats">', i;
+    var cats = SHOP_CATS.slice(2, 8);
+    for (i = 0; i < cats.length; i++) h += '<span class="cat' + (SADM.f === cats[i] ? ' sel' : '') + '" data-act="sadmCat" data-arg="' + cats[i] + '">' + cats[i] + '</span>';
+    h += '</div>';
+    var list = prodAll(true);
+    for (i = 0; i < list.length; i++) {
+      var q = list[i];
+      if (q.custom || q.cat !== SADM.f) continue;
+      var prices = [1, 3, 5, 8, 10, 12, 15, 18, 20, 22, 25, 30, 35, 40, 45, 50, 60, 70, 80, 90, 100, 120, 150, 200, 250, 300, 400, 500];
+      if (prices.indexOf(q.price) < 0) prices.push(q.price);
+      prices.sort(function (a, b) { return a - b; });
+      h += '<div class="ptrow"><span class="pn"><span class="sicon">' + q.icon + '</span>' + esc(q.name) + (q.price !== q.base ? '<span class="badge">原價 ' + q.base + '</span>' : '') + '</span>' +
+        '<select class="psel" data-prod="' + q.id + '">';
+      for (var k = 0; k < prices.length; k++) h += '<option value="' + prices[k] + '"' + (prices[k] === q.price ? ' selected' : '') + '>' + SYM() + ' ' + prices[k] + '</option>';
+      h += '</select><span class="sw' + (q.on ? ' on' : '') + '" data-act="sadmToggle" data-arg="' + q.id + '"><i></i></span></div>';
+    }
+    return h + '<div class="pend" style="margin-top:6px">開關＝商店裡看不看得到；改價格會馬上存進試算表的 Shop 分頁。自訂商品請在試算表的 Rewards 分頁新增，會出現在「家長特製」。</div>';
+  });
+}
+function saveShop(q, price, on) {
+  if (!C.shop) C.shop = {};
+  C.shop[q.id] = { price: price, on: on };
+  lsSet(K('pp_cache'), C);
+  parentCall({ action: 'setShop', id: q.id, name: q.name, price: price, on: on ? '1' : '0' }, '已更新「' + q.name + '」');
+}
+
 /* 自訂專注時間 */
 var MK = { buf: '' };
 function openMinutes() {
@@ -2678,7 +2840,41 @@ var ACTS = {
     closeOv();
     ACTS.pomo('f' + n);
   },
-  rewards: function () { if (isKid()) openMuseum(); else openRewards(); },
+  rewards: function () { openShop(); },
+  shop: function () { openShop(); },
+  shopCat: function (c) { SHOPF.f = c; refreshOv(); },
+  prod: function (id) { openProd(id); },
+  buy: function (id) {
+    var q = findProd(id);
+    if (!q) return;
+    if (starTotal() < q.price) { toast('寶石還不夠喔，再加油！'); return; }
+    askPin('兌換「' + q.name + '」', function () {
+      starEvent(-q.price, '兌換：' + q.name, 'redeem');
+      if (q.money > 0) ledgerEvent('收入', '寶石兌換：' + q.name, q.money, '寶石兌換');
+      else {
+        if (!S.coupons) S.coupons = [];
+        S.coupons.push({ id: uid(), pid: q.id, icon: q.icon, name: q.name, ts: ymd(new Date()) + ' ' + hm(new Date()), used: false });
+      }
+      addTreasure('crown', 1);
+      saveS();
+      if (!kidSay('redeem')) toast('兌換成功：' + q.name);
+      openShop();
+    });
+  },
+  useCoupon: function (id) {
+    askPin('兌現兌換券', function () {
+      for (var i = 0; i < (S.coupons || []).length; i++) if (S.coupons[i].id === id) { S.coupons[i].used = true; S.coupons[i].usedTs = ymd(new Date()) + ' ' + hm(new Date()); }
+      saveS();
+      toast('兌換券已使用，好好享受！');
+      openShop();
+    });
+  },
+  collect: function () { openCollect(); },
+  ctab: function (t) { openCollect(t); },
+  shopAdmin: function () { openShopAdmin(); },
+  sadmCat: function (c) { SADM.f = c; refreshOv(); },
+  sadmToggle: function (id) { var q = findProd(id); if (q) saveShop(q, q.price, !q.on); refreshOv(); },
+  parentBack: function () { openParent(); },
   catalog: function () { openCatalog(); },
   calm: function (d) {
     CALM.m += +d;
@@ -2689,7 +2885,7 @@ var ACTS = {
   catFilter: function (c) { CAT.f = c; refreshOv(); },
   treasure: function (id) { openTreasure(id); },
   closeCard: function (mode) {
-    if (mode === 'view') { openMuseum(); return; }
+    if (mode === 'view') { openCollect('card'); return; }
     closeOv();
     if (mode === 'new') kidSay('taskAll');
   },
@@ -2920,6 +3116,11 @@ if (DEMO) {
 $('ov').addEventListener('click', onTap, false);
 function formSync(e) {
   var el = e.target;
+  if (el && el.getAttribute && el.getAttribute('data-prod') && e.type === 'change') {
+    var q = findProd(el.getAttribute('data-prod'));
+    if (q) { saveShop(q, Number(el.value) || q.price, q.on); refreshOv(); }
+    return;
+  }
   if (!el || !el.name || !PF.hasOwnProperty(el.name)) return;
   PF[el.name] = el.name === 'parent' ? el.value === '1' : el.value;
   if (el.name === 'type') { PF.cond = ''; PF.c2 = ''; if (!BONUS_DESC[PF.type]) PF.bonus = '0'; refreshOv(); }
