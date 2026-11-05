@@ -328,17 +328,15 @@
   body.th-space #cMoney::after { content: "👽"; }
 
   /* ===== 主題：怪盜月夜（夜空 + 撲克牌卡片） ===== */
-  body.th-kid {
-    background-color: #0b1d51; color: #14286e;
-    background-image: radial-gradient(#ffffff 1px, transparent 2px), radial-gradient(#c5d3ff 1px, transparent 2px);
-    background-size: 80px 80px, 130px 130px; background-position: 0 0, 40px 65px;
-  }
-  body.th-kid #top { background: #14286e; border-bottom: 3px solid #ffffff; }
+  body.th-kid { background: #0b1d51 url(kid/osaka-night.svg) center bottom no-repeat; background-size: cover; color: #14286e; }
+  body.th-kid #top { background: rgba(11,29,81,0.55); border-bottom: 2px solid rgba(255,255,255,0.7); }
   body.th-kid #time, body.th-kid #date { color: #ffffff; }
   body.th-kid #syncInfo { color: #c5d3ff; }
   body.th-kid #exam.e-green { color: #8ce99a; } body.th-kid #exam.e-orange { color: #ffd43b; } body.th-kid #exam.e-red { color: #ff8787; }
   body.th-kid .tbtn { background: #ffffff; color: #14286e; border-radius: 19px; }
-  body.th-kid .card { background: #ffffff; border: 3px solid #1c3d8f; border-radius: 14px; outline: 2px solid #c5d3ff; outline-offset: -9px; }
+  body.th-kid .card { background: rgba(255,255,255,0.80); border: 3px solid rgba(255,255,255,0.95); border-radius: 14px; outline: 2px solid rgba(28,61,143,0.35); outline-offset: -9px; }
+  body.th-kid .starbar { background: rgba(237,242,255,0.85); }
+  body.th-kid .task { border-color: rgba(28,61,143,0.12); }
   body.th-kid .card h2 { color: #14286e; }
   body.th-kid #cTasks::after { content: "♠\FE0E"; color: #1c3d8f; font-family: "Apple Symbols", "Arial Unicode MS", sans-serif; }
   body.th-kid #cPomo::after { content: "♥\FE0E"; color: #e03131; font-family: "Apple Symbols", "Arial Unicode MS", sans-serif; }
@@ -366,6 +364,69 @@
   body.th-kid #ovBox { border: 6px double #1c3d8f; border-radius: 16px; }
   body.th-kid #bal { color: #1c3d8f; }
 
+  /* ===== 怪盜飛行計時器 ===== */
+  .glider { position: relative; overflow: hidden; border-radius: 12px; }
+  .glider .gmap { position: absolute; left: 0; top: 0; width: 100%; height: 100%; display: block; }
+  .glabel { fill: #ffffff; font-size: 10px; font-weight: bold; }
+  .glabel.small { font-size: 8px; fill: #dbe4ff; }
+  .kid-sprite { position: absolute; left: 0; top: 0; width: 30%; margin-left: -15%; margin-top: -12%;
+    -webkit-transition: -webkit-transform 1s linear; transition: transform 1s linear; }
+  .kid-bob { -webkit-animation: kidbob 1.4s ease-in-out infinite alternate; animation: kidbob 1.4s ease-in-out infinite alternate; }
+  .kid-flip { display: block; width: 100%; -webkit-transform: scaleX(-1); transform: scaleX(-1); }
+  .kid-sprite.rest { width: 16%; margin-left: -8%; margin-top: -11%; }
+  @-webkit-keyframes kidbob { from { -webkit-transform: translateY(-4%); } to { -webkit-transform: translateY(4%); } }
+  @keyframes kidbob { from { transform: translateY(-4%); } to { transform: translateY(4%); } }
+  .kid-dist { position: absolute; left: 8px; top: 6px; font-size: 13px; color: #fff; background: rgba(11,29,81,0.65); padding: 2px 8px; border-radius: 10px; white-space: nowrap; }
+
+  /* 白色禮帽、白鴿 */
+  .celebrate { position: fixed; z-index: 42; pointer-events: none; -webkit-transition: opacity 0.6s; transition: opacity 0.6s; }
+  .celebrate.solid { background: #ffffff; border-radius: 16px; }
+  .flip-hat { position: absolute; left: 0; top: 0; width: 100%; height: 100%; -webkit-animation: hatflip 0.9s ease-in-out forwards; animation: hatflip 0.9s ease-in-out forwards; }
+  .flip-hat svg { width: 100%; height: 100%; }
+  @-webkit-keyframes hatflip { 0% { -webkit-transform: rotate(0deg); } 60% { -webkit-transform: translateY(-6%) rotate(195deg); } 100% { -webkit-transform: translateY(4%) rotate(180deg); } }
+  @keyframes hatflip { 0% { transform: rotate(0deg); } 60% { transform: translateY(-6%) rotate(195deg); } 100% { transform: translateY(4%) rotate(180deg); } }
+  .dove { position: absolute; width: 36px; height: 26px; -webkit-transition: -webkit-transform 2s ease-out, opacity 2s ease-in; transition: transform 2s ease-out, opacity 2s ease-in; }
+  .dove svg { width: 100%; height: 100%; -webkit-animation: flap 0.25s ease-in-out infinite alternate; animation: flap 0.25s ease-in-out infinite alternate; }
+  @-webkit-keyframes flap { to { -webkit-transform: scaleY(0.6); } }
+  @keyframes flap { to { transform: scaleY(0.6); } }
+
+  /* 寶石展示館、預告函 */
+  .gem { vertical-align: middle; }
+  .tstar .gem { margin-left: 2px; }
+  .mus { display: flex; flex-wrap: wrap; margin: 0 -3px; }
+  .case { width: 33.33%; padding: 6px 3px; text-align: center; }
+  .case b { display: block; font-size: 15px; margin-top: 2px; }
+  .case small { display: block; font-size: 12px; color: #7b8794; line-height: 1.3; }
+  .case.lock b { color: #adb5bd; }
+  .cardrow { display: flex; flex-wrap: wrap; }
+  .minicard { width: 46px; margin: 3px; padding: 4px 0; text-align: center; font-size: 12px; line-height: 1.4; background: #fff9db; border: 1px solid #e9d8a6; border-radius: 4px; }
+  .yokoku { background: #fffdf3; border: 3px double #1c3d8f; border-radius: 6px; padding: 20px 26px; color: #14286e; text-align: center; }
+  .yk-title { font-size: 34px; letter-spacing: 8px; margin-bottom: 12px; }
+  .yk-body { font-size: 21px; line-height: 1.8; }
+  .yk-sign { margin-top: 14px; text-align: right; font-size: 22px; }
+  .yk-hat { display: inline-block; width: 44px; height: 44px; vertical-align: middle; }
+  .yk-hat svg { width: 100%; height: 100%; }
+  .yk-tip { margin-top: 10px; font-size: 13px; color: #7b8794; }
+
+  /* ===== RPG 對話框 ===== */
+  #rpg { display: none; position: fixed; left: 50%; bottom: 14px; width: 720px; margin-left: -360px; z-index: 45; }
+  .rpg-box { display: flex; align-items: center; background: rgba(11,29,81,0.96); border: 5px double #ffffff; border-radius: 14px; padding: 10px 14px; color: #ffffff; }
+  .rpg-ava { width: 92px; height: 92px; border-radius: 46px; border: 3px solid #ffffff; background: #fff; flex-shrink: 0; margin-right: 14px; }
+  .rpg-main { flex: 1; min-width: 0; }
+  .rpg-name { display: inline-block; background: #e03131; color: #fff; font-size: 15px; padding: 2px 12px; border-radius: 10px; margin-bottom: 4px; }
+  .rpg-text { font-size: 22px; line-height: 1.45; min-height: 64px; }
+  .rpg-next { align-self: flex-end; font-size: 16px; -webkit-animation: rpgblink 0.8s steps(2) infinite; animation: rpgblink 0.8s steps(2) infinite; }
+  @-webkit-keyframes rpgblink { to { opacity: 0; } }
+  @keyframes rpgblink { to { opacity: 0; } }
+  body.L-tall #rpg, body.L-narrow #rpg { width: 94%; margin-left: -47%; }
+  body.L-narrow .rpg-ava { width: 64px; height: 64px; }
+  body.L-narrow .rpg-text { font-size: 18px; min-height: 52px; }
+
+  /* 模擬模式控制列 */
+  #demoBar { display: none; position: fixed; left: 8px; bottom: 8px; z-index: 44; align-items: center; background: rgba(224,49,49,0.92); color: #fff; font-size: 13px; padding: 4px 6px 4px 10px; border-radius: 16px; }
+  #demoBar b { margin-right: 6px; } #demoBar span { margin-right: 6px; }
+  #demoBar .dbtn { background: #fff; color: #c92a2a; border-radius: 12px; padding: 4px 10px; margin-right: 4px; }
+
   /* 主題選擇視窗 */
   .thgrid { display: flex; flex-wrap: wrap; margin: 0 -4px 6px; }
   .thc { width: 50%; padding: 4px; }
@@ -377,6 +438,10 @@
   .fnt span { flex: 1; }
   .fnt small { color: #7b8794; font-size: 14px; }
   .ovsub { font-size: 16px; font-weight: bold; margin: 8px 0 2px; }
+  .icgrid { display: flex; flex-wrap: wrap; margin: 0 -3px; }
+  .icc { width: 20%; padding: 3px; text-align: center; font-size: 13px; line-height: 1.2; }
+  .icc img { display: block; width: 60px; height: 60px; margin: 0 auto 3px; border-radius: 14px; border: 3px solid transparent; }
+  .icc.sel img { border-color: #1971c2; }
 </style>
 </head>
 <body>
@@ -404,6 +469,10 @@
 <div id="ov"><div id="ovBox"></div></div>
 <div id="toast"></div>
 <div id="dim"></div>
+<div id="rpg"><div class="rpg-box"><img class="rpg-ava" src="kid/avatar.png" alt="">
+  <div class="rpg-main"><span class="rpg-name">怪盜基德</span><div id="rpgText" class="rpg-text"></div></div>
+  <div class="rpg-next">▼</div></div></div>
+<div id="demoBar"></div>
 <div id="errbar"></div>
 
 <script>
@@ -414,7 +483,7 @@ var API_URL = 'https://script.google.com/macros/s/AKfycbxY-7ZoZfDN-pRjV-p0rnsqRY
 var API_KEY = 'change-me-1234';
 /* ======================================== */
 
-var APP_VERSION = '1104-icon5';   // 每次更新都改這個，用來確認 iPad 載入的是新版
+var APP_VERSION = '1105-kid-demo2';   // 每次更新都改這個，用來確認 iPad 載入的是新版
 var WD = '日一二三四五六';
 var SPEND_CATS = ['零食', '文具', '玩具', '捐款', '其他'];
 var INCOME_CATS = ['零用錢', '紅包', '獎勵', '其他'];
@@ -495,9 +564,32 @@ function lsSet(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch
 
 /* ---------- 資料 ---------- */
 var DEF_CONFIG = { exams: [], holidays: [], goalName: '', goalAmount: 0, pin: '0000', pomoStars: 1, nightStart: 21, nightEnd: 6 };
-var C = lsGet('pp_cache', null) || {};          // 最後一次從試算表讀到的資料
-var OUT = lsGet('pp_outbox', []);               // 還沒上傳的紀錄
-var S = lsGet('pp_state', {});                  // 本機狀態
+/* 模擬模式：kid-demo.html 或網址加 ?demo=1。不連線、資料另外存、時間加快 60 倍 */
+var FORCE_DEMO = false;
+var DEMO = FORCE_DEMO || /[?&]demo=1/.test(location.search);
+var TIME_SCALE = DEMO ? 60 : 1;
+function K(k) { return (DEMO ? 'demo_' : '') + k; }
+var DEMO_DATA = {
+  date: '', starTotal: 12, taskNet: {}, ledgerBalance: 380,
+  tasks: [{ name: '寫功課', days: '每天', stars: 2 }, { name: '閱讀 20 分鐘', days: '每天', stars: 1 },
+    { name: '整理書包', days: '每天', stars: 1 }, { name: '練習鋼琴', days: '每天', stars: 1 }],
+  schedule: [
+    { period: '1', time: '08:40', d: ['國語', '數學', '國語', '英語', '數學'] },
+    { period: '2', time: '09:30', d: ['數學', '國語', '體育', '國語', '社會'] },
+    { period: '3', time: '10:30', d: ['體育', '音樂', '數學', '自然', '美勞'] },
+    { period: '4', time: '11:20', d: ['自然', '社會', '英語', '數學', '美勞'] },
+    { period: '放學後', time: '', d: ['安親班', '鋼琴課', '安親班', '游泳', '安親班'] }],
+  examSchedule: [],
+  reminders: [{ kw: '每天', items: '聯絡簿、鉛筆盒、水壺', clothes: '', date: '' },
+    { kw: '體育', items: '毛巾', clothes: '穿運動服和球鞋', date: '' }, { kw: '音樂', items: '直笛', clothes: '', date: '' }],
+  config: { exams: [{ name: '第二次段考', date: '2026-12-03' }], holidays: [], goalName: '樂高', goalAmount: 1500,
+    pin: '0000', pomoStars: 1, nightStart: 21, nightEnd: 6 },
+  rewards: [{ name: '零用錢 50 元', stars: 20, money: 50, top: true }, { name: '看卡通 30 分鐘', stars: 10, money: 0, top: false }],
+  ledgerRecent: [{ date: '2026-11-01', type: '收入', desc: '每週零用錢', amt: 100 }]
+};
+var C = lsGet(K('pp_cache'), null) || (DEMO ? JSON.parse(JSON.stringify(DEMO_DATA)) : {});   // 最後一次從試算表讀到的資料
+var OUT = lsGet(K('pp_outbox'), []);            // 還沒上傳的紀錄
+var S = lsGet(K('pp_state'), DEMO ? { theme: 'kid', font: 'naikai', pomoStyle: 'glider' } : {});   // 本機狀態
 (function fixData() {
   var keys = ['tasks', 'schedule', 'reminders', 'rewards', 'ledgerRecent'];
   for (var i = 0; i < keys.length; i++) if (!C[keys[i]]) C[keys[i]] = [];
@@ -510,8 +602,8 @@ var S = lsGet('pp_state', {});                  // 本機狀態
   if (!S.pomoStyle) S.pomoStyle = 'pie';
   if (!S.bag) S.bag = {};
 })();
-function saveOut() { lsSet('pp_outbox', OUT); }
-function saveS() { lsSet('pp_state', S); }
+function saveOut() { lsSet(K('pp_outbox'), OUT); }
+function saveS() { lsSet(K('pp_state'), S); }
 
 function starTotal() {
   var t = Number(C.starTotal) || 0;
@@ -536,8 +628,25 @@ function taskDone(name) {
   }
   return n > 0;
 }
+/* 模擬模式：紀錄直接套用在本機資料，不上傳 */
+function applyLocal(e) {
+  if (e.kind === 'star') {
+    C.starTotal = (Number(C.starTotal) || 0) + e.n;
+    if (e.type === 'task' || e.type === 'untask') {
+      var today = ymd(new Date()), nm = e.ref.slice(today.length + 1);
+      if (C.date !== today) { C.date = today; C.taskNet = {}; }
+      C.taskNet[nm] = (C.taskNet[nm] || 0) + (e.type === 'task' ? 1 : -1);
+    }
+  } else {
+    C.ledgerBalance = (Number(C.ledgerBalance) || 0) + (e.type === '支出' ? -e.amt : e.amt);
+    C.ledgerRecent.unshift({ date: e.date, type: e.type, desc: e.desc, amt: e.amt });
+    C.ledgerRecent = C.ledgerRecent.slice(0, 5);
+  }
+  lsSet(K('pp_cache'), C);
+}
 function addEvent(e) {
   e.id = e.id || uid();
+  if (DEMO) { applyLocal(e); renderAll(); return; }
   OUT.push(e);
   saveOut();
   renderAll();
@@ -657,8 +766,8 @@ function pinnedReward() {
 function renderTasks() {
   var list = todayTasks(), total = starTotal(), rw = pinnedReward();
   var h = '<h2>' + ic(0) + '今日任務</h2>';
-  h += '<div class="starbar" data-act="rewards"><div class="sbtop"><span class="sbnum">★ ' + total + '</span>';
-  h += '<span class="sbgoal">' + (rw ? '目標：' + esc(rw.name) + '（' + rw.stars + '★）　點我兌換' : '點我看獎勵') + '</span></div>';
+  h += '<div class="starbar" data-act="rewards"><div class="sbtop"><span class="sbnum">' + SYM() + ' ' + total + '</span>';
+  h += '<span class="sbgoal">' + (rw ? '目標：' + esc(rw.name) + '（' + rw.stars + SYM() + '）　' + (isKid() ? '點我進展示館' : '點我兌換') : '點我看獎勵') + '</span></div>';
   if (rw) h += '<div class="bar"><i style="width:' + pct(total, rw.stars) + '%"></i></div>';
   h += '</div><div class="list">';
   if (!list.length) h += '<div class="empty">' + (C.tasks.length ? '今天沒有任務，好好休息！' : '尚未同步任務資料') + '</div>';
@@ -666,7 +775,7 @@ function renderTasks() {
     var done = taskDone(list[i].name);
     h += '<div class="task' + (done ? ' done' : '') + '" data-act="task" data-arg="' + i + '">' +
       '<span class="box">' + (done ? '✓' : '') + '</span><span class="tname">' + esc(list[i].name) + '</span>' +
-      '<span class="tstar">+' + list[i].stars + '★</span></div>';
+      '<span class="tstar">+' + list[i].stars + (isKid() ? gemSvg(taskGem(list[i].name), 22) : '★') + '</span></div>';
   }
   h += '</div>';
   $('cTasks').innerHTML = h;
@@ -674,7 +783,7 @@ function renderTasks() {
 
 function renderPomo() {
   var p = S.pomo, h = '<h2>' + ic(1) + '專注蕃茄鐘</h2>';
-  h += '<div class="pmsg">' + (p ? (p.kind === 'focus' ? '專注中…完成可得 ' + C.config.pomoStars + '★' : '休息一下，喝口水')
+  h += '<div class="pmsg">' + (p ? (p.kind === 'focus' ? '專注中…完成可得 ' + C.config.pomoStars + SYM() : '休息一下，喝口水')
     : '選一個時間開始吧') + '</div>';
   var st = pomoStyle(), rest = p && p.kind === 'rest' ? ' rest' : '';
   if (st.id === 'digit') {
@@ -696,11 +805,24 @@ function renderPomo() {
   h += '</div>';
   $('cPomo').innerHTML = h;
   fitDial();
+  trailLen = 0;
+  if (!p) moveKid(1, false);
   tickPomo();
 }
 
 /* 計時樣式；ratio = 圖形的寬 ÷ 高 */
+/* 主畫面圖示：每一個都是 profiles 資料夾裡的描述檔，安裝後會取代舊的學習面板圖示 */
+var ICON_SETS = [
+  { id: 'kid', name: '怪盜月夜' },
+  { id: 'kidwhite', name: '怪盜純白' },
+  { id: 'star', name: '星星寶寶' },
+  { id: 'shadow', name: '黑影人' },
+  { id: 'shadow2', name: '原創黑影人' }
+];
+function pageBase() { return location.href.replace(/[?#].*$/, '').replace(/[^\/]*$/, ''); }
 var POMO_STYLES = [
+  { id: 'glider', name: '怪盜飛行', desc: '滑翔翼由左往右飛到終點', ratio: 1.6 },
+  { id: 'tophat', name: '白色禮帽', desc: '黑色禮帽慢慢變白，最後翻過來飛出白鴿', ratio: 1 },
   { id: 'pie', name: '圓餅倒數', desc: '扇形越變越小', ratio: 1 },
   { id: 'ring', name: '圓環倒數', desc: '圓圈慢慢消失', ratio: 1 },
   { id: 'tomato', name: '番茄', desc: '番茄裡的紅色慢慢變少', ratio: 1 },
@@ -713,7 +835,13 @@ var RING_C = 515.22;   // 2 × π × 82
 
 function graphic(id, rest) {
   var g = '';
-  if (id === 'pie') {
+  if (id === 'glider') {
+    g = '<div id="dial" class="glider">' + gliderSvg() +
+      '<div id="kidSprite" class="kid-sprite' + rest + '"><div class="kid-bob"><img class="kid-flip" src="kid/glider.png" alt=""></div></div>' +
+      '<div id="kidDist" class="kid-dist"></div></div>';
+  } else if (id === 'tophat') {
+    g = hatSvg(false, 'dial');
+  } else if (id === 'pie') {
     g = '<svg id="dial" viewBox="0 0 200 200"><circle class="dial-bg" cx="100" cy="100" r="96"/>' + dialTicks() +
       '<path id="pomoPie" class="pie-fill' + rest + '" d=""/><circle class="dial-c" cx="100" cy="100" r="9"/></svg>';
   } else if (id === 'ring') {
@@ -744,6 +872,275 @@ function graphic(id, rest) {
   }
   return g;
 }
+/* ===== 怪盜飛行（都由左往右飛，畫布 320×200） ===== */
+var ROUTES = [
+  { id: 'castle', name: '通天閣 → 大阪城', need: 0, km: 3.5, from: 'tsutenkaku', to: 'castle',
+    ways: [[0.22, '難波'], [0.42, '心齋橋'], [0.62, '本町'], [0.82, '天滿橋']] },
+  { id: 'umeda', name: '大阪城 → 梅田', need: 3, km: 3.2, from: 'castle', to: 'umeda',
+    ways: [[0.28, '天滿橋'], [0.52, '北濱'], [0.76, '中之島']] },
+  { id: 'tempozan', name: '中之島 → 天保山摩天輪', need: 6, km: 7.5, from: 'hall', to: 'wheel',
+    ways: [[0.26, '肥後橋'], [0.5, '九條'], [0.74, '弁天町']] }
+];
+var LANDMARK_H = { tsutenkaku: 104, castle: 80, umeda: 84, hall: 48, wheel: 72 };
+var LANDMARK_NAME = { tsutenkaku: '通天閣', castle: '大阪城', umeda: '梅田', hall: '中之島', wheel: '天保山' };
+function routeUnlocked(r) { return !r.need || !!(S.routes && S.routes[r.id]); }
+function curRoute() { var r = findById(ROUTES, S.route); return routeUnlocked(r) ? r : ROUTES[0]; }
+var ROUTE = [[58, 92], [112, 18], [192, 142], [266, 74]];
+function setRoutePoints(r) {
+  var y0 = 186 - LANDMARK_H[r.from] - 6, y3 = 168 - LANDMARK_H[r.to] - 4;
+  ROUTE = [[58, y0], [112, Math.max(10, Math.min(y0, y3) - 60)], [192, 142], [266, y3]];
+}
+function routeAt(t) {
+  var u = 1 - t, P = ROUTE;
+  var x = u * u * u * P[0][0] + 3 * u * u * t * P[1][0] + 3 * u * t * t * P[2][0] + t * t * t * P[3][0];
+  var y = u * u * u * P[0][1] + 3 * u * u * t * P[1][1] + 3 * u * t * t * P[2][1] + t * t * t * P[3][1];
+  var dx = 3 * u * u * (P[1][0] - P[0][0]) + 6 * u * t * (P[2][0] - P[1][0]) + 3 * t * t * (P[3][0] - P[2][0]);
+  var dy = 3 * u * u * (P[1][1] - P[0][1]) + 6 * u * t * (P[2][1] - P[1][1]) + 3 * t * t * (P[3][1] - P[2][1]);
+  return { x: x, y: y, a: Math.atan2(dy, dx) * 180 / Math.PI };
+}
+/* 地標：cx = 中心、base = 地面高度 */
+function landmark(type, cx, base) {
+  var g = '<g transform="translate(' + cx + ',' + base + ')">', top = -LANDMARK_H[type];
+  if (type === 'tsutenkaku') {
+    g += '<polygon points="-14,0 14,0 4,-36 -4,-36" fill="#c5d3ff"/><rect x="-4" y="-74" width="8" height="40" fill="#c5d3ff"/>' +
+      '<rect x="-9" y="-86" width="18" height="13" rx="2" fill="#dbe4ff"/><rect x="-7" y="-82" width="14" height="3" fill="#ffd43b"/>' +
+      '<rect x="-1.5" y="-100" width="3" height="15" fill="#dbe4ff"/><circle cx="0" cy="-102" r="3" fill="#ffd43b"/>';
+  } else if (type === 'castle') {
+    g += '<ellipse cx="0" cy="0" rx="40" ry="9" fill="#1b4332"/><polygon points="-24,-2 24,-2 20,-18 -20,-18" fill="#8d99ae"/>' +
+      '<rect x="-17" y="-36" width="34" height="18" fill="#f8f9fa"/><polygon points="-23,-34 23,-34 16,-44 -16,-44" fill="#2f9e44"/>' +
+      '<rect x="-12" y="-56" width="24" height="12" fill="#f8f9fa"/><polygon points="-17,-54 17,-54 11,-63 -11,-63" fill="#2f9e44"/>' +
+      '<rect x="-7" y="-72" width="14" height="10" fill="#f8f9fa"/><polygon points="-11,-70 11,-70 6,-79 -6,-79" fill="#2f9e44"/>' +
+      '<circle cx="-5" cy="-80" r="1.6" fill="#ffd43b"/><circle cx="5" cy="-80" r="1.6" fill="#ffd43b"/>';
+  } else if (type === 'umeda') {
+    g += '<rect x="-16" y="-74" width="13" height="74" fill="#91a7ff"/><rect x="3" y="-74" width="13" height="74" fill="#91a7ff"/>' +
+      '<rect x="-19" y="-78" width="38" height="8" rx="2" fill="#bac8ff"/><circle cx="0" cy="-78" r="8" fill="none" stroke="#dbe4ff" stroke-width="2"/>';
+    for (var wy = -64; wy < -6; wy += 10) g += '<rect x="-12" y="' + wy + '" width="5" height="4" fill="#ffe066"/><rect x="7" y="' + wy + '" width="5" height="4" fill="#ffe066"/>';
+  } else if (type === 'hall') {
+    g += '<rect x="-26" y="-28" width="52" height="28" fill="#c0603b"/><path d="M-10,0 L-10,-14 A10,10 0 0,1 10,-14 L10,0 Z" fill="#7b3a22"/>' +
+      '<path d="M-14,-28 A14,14 0 0,1 14,-28 Z" fill="#2b8a3e"/><rect x="-1" y="-48" width="2" height="8" fill="#2b8a3e"/>' +
+      '<rect x="-22" y="-22" width="6" height="7" fill="#ffe066"/><rect x="16" y="-22" width="6" height="7" fill="#ffe066"/>';
+  } else if (type === 'wheel') {
+    g += '<polygon points="-14,0 14,0 2,-36 -2,-36" fill="#868e96"/><circle cx="0" cy="-38" r="32" fill="none" stroke="#dee2e6" stroke-width="2.5"/>';
+    var cols = ['#ff6b6b', '#ffd43b', '#69db7c', '#4dabf7', '#da77f2', '#ffa94d', '#63e6be', '#f783ac'];
+    for (var k = 0; k < 8; k++) {
+      var a = k * Math.PI / 4, gx = 32 * Math.cos(a), gy = -38 + 32 * Math.sin(a);
+      g += '<line x1="0" y1="-38" x2="' + gx.toFixed(1) + '" y2="' + gy.toFixed(1) + '" stroke="#adb5bd" stroke-width="1"/>' +
+        '<circle cx="' + gx.toFixed(1) + '" cy="' + gy.toFixed(1) + '" r="4" fill="' + cols[k] + '"/>';
+    }
+  }
+  return g + '<text x="0" y="' + (type === 'tsutenkaku' ? 12 : 16) + '" text-anchor="middle" class="glabel">' + LANDMARK_NAME[type] + '</text></g>';
+}
+function gliderSvg() {
+  var r = curRoute();
+  setRoutePoints(r);
+  var P = ROUTE, d = 'M' + P[0] + ' C' + P[1] + ' ' + P[2] + ' ' + P[3], g = '';
+  g += '<svg viewBox="0 0 320 200" preserveAspectRatio="none" class="gmap">' +
+    '<defs><linearGradient id="gsky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0b1d51"/><stop offset="1" stop-color="#27408b"/></linearGradient></defs>' +
+    '<rect width="320" height="200" fill="url(#gsky)"/>';
+  var stars = [[20, 20], [70, 40], [150, 14], [200, 36], [240, 12], [120, 60], [30, 70], [180, 70], [300, 60], [95, 110]];
+  for (var i = 0; i < stars.length; i++) g += '<circle cx="' + stars[i][0] + '" cy="' + stars[i][1] + '" r="1.1" fill="#fff" opacity="0.8"/>';
+  g += '<circle cx="292" cy="24" r="14" fill="#fff3bf"/>';
+  var bx = [0, 18, 30, 52, 70, 88, 104, 126, 140, 160, 176, 196, 214, 228, 300], bh = [28, 40, 22, 34, 18, 44, 30, 24, 38, 20, 32, 26, 36, 22, 30];
+  for (i = 0; i < bx.length; i++) g += '<rect x="' + bx[i] + '" y="' + (186 - bh[i]) + '" width="16" height="' + bh[i] + '" fill="#132a6b"/>';
+  g += '<path d="M0,176 C70,170 120,188 200,178 S290,166 320,172" stroke="#4dabf7" stroke-width="5" fill="none" opacity="0.45"/>' +
+    '<rect y="186" width="320" height="14" fill="#0a1640"/>';
+  if (r.to !== 'castle') g += '<ellipse cx="266" cy="170" rx="40" ry="8" fill="#16305f"/>';
+  g += landmark(r.from, 58, 186) + landmark(r.to, 266, 168);
+  g += '<path d="' + d + '" stroke="#fff" stroke-width="1.6" stroke-dasharray="3 5" fill="none" opacity="0.5"/>' +
+    '<path id="kidTrail" d="' + d + '" stroke="#ffd43b" stroke-width="2.6" fill="none" stroke-linecap="round"/>';
+  for (i = 0; i < r.ways.length; i++) {
+    var w = routeAt(r.ways[i][0]);
+    g += '<circle cx="' + w.x.toFixed(1) + '" cy="' + w.y.toFixed(1) + '" r="2.4" fill="#fff"/>' +
+      '<text x="' + w.x.toFixed(1) + '" y="' + (w.y + 11).toFixed(1) + '" text-anchor="middle" class="glabel small">' + r.ways[i][1] + '</text>';
+  }
+  return g + '</svg>';
+}
+var trailLen = 0;
+/* f = 剩下的比例（1 → 0） */
+function moveKid(f, rest) {
+  var box = $('dial'), sp = $('kidSprite'), tr = $('kidTrail'), dist = $('kidDist'), r = curRoute();
+  if (!box || !sp) return;
+  var t = rest ? 1 : 1 - f, pt = routeAt(t);
+  var x = pt.x / 320 * box.offsetWidth, y = pt.y / 200 * box.offsetHeight;
+  var ang = rest ? 0 : Math.max(-25, Math.min(25, pt.a));
+  var tf = 'translate3d(' + x.toFixed(1) + 'px,' + y.toFixed(1) + 'px,0) rotate(' + ang.toFixed(1) + 'deg)';
+  sp.style.webkitTransform = tf;
+  sp.style.transform = tf;
+  if (tr) {
+    if (!trailLen && tr.getTotalLength) trailLen = tr.getTotalLength();
+    tr.setAttribute('stroke-dasharray', trailLen.toFixed(1) + ' ' + trailLen.toFixed(1));
+    tr.setAttribute('stroke-dashoffset', (trailLen * (1 - t)).toFixed(1));
+  }
+  if (dist) {
+    var to = LANDMARK_NAME[r.to];
+    if (rest) dist.textContent = '在' + to + '休息中…';
+    else if (!S.pomo) dist.textContent = '準備從' + LANDMARK_NAME[r.from] + '出發！';
+    else {
+      var near = '';
+      for (var i = 0; i < r.ways.length; i++) if (Math.abs(t - r.ways[i][0]) < 0.06) near = '飛過' + r.ways[i][1] + '・';
+      dist.textContent = near + '距離' + to + ' ' + (r.km * (1 - t)).toFixed(1) + ' km';
+    }
+  }
+}
+
+/* ===== 白色禮帽：黑色慢慢變白 ===== */
+function hatShapes(c, stroke) {
+  var st = stroke ? ' stroke="#343a40" stroke-width="3" stroke-linejoin="round"' : '';
+  return '<path d="M62,42 Q100,32 138,42 L132,138 L68,138 Z" fill="' + c + '"' + st + '/>' +
+    '<ellipse cx="100" cy="146" rx="80" ry="17" fill="' + c + '"' + st + '/>';
+}
+function hatSvg(allWhite, id) {
+  var clip = allWhite ? '' : '<defs><clipPath id="hatClip"><rect id="hatLevel" x="0" y="170" width="200" height="30"/></clipPath></defs>';
+  return '<svg' + (id ? ' id="' + id + '"' : '') + ' viewBox="0 0 200 200">' + clip +
+    '<ellipse cx="100" cy="182" rx="74" ry="8" fill="#000" opacity="0.15"/>' +
+    (allWhite ? hatShapes('#f8f9fa', true) : hatShapes('#212529', true) + '<g clip-path="url(#hatClip)">' + hatShapes('#f8f9fa', true) + '</g>') +
+    '<path d="M67,112 L133,112 L132,134 L68,134 Z" fill="#1c7ed6"/>' +
+    '<path d="M150,40 l4,10 l10,4 l-10,4 l-4,10 l-4,-10 l-10,-4 l10,-4 Z" fill="#ffd43b"/></svg>';
+}
+
+/* ===== 完成時的白鴿動畫 ===== */
+var DOVE = '<svg viewBox="0 0 40 28"><path d="M2,16 C8,14 12,12 16,13 C14,6 18,1 24,2 C22,6 22,9 24,11 C28,10 34,8 38,10 C34,13 30,16 26,17 L29,24 L22,19 C16,21 8,20 2,16 Z" fill="#ffffff" stroke="#adb5bd" stroke-width="1"/><circle cx="31" cy="11" r="1" fill="#343a40"/></svg>';
+function celebrate(withHat) {
+  var dial = $('dial'), r;
+  if (dial && dial.getBoundingClientRect) r = dial.getBoundingClientRect();
+  if (!r || !r.width) r = { left: window.innerWidth / 2 - 100, top: window.innerHeight / 2 - 100, width: 200, height: 200 };
+  var box = document.createElement('div');
+  box.className = 'celebrate' + (withHat ? ' solid' : '');
+  box.style.left = r.left + 'px';
+  box.style.top = r.top + 'px';
+  box.style.width = r.width + 'px';
+  box.style.height = r.height + 'px';
+  if (withHat) box.innerHTML = '<div class="flip-hat">' + hatSvg(true) + '</div>';
+  document.body.appendChild(box);
+  var cx = withHat ? r.width / 2 : r.width * 0.83, cy = withHat ? r.height * 0.42 : r.height * 0.4, delay = withHat ? 700 : 100;
+  for (var i = 0; i < 10; i++) {
+    (function (i) {
+      var d = document.createElement('div');
+      d.className = 'dove';
+      d.innerHTML = DOVE;
+      d.style.left = (cx - 18) + 'px';
+      d.style.top = (cy - 12) + 'px';
+      box.appendChild(d);
+      var ang = -Math.PI / 2 + (i - 4.5) * 0.32, dist = 160 + Math.random() * 140;
+      var dx = Math.cos(ang) * dist, dy = Math.sin(ang) * dist - 40, sc = 1 + Math.random() * 0.6;
+      setTimeout(function () {
+        var tf = 'translate3d(' + dx.toFixed(0) + 'px,' + dy.toFixed(0) + 'px,0) scale(' + sc.toFixed(2) + ')' + (dx < 0 ? ' scaleX(-1)' : '');
+        d.style.webkitTransform = tf;
+        d.style.transform = tf;
+        d.style.opacity = '0';
+      }, delay + i * 70);
+    })(i);
+  }
+  setTimeout(function () { box.style.opacity = '0'; }, 3000);
+  setTimeout(function () { if (box.parentNode) box.parentNode.removeChild(box); }, 3700);
+}
+
+/* ===== 寶石展示館 ===== */
+var GEMS = [
+  { id: 'sapphire', name: '藍寶石', c: '#339af0' }, { id: 'ruby', name: '紅寶石', c: '#f03e3e' },
+  { id: 'emerald', name: '祖母綠', c: '#37b24d' }, { id: 'amethyst', name: '紫水晶', c: '#9775fa' },
+  { id: 'topaz', name: '黃玉', c: '#fab005' }, { id: 'pearl', name: '珍珠', shape: 'pearl' },
+  { id: 'moonstone', name: '月光石', shape: 'moon', how: '完成一次專注飛行' },
+  { id: 'cards', name: '魔術撲克牌', shape: 'card', how: '書包全部收好' },
+  { id: 'crown', name: '皇冠', shape: 'crown', how: '兌換一次獎勵' }
+];
+function taskGem(name) {
+  var h = 0;
+  for (var i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) % 9973;
+  return GEMS[h % 6];
+}
+function gemSvg(g, size, locked) {
+  var c = locked ? '#ced4da' : g.c, s = '<svg class="gem" viewBox="0 0 40 40" width="' + size + '" height="' + size + '">';
+  if (g.shape === 'pearl') {
+    s += '<circle cx="20" cy="22" r="12" fill="' + (locked ? c : '#f8f9fa') + '" stroke="#adb5bd" stroke-width="1.5"/><circle cx="16" cy="18" r="3.5" fill="#fff"/>';
+  } else if (g.shape === 'moon') {
+    s += '<ellipse cx="20" cy="21" rx="12" ry="14" fill="' + (locked ? c : '#d0ebff') + '" stroke="#74c0fc" stroke-width="1.5"/><path d="M14,14 Q18,10 24,12" stroke="#fff" stroke-width="2.5" fill="none" stroke-linecap="round"/>';
+  } else if (g.shape === 'card') {
+    s += '<rect x="11" y="6" width="20" height="28" rx="3" fill="#fff" stroke="' + (locked ? c : '#1c3d8f') + '" stroke-width="2"/>' +
+      '<path d="M21,26 C15,21 14,17 17,15 C19,14 21,16 21,17 C21,16 23,14 25,15 C28,17 27,21 21,26 Z" fill="' + (locked ? c : '#e03131') + '"/>';
+  } else if (g.shape === 'crown') {
+    s += '<polygon points="6,31 6,14 13,22 20,9 27,22 34,14 34,31" fill="' + (locked ? c : '#fcc419') + '" stroke="' + (locked ? '#adb5bd' : '#e67700') + '" stroke-width="1.5"/>' +
+      '<circle cx="20" cy="25" r="2.5" fill="' + (locked ? '#adb5bd' : '#e03131') + '"/>';
+  } else {
+    s += '<polygon points="7,15 14,6 26,6 33,15 20,35" fill="' + c + '"/>' +
+      '<path d="M7,15 L33,15 M14,6 L17,15 L20,35 M26,6 L23,15 L20,35" stroke="#fff" stroke-opacity="0.55" stroke-width="1.2" fill="none"/>' +
+      '<polygon points="14,6 20,6 17,15 10,15" fill="#fff" opacity="0.35"/>';
+  }
+  return s + '</svg>';
+}
+function addTreasure(id, n) {
+  if (!S.museum) S.museum = {};
+  S.museum[id] = Math.max(0, (S.museum[id] || 0) + n);
+  saveS();
+}
+function isKid() { return theme().id === 'kid'; }
+function SYM() { return isKid() ? '💎' : '★'; }
+function rewardRows() {
+  var total = starTotal(), h = '';
+  if (!C.rewards.length) h += '<div class="empty">還沒有設定獎勵</div>';
+  for (var i = 0; i < C.rewards.length; i++) {
+    var r = C.rewards[i], ok = total >= r.stars;
+    h += '<div class="rw"><span class="rn">' + esc(r.name) + (r.money ? '<br><span class="pend">兌換後自動存入 $' + r.money + '</span>' : '') + '</span>' +
+      '<span class="rs">' + r.stars + SYM() + '</span><span class="rbtn' + (ok ? '' : ' no') + '" data-act="redeem" data-arg="' + i + '">' +
+      (ok ? '兌換' : '還差 ' + (r.stars - total)) + '</span></div>';
+  }
+  return h;
+}
+function gemHint(g) {
+  if (g.how) return g.how;
+  for (var i = 0; i < C.tasks.length; i++) if (taskGem(C.tasks[i].name).id === g.id) return '完成「' + C.tasks[i].name + '」';
+  return '繼續完成任務';
+}
+function openMuseum() {
+  openOv(function () {
+    var m = S.museum || {}, h = ovHead('💎 寶石展示館（可用寶石 ' + starTotal() + '）');
+    h += '<div class="ovsub">收藏品</div><div class="mus">';
+    for (var i = 0; i < GEMS.length; i++) {
+      var g = GEMS[i], n = m[g.id] || 0;
+      h += '<div class="case' + (n ? '' : ' lock') + '">' + gemSvg(g, 44, !n) + '<b>' + (n ? g.name : '？？？') + '</b>' +
+        '<small>' + (n ? '× ' + n : esc(gemHint(g))) + '</small></div>';
+    }
+    var cards = S.cards || [];
+    h += '</div><div class="ovsub">預告函收藏（' + cards.length + ' 張）</div><div class="cardrow">';
+    if (!cards.length) h += '<span class="pend">任務全部完成的那天，就會收到一張預告函</span>';
+    for (i = Math.max(0, cards.length - 8); i < cards.length; i++) {
+      var cd = parseYmd(cards[i]);
+      h += '<span class="minicard">🎩<br>' + (cd ? (cd.getMonth() + 1) + '/' + cd.getDate() : '') + '</span>';
+    }
+    return h + '</div><div class="ovsub">用寶石兌換獎勵</div>' + rewardRows();
+  });
+}
+/* 預告函 */
+function showCard() {
+  var d = new Date(), key = ymd(d);
+  if (!S.cards) S.cards = [];
+  if (S.cards.indexOf(key) >= 0) { kidSay('taskAll'); return; }
+  S.cards.push(key);
+  saveS();
+  openOv(function () {
+    return '<div class="yokoku" data-act="closeCard"><div class="yk-title">預 告 函</div>' +
+      '<div class="yk-body">月亮升起的今晚，<br>我將前來收下——<br><b>「' + (d.getMonth() + 1) + '月' + d.getDate() + '日・任務全部完成」</b><br>這份閃閃發亮的榮耀。</div>' +
+      '<div class="yk-sign">怪盜 <span class="yk-hat">' + hatSvg(true) + '</span></div>' +
+      '<div class="yk-tip">點一下收進寶石展示館</div></div>';
+  });
+}
+/* 每週專注次數與路線解鎖 */
+function weekKey() { var d = midnight(new Date()); d.setDate(d.getDate() - ((d.getDay() + 6) % 7)); return ymd(d); }
+function weekCount() { return S.week && S.week.k === weekKey() ? S.week.n : 0; }
+function addFocusCount() {
+  var k = weekKey();
+  if (!S.week || S.week.k !== k) S.week = { k: k, n: 0 };
+  S.week.n++;
+  if (!S.routes) S.routes = {};
+  var un = '';
+  for (var i = 0; i < ROUTES.length; i++) {
+    var r = ROUTES[i];
+    if (r.need && S.week.n >= r.need && !S.routes[r.id]) { S.routes[r.id] = 1; un = r.name; }
+  }
+  saveS();
+  return un;
+}
+
 function dialTicks() {
   var t = '';
   for (var i = 0; i < 12; i++) {
@@ -801,8 +1198,13 @@ function fitDial() {
     gw = Math.floor(gh * r);
     fs = Math.floor(Math.max(16, stack ? stackF : sideF));
   }
-  svg.setAttribute('width', gw);
-  svg.setAttribute('height', gh);
+  if (svg.tagName.toLowerCase() === 'svg') {
+    svg.setAttribute('width', gw);
+    svg.setAttribute('height', gh);
+  } else {
+    svg.style.width = gw + 'px';
+    svg.style.height = gh + 'px';
+  }
   t.style.fontSize = fs + 'px';
 }
 
@@ -916,14 +1318,7 @@ function openKeypad(type) {
 function openRewards() {
   openOv(function () {
     var total = starTotal(), h = ovHead('星星兌換所（目前 ★ ' + total + '）');
-    if (!C.rewards.length) h += '<div class="empty">還沒有設定獎勵</div>';
-    for (var i = 0; i < C.rewards.length; i++) {
-      var r = C.rewards[i], ok = total >= r.stars;
-      h += '<div class="rw"><span class="rn">' + esc(r.name) + (r.money ? '<br><span class="pend">兌換後自動存入 $' + r.money + '</span>' : '') + '</span>' +
-        '<span class="rs">' + r.stars + '★</span><span class="rbtn' + (ok ? '' : ' no') + '" data-act="redeem" data-arg="' + i + '">' +
-        (ok ? '兌換' : '還差 ' + (r.stars - total)) + '</span></div>';
-    }
-    return h;
+    return h + rewardRows();
   });
 }
 
@@ -949,6 +1344,23 @@ function openTheme() {
       h += '<div class="fnt' + (ps.id === S.pomoStyle ? ' sel' : '') + '" data-act="setPomoStyle" data-arg="' + ps.id + '">' +
         '<span>' + ps.name + '</span><small>' + ps.desc + '</small></div>';
     }
+    if (theme().id === 'kid') {
+      h += '<div class="ovsub">飛行路線（本週已完成 ' + weekCount() + ' 次專注）</div>';
+      for (i = 0; i < ROUTES.length; i++) {
+        var rt = ROUTES[i], ok = routeUnlocked(rt);
+        h += '<div class="fnt' + (rt.id === curRoute().id ? ' sel' : '') + '" data-act="setRoute" data-arg="' + rt.id + '">' +
+          '<span>' + (ok ? '' : '🔒 ') + rt.name + '</span><small>' + (ok ? rt.km + ' km' : '本週完成 ' + rt.need + ' 次專注解鎖') + '</small></div>';
+      }
+      h += '<div class="ovsub">怪盜對話框</div><div class="fnt' + (S.talk !== 'off' ? ' sel' : '') + '" data-act="talk">' +
+        '<span>' + (S.talk !== 'off' ? '開啟中' : '已關閉') + '</span><small>完成任務、收好書包、蕃茄鐘結束時會說話</small></div>';
+    }
+    h += '<div class="ovsub">主畫面圖示（點一下會開啟 Safari，按「安裝」就會換掉舊圖示）</div><div class="icgrid">';
+    for (i = 0; i < ICON_SETS.length; i++) {
+      var ics = ICON_SETS[i];
+      h += '<div class="icc' + (ics.id === S.icon ? ' sel' : '') + '" data-act="setIcon" data-arg="' + ics.id + '">' +
+        '<img src="profiles/' + ics.id + '.png" alt=""><span>' + ics.name + '</span></div>';
+    }
+    h += '</div>';
     return h + '<div class="pend" style="margin-top:8px;text-align:right">版本 ' + APP_VERSION + '</div>';
   });
 }
@@ -982,7 +1394,7 @@ function tickPomo() {
   if (!tEl || !p) return;
   var left = p.end - now();
   if (left <= 0) { finishPomo(); return; }
-  var sec = Math.ceil(left / 1000), f = left / p.dur, el;
+  var sec = Math.ceil(left * TIME_SCALE / 1000), f = left / p.dur, el;
   tEl.textContent = pad(Math.floor(sec / 60)) + ':' + pad(sec % 60);
   if ((el = $('pomoBar'))) el.style.width = pct(p.dur - left, p.dur) + '%';
   if ((el = $('pomoPie'))) el.setAttribute('d', piePath(f));
@@ -999,11 +1411,69 @@ function tickPomo() {
     $('hgBot').setAttribute('y', by.toFixed(1));
     $('hgBot').setAttribute('height', (178 - by).toFixed(1));
   }
+  if ($('kidSprite')) moveKid(f, p.kind === 'rest');
+  if ((el = $('hatLevel'))) {                       // 禮帽：白色從帽沿往上長
+    var hy = 164 - (1 - f) * 134;
+    el.setAttribute('y', hy.toFixed(1));
+    el.setAttribute('height', (200 - hy).toFixed(1));
+  }
   if ($('seg0')) {                                  // 電池：一格一格用完
     var on = Math.ceil(f * 10), cls = f > 0.5 ? 'seg on' : (f > 0.2 ? 'seg on mid' : 'seg on low');
     for (var i = 0; i < 10; i++) $('seg' + i).setAttribute('class', i < on ? cls : 'seg');
   }
 }
+/* ===== RPG 對話框（怪盜月夜主題才會出現） ===== */
+var KID_LINES = {
+  start: ['It\'s Show Time！目標大阪城，出發！', '專注模式啟動。這段時間，誰都別想打擾你。'],
+  task: ['漂亮！又一項任務到手，還順便收下了一顆{x}。', '{x}到手！這份認真，連月亮都在看著你。',
+    '漂亮！又一項任務到手，手法乾淨俐落。', '不錯嘛～這份認真，連月亮都在看著你。', '完成！魔術的秘密，就是每天多練習一點點。',
+    '任務達成！一流的怪盜從不拖延，你也是。', '做得好！下一個舞台，也交給你了。'],
+  taskAll: ['今天的任務全部完成！這場表演完美落幕——為你鼓掌！', '全部搞定！今晚的月光，就是為你準備的聚光燈。'],
+  bag: ['很好，這個放進去了。準備萬全，才是紳士的禮儀。', '收好了！小細節決定大成功。', '再確認一次——好的魔術師從不忘記道具。'],
+  bagAll: ['書包整理完畢！明天的舞台，你已經準備好了。', '道具全部到齊！明天就漂亮地登場吧。'],
+  pomo: ['抵達大阪城！從通天閣一路專注飛到這裡，真有你的。', '降落成功！這段專注時間，比任何寶石都閃亮。', '飛行完成——專注到最後一秒，這才是真正的魔術。'],
+  rest: ['休息結束！準備好了嗎？下一場表演要開始囉。'],
+  pomoHat: ['魔術完成！帽子一翻，白鴿全都飛出來了——這就是專注的魔法。', '黑帽子變成白帽子了！你的專注，連我都想拍手。'],
+  pomoAny: ['專注完成！一流的魔術師，都是這樣一點一點練出來的。', '時間到！這段專注，比任何寶石都閃亮。'],
+  redeem: ['獎勵到手！這可是你憑實力贏來的寶物。'],
+  unlock: ['新路線解鎖：{x}！下一次專注，就飛這條吧。'],
+  sleep: ['已經九點了。就算是怪盜，也需要充足的睡眠喔，晚安。', '月亮都爬到天空正中央了——該上床囉，明天見。']
+};
+var RPG = { queue: [], timer: null, typing: null, full: '' };
+function kidOn() { return theme().id === 'kid' && S.talk !== 'off'; }
+function kidSay(kind, x) {
+  if (!kidOn()) return false;
+  var L = KID_LINES[kind];
+  if (!L) return false;
+  RPG.queue.push(L[Math.floor(Math.random() * L.length)].replace('{x}', x || ''));
+  if (RPG.queue.length > 2) RPG.queue.shift();
+  if ($('rpg').style.display !== 'block') rpgNext();
+  return true;
+}
+function rpgNext() {
+  clearInterval(RPG.typing);
+  clearTimeout(RPG.timer);
+  RPG.typing = null;
+  var t = RPG.queue.shift(), el = $('rpgText'), i = 0;
+  if (!t) { $('rpg').style.display = 'none'; return; }
+  RPG.full = t;
+  $('rpg').style.display = 'block';
+  el.textContent = '';
+  RPG.typing = setInterval(function () {             // 一個字一個字跑出來
+    i++;
+    el.textContent = t.slice(0, i);
+    if (i >= t.length) { clearInterval(RPG.typing); RPG.typing = null; RPG.timer = setTimeout(rpgNext, 5000); }
+  }, 50);
+}
+function rpgTap() {
+  if (RPG.typing) {                                  // 還在打字：先顯示全部
+    clearInterval(RPG.typing);
+    RPG.typing = null;
+    $('rpgText').textContent = RPG.full;
+    RPG.timer = setTimeout(rpgNext, 5000);
+  } else rpgNext();
+}
+
 function finishPomo() {
   var p = S.pomo;
   S.pomo = null;
@@ -1011,12 +1481,16 @@ function finishPomo() {
   beep(3);
   if (p.kind === 'focus') {
     var n = Number(C.config.pomoStars) || 0;
+    var st = pomoStyle().id, unlocked = addFocusCount();
+    if (st === 'tophat' || st === 'glider') celebrate(st === 'tophat');
+    addTreasure('moonstone', 1);
     if (n) starEvent(n, '蕃茄鐘 ' + p.min + ' 分鐘', 'pomo');
     else renderAll();
-    toast('專注完成！' + (n ? '+' + n + '★' : ''));
+    if (!kidSay(st === 'glider' ? 'pomo' : (st === 'tophat' ? 'pomoHat' : 'pomoAny'))) toast('專注完成！' + (n ? '+' + n + SYM() : ''));
+    if (unlocked) kidSay('unlock', unlocked);
   } else {
     renderPomo();
-    toast('休息結束，繼續加油！');
+    if (!kidSay('rest')) toast('休息結束，繼續加油！');
   }
 }
 
@@ -1113,6 +1587,7 @@ function pushAll(cb) {
   });
 }
 function sync() {
+  if (DEMO) { syncMsg = '模擬模式（不連線）'; renderSync(); return; }
   if (syncing) return;
   syncing = true;
   syncMsg = '同步中…';
@@ -1126,7 +1601,7 @@ function sync() {
       if (manualSync) toast('同步完成！');
       manualSync = false;
       C = d;
-      lsSet('pp_cache', C);
+      lsSet(K('pp_cache'), C);
       S.lastSync = now();
       saveS();
       syncMsg = '';
@@ -1142,10 +1617,28 @@ var ACTS = {
     var t = todayTasks()[+i];
     if (!t) return;
     var done = taskDone(t.name), n = Number(t.stars) || 0, ref = ymd(new Date()) + '|' + t.name;
-    if (done) starEvent(-n, '取消：' + t.name, 'untask', ref);
-    else { starEvent(n, '完成：' + t.name, 'task', ref); toast('太棒了！+' + n + '★'); }
+    if (done) { starEvent(-n, '取消：' + t.name, 'untask', ref); addTreasure(taskGem(t.name).id, -1); }
+    else {
+      addTreasure(taskGem(t.name).id, 1);
+      starEvent(n, '完成：' + t.name, 'task', ref);
+      var all = true, tl = todayTasks();
+      for (var k = 0; k < tl.length; k++) if (!taskDone(tl[k].name)) all = false;
+      if (all && kidOn()) showCard();
+      else if (!kidSay('task', taskGem(t.name).name)) toast('太棒了！+' + n + SYM());
+    }
   },
-  rewards: function () { openRewards(); },
+  rewards: function () { if (isKid()) openMuseum(); else openRewards(); },
+  closeCard: function () { closeOv(); kidSay('taskAll'); },
+  setRoute: function (id) {
+    var r = findById(ROUTES, id);
+    if (!routeUnlocked(r)) { toast('本週完成 ' + r.need + ' 次專注就能解鎖'); return; }
+    S.route = id;
+    saveS();
+    renderPomo();
+    refreshOv();
+  },
+  demoSleep: function () { kidSay('sleep'); },
+  demoWeek: function () { addFocusCount(); addFocusCount(); addFocusCount(); toast('本週專注次數 +3'); },
   redeem: function (i) {
     var r = C.rewards[+i];
     if (!r) return;
@@ -1154,13 +1647,16 @@ var ACTS = {
       var id = uid();
       starEvent(-r.stars, '兌換：' + r.name, 'redeem', '', id);
       if (r.money > 0) ledgerEvent('收入', '星星兌換：' + r.name, r.money, '星星兌換', id + 'L');
-      toast('兌換成功：' + r.name);
+      addTreasure('crown', 1);
+      if (!kidSay('redeem')) toast('兌換成功：' + r.name);
     });
   },
   pomo: function (a) {
     unlockAudio();
     var min = parseInt(a.slice(1), 10);
-    S.pomo = { kind: a.charAt(0) === 'f' ? 'focus' : 'rest', min: min, dur: min * 60000, end: now() + min * 60000 };
+    var dur = min * 60000 / TIME_SCALE;
+    S.pomo = { kind: a.charAt(0) === 'f' ? 'focus' : 'rest', min: min, dur: dur, end: now() + dur };
+    if (S.pomo.kind === 'focus') kidSay('start');
     saveS();
     renderPomo();
   },
@@ -1173,9 +1669,16 @@ var ACTS = {
   bag: function (i) {
     var item = bagFor(schedTarget()).items[+i];
     if (!item) return;
-    if (S.bag.ok[item]) delete S.bag.ok[item]; else S.bag.ok[item] = 1;
+    var adding = !S.bag.ok[item];
+    if (adding) S.bag.ok[item] = 1; else delete S.bag.ok[item];
     saveS();
     renderSched();
+    if (adding) {
+      var items = bagFor(schedTarget()).items, all = true;
+      for (var k = 0; k < items.length; k++) if (!S.bag.ok[items[k]]) all = false;
+      if (all) addTreasure('cards', 1);
+      kidSay(all ? 'bagAll' : 'bag');
+    }
   },
   spend: function () { openKeypad('支出'); },
   income: function () { askPin('記收入', function () { openKeypad('收入'); }); },
@@ -1209,6 +1712,23 @@ var ACTS = {
   },
   reload: function () { location.reload(); },
   theme: function () { openTheme(); },
+  setIcon: function (id) {
+    S.icon = id;
+    saveS();
+    refreshOv();
+    toast('已開啟 Safari，請點「安裝」');
+    window.open(pageBase() + 'profiles/' + id + '.mobileconfig', '_blank');   // 主畫面模式下會跳到 Safari
+  },
+  talk: function () { S.talk = S.talk === 'off' ? 'on' : 'off'; saveS(); refreshOv(); },
+  demoTalk: function () {
+    var kinds = ['task', 'bag', 'pomo', 'taskAll', 'bagAll', 'redeem'];
+    kidSay(kinds[Math.floor(Math.random() * kinds.length)]);
+  },
+  demoFinish: function () { if (S.pomo) { S.pomo.end = now(); tickPomo(); } else toast('先按「專注 25」開始'); },
+  demoReset: function () {
+    try { localStorage.removeItem(K('pp_cache')); localStorage.removeItem(K('pp_state')); } catch (e) {}
+    location.reload();
+  },
   setPomoStyle: function (id) { S.pomoStyle = id; saveS(); renderPomo(); refreshOv(); },
   pstyle: function () {
     var i = 0;
@@ -1275,10 +1795,21 @@ function tick() {
     if (ymd(d) !== lastDay) { lastDay = ymd(d); sync(); }
     if (!ovRender) renderAll();
     if (now() - (S.lastSync || 0) > 5 * 60000) sync();
+    if (kidOn() && d.getHours() >= 21 && S.sleepTold !== ymd(d)) { S.sleepTold = ymd(d); saveS(); kidSay('sleep'); }
   }
 }
 
 $('app').addEventListener('click', onTap, false);
+$('rpg').addEventListener('click', rpgTap, false);
+if (DEMO) {
+  var db = $('demoBar');
+  db.style.display = 'flex';
+  db.innerHTML = '<b>模擬模式</b><span>時間快 60 倍・不連線</span>' +
+    '<span class="dbtn" data-act="demoTalk">測試對話</span><span class="dbtn" data-act="demoFinish">直接飛到終點</span>' +
+    '<span class="dbtn" data-act="demoSleep">晚安提醒</span><span class="dbtn" data-act="demoWeek">專注 +3 次</span>' +
+    '<span class="dbtn" data-act="demoReset">重置</span>';
+  db.addEventListener('click', onTap, false);
+}
 $('ov').addEventListener('click', onTap, false);
 /* 旋轉時 iOS 會晚一點才更新尺寸，所以分兩次檢查 */
 var fitTimer = null;
