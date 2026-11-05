@@ -309,6 +309,27 @@
   .sicon { font-size: 20px; margin-right: 6px; }
   .psel { font-size: 15px; padding: 4px; margin-right: 8px; border: 1px solid #ced4da; border-radius: 8px; background: #fff; }
 
+  /* 任務分頁、特殊任務 */
+  .ttabs { display: flex; margin-bottom: 6px; flex-shrink: 0; padding-right: 26px; }
+  .ttab { flex: 1; text-align: center; padding: 7px 0; border-radius: 10px; background: #f1f3f5; margin-right: 6px; font-size: 16px; font-weight: bold; color: #495057; }
+  .ttab.sel { background: #1c3d8f; color: #fff; }
+  .ttab em { font-style: normal; font-size: 12px; margin-left: 6px; background: #fa5252; color: #fff; border-radius: 9px; padding: 1px 7px; }
+  .ttab em.alldone { background: #40c057; }
+  .smis { border: 2px solid #ffd43b; background: #fffbeb; border-radius: 12px; padding: 8px 10px; margin: 6px 0; }
+  .smis.done { border-color: #b2f2bb; background: #f4fce3; }
+  .smh { display: flex; align-items: center; } .smh b { flex: 1; font-size: 18px; } .sdate { font-size: 13px; color: #e8590c; }
+  .smr { font-size: 14px; color: #495057; margin-top: 2px; } .smr.rule { color: #1971c2; } .smr.ok { color: #2b8a3e; font-weight: bold; }
+  .spinfo { font-size: 16px; line-height: 1.7; }
+  .prev { display: flex; flex-wrap: wrap; margin: 2px -3px 6px; }
+  .prev span { width: calc(33.33% - 6px); margin: 3px; text-align: center; background: #fff9db; border-radius: 10px; padding: 5px 0; font-size: 15px; color: #e67700; }
+  .prev b { display: block; font-size: 14px; color: #495057; }
+  .sptab { width: 100%; border-collapse: collapse; font-size: 16px; } .sptab th, .sptab td { border-bottom: 1px solid #e9ecef; padding: 6px; text-align: center; }
+  .sptotal { text-align: center; font-size: 22px; font-weight: bold; color: #e8590c; margin: 8px 0; }
+  .srow { display: flex; align-items: center; margin: 6px 0; font-size: 17px; }
+  .srow .sname { width: 90px; } .srow input, .srow select { flex: 1; font-size: 20px; padding: 6px 8px; border: 1px solid #ced4da; border-radius: 8px; background: #fff; }
+  .srow .sget { width: 90px; text-align: right; color: #e8590c; font-weight: bold; }
+  .flabel { font-size: 14px; color: #495057; margin: 8px 0 2px; }
+
   /* 彈出視窗 */
   #ov { display: none; position: fixed; left: 0; top: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.45); z-index: 10; }
   #ovBox {
@@ -640,7 +661,7 @@ var API_URL = 'https://script.google.com/macros/s/AKfycbxY-7ZoZfDN-pRjV-p0rnsqRY
 var API_KEY = 'change-me-1234';
 /* ======================================== */
 
-var APP_VERSION = '1105-v9';   // 每次更新都改這個，用來確認 iPad 載入的是新版
+var APP_VERSION = '1105-v10';   // 每次更新都改這個，用來確認 iPad 載入的是新版
 var WD = '日一二三四五六';
 var SPEND_CATS = ['零食', '文具', '玩具', '捐款', '其他'];
 var INCOME_CATS = ['零用錢', '紅包', '獎勵', '其他'];
@@ -748,7 +769,12 @@ var DEMO_DATA = {
   config: { exams: [{ name: '第二次段考', date: '2026-12-03' }], holidays: [], goalName: '樂高', goalAmount: 1500,
     pin: '0000', pomoStars: 1, nightStart: 21, nightEnd: 6 },
   rewards: [{ name: '零用錢 50 元', stars: 20, money: 50, top: true }, { name: '看卡通 30 分鐘', stars: 10, money: 0, top: false }],
-  ledgerRecent: [{ date: '2026-11-01', type: '收入', desc: '每週零用錢', amt: 100 }]
+  ledgerRecent: [{ date: '2026-11-01', type: '收入', desc: '每週零用錢', amt: 100 }],
+  specials: [
+    { id: 'SP1', name: '第二次段考', kind: '段考', date: '2026-12-03', subjects: ['國語', '數學', '英語', '自然', '社會'], mode: 'auto', min: 60, full: 100, lo: 1, hi: 10, tiers: [], per: 'each', status: 'open', scores: {}, earned: 0 },
+    { id: 'SP2', name: '英檢初級', kind: '檢定考', date: '2027-03-20', subjects: ['英檢'], mode: 'pass', min: 1, full: 1, lo: 0, hi: 30, tiers: [], per: 'each', status: 'open', scores: {}, earned: 0 },
+    { id: 'SP3', name: '第一次段考', kind: '段考', date: '2026-10-08', subjects: ['國語', '數學'], mode: 'tier', min: 0, full: 100, lo: 0, hi: 0, tiers: [[90, 10], [80, 6], [70, 3]], per: 'each', status: 'done', scores: { '國語': 92, '數學': 85 }, earned: 16 }
+  ]
 };
 var C = lsGet(K('pp_cache'), null) || (DEMO ? JSON.parse(JSON.stringify(DEMO_DATA)) : {});   // 最後一次從試算表讀到的資料
 var OUT = lsGet(K('pp_outbox'), []);            // 還沒上傳的紀錄
@@ -1154,7 +1180,7 @@ function taskSummary(t) {
 }
 function openParent() {
   openOv(function () {
-    var list = C.tasksAll || C.tasks, h = ovHead('👪 家長設定') + '<div class="okbtn" data-act="shopAdmin" style="margin:0 0 6px">🛍 商店管理（價格、上下架）</div>', i;
+    var list = C.tasksAll || C.tasks, h = ovHead('👪 家長設定') + '<div class="okbtn" data-act="specialAdmin" style="margin:0 0 6px">⭐ 特殊任務（段考、檢定考…）</div><div class="okbtn" data-act="shopAdmin" style="margin:0 0 6px">🛍 商店管理（價格、上下架）</div>', i;
     h += '<div class="ovsub">目前的任務（開關＝今天出不出現；✏️ 可以修改）</div>';
     for (i = 0; i < list.length; i++) {
       var t = list[i], on = t.on !== false, g = taskGem(t);
@@ -1210,10 +1236,16 @@ function renderTasks() {
   for (i = 0; i < all.length; i++) if (!taskDone(all[i].name)) list.push(all[i]);
   doneN = all.length - list.length;
   for (i = 0; i < all.length; i++) if (taskDone(all[i].name)) list.push(all[i]);    // 完成的沉到最下面
-  var h = '<h2 class="th2">' + ic(0) + '今日任務' + (all.length ? '<span class="tcount' + (doneN === all.length ? ' alldone' : '') + '">完成 ' + doneN + ' / ' + all.length + '</span>' : '') + '</h2>';
-  if (all.length) h += '<div class="tprog"><i style="width:' + pct(doneN, all.length) + '%"></i><span>' + pct(doneN, all.length) + '%</span></div>';
+  var spOpen = 0, sp = specials();
+  for (i = 0; i < sp.length; i++) if (sp[i].status !== 'done') spOpen++;
+  var tab = S.ttab === 'special' ? 'special' : 'daily';
+  var h = '<div class="ttabs"><span class="ttab' + (tab === 'daily' ? ' sel' : '') + '" data-act="ttab" data-arg="daily">' + ic(0) + '今日任務' +
+    (all.length ? '<em class="' + (doneN === all.length ? 'alldone' : '') + '">' + doneN + '/' + all.length + '</em>' : '') + '</span>' +
+    '<span class="ttab' + (tab === 'special' ? ' sel' : '') + '" data-act="ttab" data-arg="special">⭐ 特殊任務' + (spOpen ? '<em>' + spOpen + '</em>' : '') + '</span></div>';
+  if (tab === 'daily' && all.length) h += '<div class="tprog"><i style="width:' + pct(doneN, all.length) + '%"></i><span>今天完成 ' + doneN + ' / ' + all.length + '（' + pct(doneN, all.length) + '%）</span></div>';
   h += '<div class="sbtns"><div class="sbtn shop" data-act="shop">🛍 商店<b>' + SYM() + ' ' + total + '</b></div>' +
     '<div class="sbtn coll" data-act="collect">🏆 收藏區<b>' + gotCount() + ' 件</b></div></div><div class="list">';
+  if (tab === 'special') { $('cTasks').innerHTML = h + renderSpecialList() + '</div>'; return; }
   if (!list.length) h += '<div class="empty">' + (C.tasks.length ? '今天沒有任務，好好休息！' : '尚未同步任務資料') + '</div>';
   for (i = 0; i < list.length; i++) {
     var done = taskDone(list[i].name), inf = taskInfo(list[i]);
@@ -2384,6 +2416,208 @@ function saveShop(q, price, on) {
   parentCall({ action: 'setShop', id: q.id, name: q.name, price: price, on: on ? '1' : '0' }, '已更新「' + q.name + '」');
 }
 
+/* ===== 特殊任務（段考、檢定考、比賽…），和每日任務分開 ===== */
+var SP_KINDS = ['段考', '檢定考', '比賽', '閱讀挑戰', '其他'];
+var SP_ICON = { '段考': '📝', '檢定考': '🎓', '比賽': '🏅', '閱讀挑戰': '📚', '其他': '⭐' };
+var SP_SUBJ = ['國語', '數學', '英語', '自然', '社會', '生活', '總分'];
+var SP_MODE = { auto: '自動計算', tier: '自訂區段', pass: '通過制' };
+function specials() { return C.specials || []; }
+function findSp(id) { var a = specials(); for (var i = 0; i < a.length; i++) if (a[i].id === id) return a[i]; return null; }
+/* 一個分數換多少寶石 */
+function scoreReward(m, score) {
+  score = Number(score);
+  if (isNaN(score)) return 0;
+  if (m.mode === 'pass') return score >= 1 ? m.hi : 0;                    // 通過制：1＝通過
+  if (m.mode === 'tier') {
+    var best = 0;
+    for (var i = 0; i < m.tiers.length; i++) if (score >= m.tiers[i][0]) best = Math.max(best, m.tiers[i][1]);
+    return best;
+  }
+  if (score < m.min) return 0;
+  if (m.full <= m.min) return m.hi;
+  return Math.round(m.lo + (Math.min(score, m.full) - m.min) / (m.full - m.min) * (m.hi - m.lo));
+}
+/* 整個任務的寶石：每科分開加總，或用平均分數算一次 */
+function missionReward(m, scores) {
+  var sum = 0, n = 0, tot = 0, k;
+  for (k in scores) if (scores.hasOwnProperty(k) && scores[k] !== '' && !isNaN(Number(scores[k]))) { n++; sum += Number(scores[k]); tot += scoreReward(m, scores[k]); }
+  if (!n) return 0;
+  return m.per === 'avg' && m.mode !== 'pass' ? scoreReward(m, sum / n) : tot;
+}
+function ruleText(m) {
+  var unit = m.per === 'avg' && m.mode !== 'pass' ? '（用平均分數算一次）' : (m.subjects.length > 1 ? '（每科分開算）' : '');
+  if (m.mode === 'pass') return '通過就得 ' + SYM() + ' ' + m.hi + unit;
+  if (m.mode === 'tier') {
+    var t = m.tiers.slice(0).sort(function (a, b) { return b[0] - a[0]; }), a = [];
+    for (var i = 0; i < t.length; i++) a.push(t[i][0] + ' 分以上 ' + SYM() + t[i][1]);
+    return a.join('・') + unit;
+  }
+  return m.min + ' 分起有寶石，' + m.min + ' 分得 ' + m.lo + '、' + m.full + ' 分得 ' + m.hi + unit;
+}
+function previewRows(m) {
+  if (m.mode === 'pass') return [['通過', m.hi], ['未通過', 0]];
+  var pts = [], f = m.full, step = f >= 50 ? 10 : 1, out = [];
+  for (var v = f; v >= Math.max(0, f - step * 5); v -= step) pts.push(v);
+  for (var i = 0; i < pts.length; i++) out.push([pts[i] + ' 分', scoreReward(m, pts[i])]);
+  return out;
+}
+function spDays(m) { var d = parseYmd(m.date); return d ? dayDiff(new Date(), d) : null; }
+function renderSpecialList() {
+  var a = specials().slice(0), h = '', i;
+  a.sort(function (x, y) {                          // 進行中排前面、依日期；沒填日期的排最後
+    if (x.status !== y.status) return x.status === 'done' ? 1 : -1;
+    return String(x.date || '9999') < String(y.date || '9999') ? -1 : 1;
+  });
+  if (!a.length) return '<div class="empty">目前沒有特殊任務。<br>家長可以在「🎨 主題 → 家長設定 → 特殊任務」新增，例如段考、檢定考。</div>';
+  for (i = 0; i < a.length; i++) {
+    var m = a[i], dd = spDays(m), d = parseYmd(m.date);
+    h += '<div class="smis' + (m.status === 'done' ? ' done' : '') + '" data-act="mis" data-arg="' + esc(m.id) + '"><div class="smh"><b>' + (SP_ICON[m.kind] || '⭐') + ' ' + esc(m.name) + '</b>' +
+      '<span class="sdate">' + (d ? (d.getMonth() + 1) + '/' + d.getDate() : '') + (m.status === 'done' ? '' : (dd > 0 ? '・還有 ' + dd + ' 天' : (dd === 0 ? '・就是今天！' : '・等待登記成績'))) + '</span></div>' +
+      '<div class="smr">' + esc(m.subjects.join('・')) + '</div>' +
+      (m.status === 'done' ? '<div class="smr ok">已完成：獲得 ' + SYM() + ' ' + m.earned + '</div>' : '<div class="smr rule">' + esc(ruleText(m)) + '</div>') + '</div>';
+  }
+  return h;
+}
+function openMission(id) {
+  var m = findSp(id);
+  if (!m) return;
+  openOv(function () {
+    var h = ovHead((SP_ICON[m.kind] || '⭐') + ' ' + esc(m.name)), i, d = parseYmd(m.date), dd = spDays(m);
+    h += '<div class="spinfo"><span class="badge">' + esc(m.kind) + '</span>' + (d ? '　' + (d.getMonth() + 1) + '月' + d.getDate() + '日' + (m.status !== 'done' && dd >= 0 ? '（還有 ' + dd + ' 天）' : '') : '') +
+      '<div>科目：' + esc(m.subjects.join('、')) + '</div><div>獎勵方式：' + SP_MODE[m.mode] + '　' + esc(ruleText(m)) + '</div></div>';
+    if (m.status === 'done') {
+      h += '<div class="ovsub">成績與獎勵</div><table class="sptab"><tr><th>科目</th><th>' + (m.mode === 'pass' ? '結果' : '分數') + '</th><th>寶石</th></tr>';
+      for (i = 0; i < m.subjects.length; i++) {
+        var sc = m.scores[m.subjects[i]];
+        h += '<tr><td>' + esc(m.subjects[i]) + '</td><td>' + (sc === undefined || sc === '' ? '—' : (m.mode === 'pass' ? (Number(sc) >= 1 ? '通過' : '未通過') : sc)) + '</td><td>' +
+          (m.per === 'avg' && m.mode !== 'pass' ? '' : SYM() + ' ' + scoreReward(m, sc)) + '</td></tr>';
+      }
+      h += '</table><div class="sptotal">共獲得 ' + SYM() + ' ' + m.earned + '</div>';
+    } else {
+      h += '<div class="ovsub">考幾分可以拿幾顆？' + (m.per === 'avg' && m.mode !== 'pass' ? '（平均分數）' : '（每科）') + '</div><div class="prev">';
+      var pr = previewRows(m);
+      for (i = 0; i < pr.length; i++) h += '<span><b>' + pr[i][0] + '</b>' + SYM() + ' ' + pr[i][1] + '</span>';
+      h += '</div>';
+    }
+    return h + '<div class="okbtn" data-act="spScore" data-arg="' + esc(m.id) + '">✏️ ' + (m.status === 'done' ? '修改成績' : '登記成績') + '（需要家長密碼）</div>';
+  });
+}
+var SCORE = { id: '', v: {} };
+function openScore(id) {
+  var m = findSp(id);
+  SCORE = { id: id, v: {} };
+  for (var k in m.scores) if (m.scores.hasOwnProperty(k)) SCORE.v[k] = m.scores[k];
+  openOv(function () {
+    var h = '<div class="ovh"><span class="x" data-act="mis" data-arg="' + esc(id) + '">← 返回</span><h2>登記成績</h2><span class="x" data-act="close">關閉</span></div>' +
+      '<div class="phint" style="margin:0 0 6px">' + esc(m.name) + '：' + esc(ruleText(m)) + '</div>', i;
+    for (i = 0; i < m.subjects.length; i++) {
+      var sj = m.subjects[i], v = SCORE.v[sj] === undefined ? '' : SCORE.v[sj];
+      h += '<div class="srow"><span class="sname">' + esc(sj) + '</span>';
+      if (m.mode === 'pass') h += '<select data-score="' + esc(sj) + '"><option value="">還沒有結果</option><option value="1"' + (String(v) === '1' ? ' selected' : '') + '>通過</option><option value="0"' + (String(v) === '0' ? ' selected' : '') + '>未通過</option></select>';
+      else h += '<input data-score="' + esc(sj) + '" type="number" min="0" max="' + m.full + '" placeholder="0～' + m.full + '" value="' + esc(v) + '">';
+      h += '<span class="sget" id="sg_' + i + '"></span></div>';
+    }
+    return h + '<div class="sptotal" id="spTot"></div><div class="okbtn" data-act="spSave">確認並發放寶石</div>' +
+      '<div class="pend">分數登記錯了也沒關係，之後可以再修改，寶石會自動補發或扣回差額。</div>';
+  });
+  scoreRefresh();
+}
+function scoreRefresh() {
+  var m = findSp(SCORE.id);
+  if (!m) return;
+  for (var i = 0; i < m.subjects.length; i++) {
+    var el = $('sg_' + i), v = SCORE.v[m.subjects[i]];
+    if (el) el.textContent = v === undefined || v === '' ? '' : (m.per === 'avg' && m.mode !== 'pass' ? '' : '→ ' + SYM() + ' ' + scoreReward(m, v));
+  }
+  var t = $('spTot');
+  if (t) t.textContent = '合計 ' + SYM() + ' ' + missionReward(m, SCORE.v) + (m.status === 'done' ? '（上次 ' + m.earned + '）' : '');
+}
+/* 家長：特殊任務管理 */
+function blankMF() { return { id: '', name: '', kind: '段考', date: '', subjects: ['國語', '數學', '英語', '自然', '社會'], extra: '', mode: 'auto', min: '60', full: '100', lo: '1', hi: '10', tiers: [[90, 10], [80, 6], [70, 3]], per: 'each' }; }
+var MF = blankMF();
+function mfFrom(m) {
+  var f = blankMF();
+  f.id = m.id; f.name = m.name; f.kind = m.kind; f.date = String(m.date || '').slice(0, 10); f.mode = m.mode; f.per = m.per;
+  f.min = String(m.min); f.full = String(m.full); f.lo = String(m.lo); f.hi = String(m.hi);
+  f.tiers = m.tiers.length ? m.tiers.slice(0) : f.tiers;
+  f.subjects = []; f.extra = '';
+  for (var i = 0; i < m.subjects.length; i++) { if (SP_SUBJ.indexOf(m.subjects[i]) >= 0) f.subjects.push(m.subjects[i]); else f.extra += (f.extra ? '、' : '') + m.subjects[i]; }
+  return f;
+}
+function mfMission() {
+  var subs = MF.subjects.slice(0), ex = String(MF.extra || '').split(/[、,，\s]+/), i;
+  for (i = 0; i < ex.length; i++) if (ex[i] && subs.indexOf(ex[i]) < 0) subs.push(ex[i]);
+  var tiers = [];
+  for (i = 0; i < MF.tiers.length; i++) tiers.push([Number(MF.tiers[i][0]) || 0, Number(MF.tiers[i][1]) || 0]);
+  return { id: MF.id, name: MF.name, kind: MF.kind, date: MF.date, subjects: subs, mode: MF.mode, min: Number(MF.min) || 0, full: Number(MF.full) || 100,
+    lo: Number(MF.lo) || 0, hi: Number(MF.hi) || 0, tiers: tiers, per: MF.mode === 'pass' ? 'each' : MF.per };
+}
+function sel(name, arr, cur, fmt) {
+  var h = '<select data-mf="' + name + '">';
+  for (var i = 0; i < arr.length; i++) h += '<option value="' + arr[i] + '"' + (String(arr[i]) === String(cur) ? ' selected' : '') + '>' + (fmt ? fmt(arr[i]) : arr[i]) + '</option>';
+  return h + '</select>';
+}
+function range(a, b, st) { var o = []; for (var v = a; v <= b; v += st) o.push(v); return o; }
+function openSpecialAdmin() {
+  openOv(function () {
+    var h = '<div class="ovh"><span class="x" data-act="parentBack">← 家長設定</span><h2>⭐ 特殊任務</h2><span class="x" data-act="close">關閉</span></div>', i, a = specials();
+    for (i = 0; i < a.length; i++) {
+      h += '<div class="ptrow' + (MF.id === a[i].id ? ' editing' : '') + '"><div class="pn"><b>' + (SP_ICON[a[i].kind] || '') + ' ' + esc(a[i].name) + '</b><div class="pmeta">' +
+        '<span class="badge">' + esc(a[i].date) + '</span><span class="badge">' + SP_MODE[a[i].mode] + '</span><span class="badge star">' + (a[i].status === 'done' ? '已完成 ' + SYM() + a[i].earned : '進行中') + '</span></div></div>' +
+        '<span class="pedit" data-act="spEdit" data-arg="' + esc(a[i].id) + '">✏️</span><span class="pedit" data-act="spDel" data-arg="' + esc(a[i].id) + '">🗑</span></div>';
+    }
+    var ex = (C.config.exams || []);
+    if (!MF.id && ex.length) {
+      h += '<div class="ovsub">從段考日期快速建立</div><div class="cats">';
+      for (i = 0; i < ex.length; i++) h += '<span class="cat" data-act="spFromExam" data-arg="' + i + '">📝 ' + esc(ex[i].name) + '（' + esc(String(ex[i].date).slice(5)) + '）</span>';
+      h += '</div>';
+    }
+    h += '<div class="ovsub" id="mfTop">' + (MF.id ? '✏️ 修改特殊任務' : '＋ 新增特殊任務') + '</div><div class="pform">' +
+      '<label><span>名稱</span><input data-mf="name" value="' + esc(MF.name) + '" placeholder="例如：第二次段考"></label>' +
+      '<label><span>類型</span>' + sel('kind', SP_KINDS, MF.kind, function (k) { return SP_ICON[k] + ' ' + k; }) + '</label>' +
+      '<label><span>日期</span><input data-mf="date" type="date" value="' + esc(MF.date) + '"></label>' +
+      '<div class="flabel">科目（點一下選擇）</div><div class="cats">';
+    for (i = 0; i < SP_SUBJ.length; i++) h += '<span class="cat' + (MF.subjects.indexOf(SP_SUBJ[i]) >= 0 ? ' sel' : '') + '" data-act="mfSubj" data-arg="' + SP_SUBJ[i] + '">' + SP_SUBJ[i] + '</span>';
+    h += '</div><label><span>其他科目</span><input data-mf="extra" value="' + esc(MF.extra) + '" placeholder="例如：英檢聽力、英檢閱讀"></label>' +
+      '<label><span>計算方式</span>' + sel('mode', ['auto', 'tier', 'pass'], MF.mode, function (k) { return { auto: '自動計算（只要給分數下限與獎勵範圍）', tier: '自訂分數區段', pass: '通過制（通過就給）' }[k]; }) + '</label>';
+    if (MF.mode === 'auto') {
+      h += '<label><span>分數下限</span>' + sel('min', range(0, 100, 5), MF.min, function (v) { return v + ' 分'; }) + '<small class="pnote">低於這個分數沒有寶石</small></label>' +
+        '<label><span>滿分</span>' + sel('full', [100, 120, 150, 200, 50, 20, 10], MF.full, function (v) { return v + ' 分'; }) + '</label>' +
+        '<label><span>獎勵下限</span>' + sel('lo', range(0, 20, 1), MF.lo, function (v) { return v + ' 顆'; }) + '<small class="pnote">剛好考到分數下限拿幾顆</small></label>' +
+        '<label><span>獎勵上限</span>' + sel('hi', range(1, 50, 1), MF.hi, function (v) { return v + ' 顆'; }) + '<small class="pnote">考滿分拿幾顆，中間依比例自動算</small></label>';
+    } else if (MF.mode === 'tier') {
+      h += '<div class="flabel">分數區段（考到「以上」就拿那一格的寶石）</div>';
+      for (i = 0; i < MF.tiers.length; i++) {
+        h += '<label><span>區段 ' + (i + 1) + '</span>' + sel('tierS_' + i, range(0, 150, 5), MF.tiers[i][0], function (v) { return v + ' 分以上'; }) +
+          '<span class="pgap">得</span>' + sel('tierR_' + i, range(0, 50, 1), MF.tiers[i][1], function (v) { return v + ' 顆'; }) +
+          '<span class="pedit" data-act="mfTierDel" data-arg="' + i + '">✕</span></label>';
+      }
+      h += '<div class="cat" data-act="mfTierAdd" style="display:inline-block">＋ 加一個區段</div>';
+    } else {
+      h += '<label><span>通過獎勵</span>' + sel('hi', range(1, 100, 1), MF.hi, function (v) { return v + ' 顆'; }) + '<small class="pnote">每個項目通過就給</small></label>';
+    }
+    if (MF.mode !== 'pass') h += '<label><span>計分對象</span>' + sel('per', ['each', 'avg'], MF.per, function (k) { return k === 'each' ? '每科分開算，再加總' : '用平均分數算一次'; }) + '</label>';
+    var pm = mfMission(), pr = previewRows(pm);
+    h += '</div><div class="flabel">預覽：' + (pm.per === 'avg' && pm.mode !== 'pass' ? '平均分數' : '每科') + '考幾分拿幾顆</div><div class="prev">';
+    for (i = 0; i < pr.length; i++) h += '<span><b>' + pr[i][0] + '</b>' + SYM() + ' ' + pr[i][1] + '</span>';
+    h += '</div>';
+    if (MF.id) h += '<div class="okbtn" data-act="spSaveDef">💾 儲存修改</div><div class="okbtn graybtn" data-act="spCancel">取消修改</div>';
+    else h += '<div class="okbtn" data-act="spSaveDef">＋ 新增特殊任務</div>';
+    return h;
+  });
+}
+function saveSpecialRemote(m, msg) {
+  var tiers = [];
+  for (var i = 0; i < m.tiers.length; i++) tiers.push(m.tiers[i][0] + ':' + m.tiers[i][1]);
+  if (!C.specials) C.specials = [];
+  var found = false;
+  for (i = 0; i < C.specials.length; i++) if (C.specials[i].id === m.id) { if (m.status === 'archive') C.specials.splice(i, 1); else C.specials[i] = m; found = true; break; }
+  if (!found && m.status !== 'archive') C.specials.push(m);
+  lsSet(K('pp_cache'), C);
+  parentCall({ action: 'saveSpecial', id: m.id, name: m.name, kind: m.kind, date: m.date, subjects: m.subjects.join('、'), mode: m.mode, min: m.min, full: m.full,
+    lo: m.lo, hi: m.hi, tiers: tiers.join(','), per: m.per, status: m.status, scores: JSON.stringify(m.scores || {}), earned: m.earned || 0 }, msg);
+}
+
 /* 自訂專注時間 */
 var MK = { buf: '' };
 function openMinutes() {
@@ -2539,6 +2773,9 @@ var KID_LINES = {
   sleep: ["已經九點了。就算是怪盜，也需要充足的睡眠喔，晚安。", "月亮都爬到天空正中央了——該上床囉，明天見。", "今天的表演到此結束。晚安，好夢。", "早點睡，明天才有精神繼續閃閃發亮。", "熬夜不是紳士的作風喔。該睡覺了。", "把書包收好、刷好牙，就去睡吧。晚安。", "夜晚是我的工作時間，卻是你的休息時間。晚安！", "睡個好覺，夢裡也許會遇見滑翔翼喔。", "明天見！今晚的月亮會守護你的。", "該關燈囉。今天辛苦了，晚安。"],
   bday: ["生日快樂，小布丁！今晚的月亮，是特地為你升起的。", "七月九日——全世界最重要的日子之一。小布丁，生日快樂！", "我原本想偷走一顆寶石，結果發現最閃亮的是今天的壽星。生日快樂！", "Ladies and Gentlemen，請為今天的主角小布丁鼓掌！", "又長大一歲了！願你今年的每一天，都像魔術一樣精彩。", "生日快樂！白鴿們都飛來幫你唱生日歌了。", "小布丁，生日快樂。今天的任務就是——好好被大家寵愛。", "許個願吧！這次換我幫你守護它。", "今天的預告函特別不一樣喔，記得完成任務去收下它。", "生日快樂！你是我見過最認真、最閃亮的小魔術師。"],
   moneyTip: ["理財小祕訣：買東西前先問自己——這是「需要」，還是「想要」？", "想要的東西，先等三天再決定。三天後還想要，才是真的想要。", "紳士的習慣：拿到零用錢，先存一部分，再花剩下的。", "小錢也會變大錢。每天省 10 元，一個月就有 300 元喔。", "買之前比一比價格，同樣的東西，聰明的人會買到更划算的。", "試試看把錢分成三份：存起來、花掉、分享給別人。", "把存錢目標寫下來，每天看一眼，就比較不會亂花。", "零食吃完就沒了，但存下來的錢，可以換到更大的夢想。", "朋友有的東西，不一定你也需要。不跟風，也是一種帥氣。", "記帳的人最厲害——因為你知道每一塊錢跑到哪裡去了。", "大目標可以拆成小目標，一步一步存，就一定到得了。", "借來的錢一定要還。守信用，是比寶石更珍貴的東西。", "好的東西可以用很久。買的時候想想：它能陪我多久？", "花錢買經驗也很棒，例如一本好書，或一次學習的機會。", "如果今天沒有花錢，那也是一種勝利喔。", "東西壞了先想想能不能修好，修好再用也很酷。", "等待的時間，會讓你更珍惜得到的東西。", "看到「限時特價」先冷靜。真正需要的東西，不怕等一下。", "存錢就像收集寶石，一顆一顆，最後會變成寶藏。", "錢是工具，不是目標。把它用在讓你和別人開心的地方吧。"],
+  specialDone: ["成績登記完成！這次一共拿到 {x} 顆寶石，努力有回報！", "了不起！{x} 顆寶石，是你認真準備換來的。", "考試辛苦了！{x} 顆寶石送給你。", "這份成績單，比任何寶石都閃亮——{x} 顆收下吧！", "準備考試的每一天都沒有白費，{x} 顆寶石到手！", "漂亮的成績！今晚的月亮也為你驕傲。", "{x} 顆寶石入庫！一流的實力，就是這樣練出來的。", "太棒了！下次的目標，我們一起再往上挑戰。", "辛苦了，好好休息一下吧。{x} 顆寶石是你的。", "成績出爐！你的努力，我都看在眼裡。"],
+  specialZero: ["這次沒有拿到寶石，但努力的過程一樣重要。下次一起加油！", "分數不是全部，願意面對結果的你很勇敢。", "這次差一點點，我們找出不會的地方，下次就會進步。", "一流的魔術師也失敗過很多次，重要的是再試一次。", "沒關係，這次的經驗就是下次的祕密武器。", "比起分數，我更在意你有沒有盡力——你有，對吧？", "下次的舞台，一定能更精彩。", "跌倒了就站起來，這才是真正的帥氣。", "我們把這次當作練習，下一次正式表演再發光！", "別灰心，月亮也有圓有缺，下次一定會更好。"],
+  specialNew: ["新的特殊任務出現了：{x}！準備好接受挑戰了嗎？", "特殊任務「{x}」已經送達，好好準備吧！", "預告：{x}。這次的寶石，等你來拿！", "{x} 要來了！每天準備一點點，就不怕。", "新的挑戰：{x}。我相信你可以的！", "特殊任務登場——{x}！", "{x} 的獎勵已經準備好了，就看你的表現囉。", "準備好了嗎？{x}，Show Time！", "{x}，是展現實力的好機會。", "接下來的大舞台：{x}！"],
   taskOntime: ["準時完成！還多拿了 {x} 顆加碼寶石，漂亮！", "比預告的時間還早，真是一流的手法。", "準時抵達！紳士最重要的，就是守時。", "時間還沒到就完成了，連我都佩服。", "趕在時間內完成！加碼寶石送給你。", "準時交件！這就是專業。", "你跑贏了時鐘，漂亮的一擊！", "時間管理大師就是你！", "在截止前完成，這份從容，很帥氣。", "準時達成！今晚的月亮也在為你鼓掌。"],
   taskLate: ["完成了！雖然超過時間，但有做完就很棒。下次早一點開始吧。", "時間過了一點，不過你沒有放棄，這很重要。", "完成！下次試試看先做最難的，就不會拖到時間了。", "有做完就值得肯定。明天我們挑戰準時，好嗎？", "慢了一點點，沒關係。魔術師也要練習很多次。", "完成任務！下次把時鐘當成對手，一起贏過它吧。", "雖然超時，但你堅持到最後，給你拍拍手。", "晚了一些，但完成比完美更重要。", "下次提早十分鐘開始，就能拿到加碼喔。", "任務完成！明天再來挑戰準時吧。"],
   chStart: ["限時挑戰開始！目標：{x} 分鐘內完成！", "計時開始——讓我看看你的速度！", "挑戰開始！動作要快，但也要做好喔。", "預備——開始！時鐘已經在跑了。", "這是一場和時間的比賽，加油！", "挑戰啟動！我在旁邊幫你計時。", "開始！一流的怪盜，動作都很俐落。", "限時任務開始，Show Time！", "倒數開始，專心衝刺吧！", "時鐘開始轉動，看你的了！"],
@@ -2842,6 +3079,59 @@ var ACTS = {
   },
   rewards: function () { openShop(); },
   shop: function () { openShop(); },
+  ttab: function (t) { S.ttab = t; saveS(); renderTasks(); },
+  mis: function (id) { openMission(id); },
+  spScore: function (id) { askPin('登記成績', function () { openScore(id); }); },
+  spSave: function () {
+    var m = findSp(SCORE.id);
+    if (!m) return;
+    var has = false, k;
+    for (k in SCORE.v) if (SCORE.v.hasOwnProperty(k) && SCORE.v[k] !== '') has = true;
+    if (!has) { toast('請至少輸入一個分數'); return; }
+    var earned = missionReward(m, SCORE.v), diff = earned - (m.status === 'done' ? m.earned : 0);
+    var nm = JSON.parse(JSON.stringify(m));
+    nm.scores = SCORE.v; nm.earned = earned; nm.status = 'done';
+    if (diff) starEvent(diff, '特殊任務：' + m.name + (m.status === 'done' ? '（修改成績）' : ''), 'special', 'SP|' + m.id);
+    saveSpecialRemote(nm, '成績已登記，' + (diff >= 0 ? '發放' : '扣回') + ' ' + SYM() + ' ' + Math.abs(diff));
+    closeOv();
+    renderTasks();
+    if (earned > 0) { celebrate(false); kidSay('specialDone', earned); } else kidSay('specialZero');
+  },
+  specialAdmin: function () { MF = blankMF(); openSpecialAdmin(); },
+  spEdit: function (id) { MF = mfFrom(findSp(id)); refreshOv(); var t = $('mfTop'); if (t) $('ovBox').scrollTop = t.offsetTop - 10; },
+  spCancel: function () { MF = blankMF(); refreshOv(); },
+  spDel: function (id) {
+    var m = findSp(id);
+    if (!m || !confirm('要把「' + m.name + '」封存嗎？（已發放的寶石不會被收回）')) return;
+    var nm = JSON.parse(JSON.stringify(m));
+    nm.status = 'archive';
+    saveSpecialRemote(nm, '已封存「' + m.name + '」');
+  },
+  spFromExam: function (i) {
+    var ex = C.config.exams[+i];
+    MF = blankMF();
+    MF.name = ex.name; MF.date = String(ex.date).slice(0, 10);
+    refreshOv();
+  },
+  mfSubj: function (sj) { var k = MF.subjects.indexOf(sj); if (k >= 0) MF.subjects.splice(k, 1); else MF.subjects.push(sj); refreshOv(); },
+  mfTierAdd: function () { MF.tiers.push([60, 1]); refreshOv(); },
+  mfTierDel: function (i) { MF.tiers.splice(+i, 1); refreshOv(); },
+  spSaveDef: function () {
+    var m = mfMission();
+    if (!m.name) { toast('請輸入名稱'); return; }
+    if (!m.subjects.length) { toast('請至少選一個科目'); return; }
+    if (m.mode === 'auto' && m.hi < m.lo) { toast('獎勵上限不能比下限少'); return; }
+    if (m.mode === 'auto' && m.full <= m.min) { toast('滿分要比分數下限高'); return; }
+    if (m.mode === 'tier' && !m.tiers.length) { toast('請至少設定一個區段'); return; }
+    var old = MF.id ? findSp(MF.id) : null, isNew = !old;
+    m.id = MF.id || 'SP' + uid();
+    m.status = old ? old.status : 'open';
+    m.scores = old ? old.scores : {};
+    m.earned = old ? old.earned : 0;
+    MF = blankMF();
+    saveSpecialRemote(m, isNew ? '已新增特殊任務' : '已儲存修改');
+    if (isNew) kidSay('specialNew', m.name);
+  },
   shopCat: function (c) { SHOPF.f = c; refreshOv(); },
   prod: function (id) { openProd(id); },
   buy: function (id) {
@@ -3116,6 +3406,15 @@ if (DEMO) {
 $('ov').addEventListener('click', onTap, false);
 function formSync(e) {
   var el = e.target;
+  if (el && el.getAttribute && el.getAttribute('data-score') !== null) { SCORE.v[el.getAttribute('data-score')] = el.value; scoreRefresh(); return; }
+  var mf = el && el.getAttribute && el.getAttribute('data-mf');
+  if (mf) {
+    var tm = /^tier([SR])_(\d+)$/.exec(mf);
+    if (tm) MF.tiers[+tm[2]][tm[1] === 'S' ? 0 : 1] = Number(el.value);
+    else MF[mf] = el.value;
+    if (el.tagName === 'SELECT' && e.type === 'change') refreshOv();
+    return;
+  }
   if (el && el.getAttribute && el.getAttribute('data-prod') && e.type === 'change') {
     var q = findProd(el.getAttribute('data-prod'));
     if (q) { saveShop(q, Number(el.value) || q.price, q.on); refreshOv(); }
