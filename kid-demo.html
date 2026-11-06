@@ -578,6 +578,15 @@
   .tcell b { display: block; font-size: 12px; line-height: 1.25; height: 30px; overflow: hidden; }
   .tcell.lock b { color: #adb5bd; }
   .tdetail { text-align: center; }
+  .smis.quizcard { border: 3px solid #e8590c; background: #fff4e6; }
+  .smis.quizcard .smh b { color: #d9480f; }
+  #qzPrev small { display: block; font-size: 15px; color: #495057; font-weight: normal; }
+
+  .up { color: #2f9e44; } .down { color: #e03131; } .same { color: #868e96; }
+  .sget small { display: block; font-size: 13px; color: #7b8794; }
+  .sptotal small { font-size: 16px; color: #2f9e44; margin-left: 6px; }
+  .cmpline { text-align: center; font-size: 17px; font-weight: bold; margin: 2px 0 8px; }
+
   .grows { display: flex; flex-wrap: wrap; margin: 4px 0 8px; }
   .grows span { display: flex; align-items: center; width: 50%; font-size: 15px; padding: 3px 4px; }
   .grows .giftsvg { margin-right: 6px; flex-shrink: 0; }
@@ -852,6 +861,47 @@
   .icc { width: 20%; padding: 3px; text-align: center; font-size: 13px; line-height: 1.2; }
   .icc img { display: block; width: 60px; height: 60px; margin: 0 auto 3px; border-radius: 14px; border: 3px solid transparent; }
   .icc.sel img { border-color: #1971c2; }
+
+  /* 隱藏任務 */
+  .hidteaser { margin: 8px 4px 4px; padding: 10px 12px; border: 2px dashed #9775fa; border-radius: 12px; background: #f3f0ff; color: #6741d9; font-size: 16px; font-weight: bold; text-align: center; }
+  body #ovBox.hidbox { width: 720px; margin-left: -360px; padding: 22px 26px; color: #fff; text-align: center; border: 6px double #ffd43b; border-radius: 22px;
+    background: #0b1d51; background-image: radial-gradient(ellipse at center, #1c3d8f 0%, #0b1d51 80%); -webkit-animation: hidpop 0.5s ease-out; animation: hidpop 0.5s ease-out; }
+  @-webkit-keyframes hidpop { from { opacity: 0; -webkit-transform: translateY(-50%) scale(0.6); } to { opacity: 1; -webkit-transform: translateY(-50%) scale(1); } }
+  @keyframes hidpop { from { opacity: 0; transform: translateY(-50%) scale(0.6); } to { opacity: 1; transform: translateY(-50%) scale(1); } }
+  body.L-tall #ovBox.hidbox, body.L-narrow #ovBox.hidbox { width: 94%; margin-left: -47%; }
+  .hid-top { font-size: 36px; font-weight: bold; color: #ffd43b; letter-spacing: 2px; margin-bottom: 10px; }
+  .hid-row { display: flex; align-items: center; text-align: left; margin-bottom: 12px; }
+  .hid-ava { width: 110px; height: 110px; border-radius: 55px; border: 4px solid #fff; background: #fff; flex-shrink: 0; margin-right: 16px; }
+  .hid-say { font-size: 23px; line-height: 1.5; }
+  .hid-card { background: #fff; color: #1c3d8f; border-radius: 16px; padding: 14px 16px; border: 3px solid #ffd43b; }
+  .hid-name { font-size: 32px; font-weight: bold; }
+  .hid-info { font-size: 17px; color: #495057; margin-top: 4px; }
+  .hid-rw { font-size: 19px; margin-top: 8px; } .hid-rw .giftsvg { vertical-align: middle; }
+  .hid-btns { display: flex; margin-top: 16px; }
+  .hid-go, .hid-later { flex: 1; margin: 0 6px; padding: 16px 0; border-radius: 30px; font-size: 24px; font-weight: bold; }
+  .hid-go { background: #e8590c; color: #fff; border: 3px solid #ffd43b; }
+  .hid-later { background: rgba(255,255,255,0.12); color: #fff; border: 3px solid #fff; }
+  .hid-go.tapped, .hid-later.tapped { background: #ffd43b; color: #1b1446; }
+
+  /* 信箱 */
+  .mailbtn { position: relative; }
+  .mdot { display: none; position: absolute; top: -6px; right: -6px; min-width: 20px; height: 20px; line-height: 20px; padding: 0 5px; border-radius: 10px; background: #e03131; color: #fff;
+    font-size: 12px; font-style: normal; font-weight: bold; text-align: center; border: 2px solid #fff; -webkit-animation: bpop 0.8s ease-in-out infinite alternate; animation: bpop 0.8s ease-in-out infinite alternate; }
+  .mlrow { display: flex; align-items: center; padding: 10px 10px; margin: 5px 0; border-radius: 12px; background: #f8f9fa; border: 2px solid #e9ecef; }
+  .mlrow.unread { background: #fff9db; border-color: #fcc419; }
+  .mic { font-size: 28px; margin-right: 10px; }
+  .mmain { flex: 1; min-width: 0; } .mmain b { display: block; font-size: 18px; } .mmain small { color: #7b8794; font-size: 14px; }
+  .mnew { background: #e03131; color: #fff; font-size: 13px; font-weight: bold; border-radius: 10px; padding: 2px 8px; }
+  .mdel { background: #fff5f5; color: #c92a2a; border: 1px solid #ffa8a8; border-radius: 8px; padding: 6px 10px; font-size: 14px; margin-left: 6px; }
+  .yk-letter { text-align: center; }
+  .yk-letter .yk-sub { font-size: 17px; color: #8a7a55; margin-bottom: 4px; }
+  .yk-ltext { text-align: left; font-size: 22px; font-weight: bold; line-height: 1.75; margin: 10px 6px; }
+  .yokoku.parentpaper { background-image: radial-gradient(ellipse at center, #fffafc 55%, #ffe3ec 100%); }
+  .yokoku.kidpaper { background-image: radial-gradient(ellipse at center, #fffdf0 55%, #e7f5ff 100%); border-color: #74c0fc; outline-color: #74c0fc; }
+  .ksign { font-size: 44px; margin-left: 8px; }
+  .wrbox { width: 100%; min-height: 150px; font-size: 20px; line-height: 1.6; padding: 10px; border-radius: 12px; border: 2px solid #ced4da; margin: 6px 0; font-family: inherit; -webkit-appearance: none; }
+  .pform label.tall { align-items: flex-start; }
+  .cat.stk { font-size: 24px; padding: 4px 10px; }
 </style>
 </head>
 <body>
@@ -860,6 +910,7 @@
     <span id="time">--:--</span><span id="date"></span>
     <div id="exam"></div>
     <span id="syncInfo"></span>
+    <span class="tbtn mailbtn" data-act="mail">📮 信箱<i id="mailDot" class="mdot"></i></span>
     <span class="tbtn" data-act="sync">同步</span>
     <span class="tbtn" data-act="theme">🎨 主題</span>
     <span class="tbtn" data-act="night" id="nightBtn">夜間：自動</span>
@@ -894,7 +945,7 @@ var API_URL = 'https://script.google.com/macros/s/AKfycbxY-7ZoZfDN-pRjV-p0rnsqRY
 var API_KEY = 'change-me-1234';
 /* ======================================== */
 
-var APP_VERSION = '1106-v19';   // 每次更新都改這個，用來確認 iPad 載入的是新版
+var APP_VERSION = '1106-v20';   // 每次更新都改這個，用來確認 iPad 載入的是新版
 var WD = '日一二三四五六';
 var SPEND_CATS = ['零食', '文具', '玩具', '捐款', '其他'];
 var INCOME_CATS = ['零用錢', '紅包', '獎勵', '其他'];
@@ -1003,6 +1054,8 @@ var DEMO_DATA = {
     pin: '0000', pomoStars: 1, nightStart: 21, nightEnd: 6 },
   rewards: [{ name: '零用錢 50 元', stars: 20, money: 50, top: true }, { name: '看卡通 30 分鐘', stars: 10, money: 0, top: false }],
   ledgerRecent: [{ date: '2026-11-01', type: '收入', desc: '每週零用錢', amt: 100 }],
+  quizzes: [{ id: 'Q1', time: '2026-10-20 18:10', subject: '數學', score: 85, full: 100, dia: 1, gem: '' }, { id: 'Q2', time: '2026-10-27 18:30', subject: '國語', score: 92, full: 100, dia: 2, gem: 'emerald' }],
+  mail: [{ id: 'M1', at: '2026-11-01 07:00', from: '怪盜基德的父母', to: 'kid', title: '給最棒的小布丁', body: '今晚，我們將前來收下你最燦爛的笑容。\n這個禮拜你每天都準時寫完功課，爸爸媽媽都看在眼裡。\n繼續加油，你是我們心中最閃亮的寶石！', status: '未讀' }],
   specials: [
     { id: 'SP1', name: '第二次段考', kind: '段考', date: '2026-12-03', subjects: ['國語', '數學', '英語', '自然', '社會'], mode: 'auto', min: 60, full: 100, lo: 1, hi: 10, tiers: [], per: 'each', status: 'open', scores: {}, earned: 0 },
     { id: 'SP2', name: '英檢初級', kind: '檢定考', date: '2027-03-20', subjects: ['英檢'], mode: 'pass', min: 1, full: 1, lo: 0, hi: 30, tiers: [], per: 'each', status: 'open', scores: {}, earned: 0 },
@@ -1270,6 +1323,31 @@ function taskTime(t) {
 }
 var PERIODS = ['🌅 早上', '☀️ 下午', '🌙 晚上', '✨ 隨時都可以'];
 function periodOf(k) { return k < 0 ? 3 : (k < 720 ? 0 : (k < 1080 ? 1 : 2)); }
+function isHidden(t) { return !!(t.pre && !taskDone(t.name) && findTask(t.pre) && !taskDone(t.pre)); }
+var HIDQ = [], HID = null;
+function queueHidden(t) {                         // 完成條件任務後，把剛解鎖的隱藏任務排進佇列
+  var tl = todayTasks();
+  for (var i = 0; i < tl.length; i++) if (tl[i].pre === t.name && !taskDone(tl[i].name) && HIDQ.indexOf(tl[i].name) < 0) HIDQ.push(tl[i].name);
+  if (HIDQ.length && !kidOn()) setTimeout(showHidden, 800);
+}
+var HID_LINES = ['嘿嘿，你發現了隱藏的寶箱！裡面藏著一個新任務。', '條件達成——祕密通道打開了！一個隱藏任務出現了。', '真不愧是你！只有完成前一個任務的人，才看得到這個祕密。',
+  '這是只給優秀助手的祕密任務。要現在挑戰嗎？', 'Ladies and gentlemen！隱藏關卡登場！'];
+function showHidden() {
+  if (!HIDQ.length) return;
+  if (ovRender || $('rpg').style.display === 'block') return;           // 等對話框和視窗都關了再出現
+  var name = HIDQ.shift(), t = findTask(name);
+  if (!t || taskDone(name) || isHidden(t)) { showHidden(); return; }
+  HID = { name: name, line: HID_LINES[Math.floor(Math.random() * HID_LINES.length)], ava: Math.floor(Math.random() * KID_IMG.avatars.length) };
+  $('ovBox').className = 'hidbox';
+  openOv(function () {
+    var g = taskGem(t), inf = taskInfo(t);
+    return '<div class="hid-top">🔓 隱藏任務出現！</div><div class="hid-row"><img class="hid-ava" src="' + KID_IMG.avatars[HID.ava] + '" alt=""><div class="hid-say">' + esc(HID.line) + '</div></div>' +
+      '<div class="hid-card"><div class="hid-name">' + esc(t.name) + '</div>' + (inf.chip ? '<div class="hid-info">' + inf.chip + '</div>' : '') +
+      '<div class="hid-rw">完成可得 ' + SYM() + ' ' + t.stars + (t.bonus ? '（加碼再 +' + t.bonus + '）' : '') + '　＋ ' + giftSvg(g.r, 30) + ' ' + GIFT_STYLE[g.r][2] + '</div></div>' +
+      '<div class="hid-btns"><span class="hid-go" data-act="hidGo" data-arg="' + esc(name) + '">⚡ 馬上去做</span><span class="hid-later" data-act="hidLater">⏰ 等一下再做</span></div>';
+  });
+  tsound('fanfare');
+}
 function findTask(name) { for (var i = 0; i < C.tasks.length; i++) if (C.tasks[i].name === name) return C.tasks[i]; return null; }
 function focusToday() { return S.fday && S.fday.d === ymd(new Date()) ? S.fday.n : 0; }
 function streakOf(t) {
@@ -1391,6 +1469,7 @@ function completeTask(t, bonus, line, x) {
   }
   LAST_BONUS = reasons.length ? { reason: reasons.join('，而且'), r: { n: bonus || 0, bonusTag: !!bonus, drops: drops, line: bonusLine(bonus, drops) } } : null;
   var choices = [['next', '下一個任務！'], ['thanks', '謝謝基德']];
+  queueHidden(t);
   if (all && kidOn()) showCard('new');
   else if (kidSay(line || 'task', x || '神祕寶物', { r: LAST_REWARD, c: LAST_BONUS ? null : choices, quick: !!LAST_BONUS })) sayBonus(choices);
   else toast('太棒了！+' + n + SYM() + (bonus ? '（含加碼 ' + bonus + '）' : '') + '・' + gem.name + (drops.length ? '・額外掉落 ' + drops[0].gem.name : ''));
@@ -1486,7 +1565,7 @@ function taskSummary(t) {
 }
 function openParent() {
   openOv(function () {
-    var list = C.tasksAll || C.tasks, h = ovHead('👪 家長設定') + '<div class="okbtn" data-act="specialAdmin" style="margin:0 0 6px">⭐ 特殊任務（段考、檢定考…）</div><div class="okbtn" data-act="shopAdmin" style="margin:0 0 6px">🛍 商店管理（價格、上下架）</div>', i;
+    var list = C.tasksAll || C.tasks, h = ovHead('👪 家長設定') + '<div class="okbtn" data-act="mailAdmin" style="margin:0 0 6px">📮 信箱（寫信給小布丁・看回信）</div><div class="okbtn" data-act="specialAdmin" style="margin:0 0 6px">⭐ 特殊任務（段考、檢定考…）</div><div class="okbtn" data-act="shopAdmin" style="margin:0 0 6px">🛍 商店管理（價格、上下架）</div>', i;
     h += '<div class="ovsub">目前的任務（開關＝今天出不出現；✏️ 可以修改）</div>';
     for (i = 0; i < list.length; i++) {
       var t = list[i], on = t.on !== false, g = taskGem(t);
@@ -1542,7 +1621,11 @@ function parentCall(params, okMsg) {
 function renderTasks() {
   var all = todayTasks(), total = starTotal(), rw = pinnedReward(), list = [], doneN = 0, i;
   var ud = [], dd = [];
-  for (i = 0; i < all.length; i++) (taskDone(all[i].name) ? dd : ud).push({ t: all[i], k: taskTime(all[i]), o: i });
+  var hidN = 0;
+  for (i = 0; i < all.length; i++) {
+    if (isHidden(all[i])) { hidN++; continue; }                         // 解鎖條件還沒完成：隱藏任務
+    (taskDone(all[i].name) ? dd : ud).push({ t: all[i], k: taskTime(all[i]), o: i });
+  }
   function byTime(a, b) { return (a.k < 0 ? 9999 : a.k) - (b.k < 0 ? 9999 : b.k) || a.o - b.o; }
   ud.sort(byTime); dd.sort(byTime);                                   // 從早上排到晚上，完成的沉到最下面
   var heads = {}, showHead = false, lastP = -1, nowP = periodOf(nowMin());
@@ -1552,7 +1635,8 @@ function renderTasks() {
     if (showHead && pi !== lastP) { heads[i] = '<div class="tgroup' + (pi === nowP ? ' now' : '') + '">' + PERIODS[pi] + (pi === nowP ? '<em>現在</em>' : '') + '</div>'; lastP = pi; }
     list.push(ud[i].t);
   }
-  if (dd.length && ud.length && showHead) heads[ud.length] = '<div class="tgroup">✅ 已完成</div>';
+  heads[ud.length] = (hidN ? '<div class="hidteaser">❓ 還有 ' + hidN + ' 個隱藏任務……完成某個任務之後就會出現！</div>' : '') +
+    (dd.length && ud.length && showHead ? '<div class="tgroup">✅ 已完成</div>' : '');
   for (i = 0; i < dd.length; i++) list.push(dd[i].t);
   doneN = dd.length;
   var spOpen = 0, sp = specials();
@@ -1565,7 +1649,7 @@ function renderTasks() {
   h += '<div class="sbtns"><div class="sbtn shop" data-act="shop">🛍 商店<b>' + SYM() + ' ' + total + '</b></div>' +
     '<div class="sbtn coll" data-act="collect">🏆 收藏區<b>' + gotCount() + ' 件</b></div></div><div class="list">';
   if (tab === 'special') { $('cTasks').innerHTML = h + renderSpecialList() + '</div>'; return; }
-  if (!list.length) h += '<div class="empty">' + (C.tasks.length ? '今天沒有任務，好好休息！' : '尚未同步任務資料') + '</div>';
+  if (!list.length && !hidN) h += '<div class="empty">' + (C.tasks.length ? '今天沒有任務，好好休息！' : '尚未同步任務資料') + '</div>';
   for (i = 0; i < list.length; i++) {
     var done = taskDone(list[i].name), inf = taskInfo(list[i]);
     if (heads[i]) h += heads[i];
@@ -1574,6 +1658,7 @@ function renderTasks() {
       (inf.chip ? '<small class="tchip ' + inf.cls + '">' + inf.chip + '</small>' : '') + '</span>' +
       '<span class="tstar">+' + list[i].stars + (isKid() ? (done ? gemSvg(taskGem(list[i]), 22) : giftSvg(taskGem(list[i]).r, 24)) : '★') + '</span></div>';
   }
+  if (heads[list.length]) h += heads[list.length];
   h += '</div>';
   $('cTasks').innerHTML = h;
 }
@@ -2800,7 +2885,7 @@ function fixRecord(r, op, type, desc, amt) {
   if (!kidSay('fix')) toast(op === 'delete' ? '已刪除這筆紀錄' : '已修改');
 }
 
-function renderAll() { renderTop(); renderTasks(); renderPomo(); renderSched(); renderMoney(); renderSync(); }
+function renderAll() { renderTop(); renderTasks(); renderPomo(); renderSched(); renderMoney(); renderSync(); renderMailDot(); }
 
 /* ---------- 提示 ---------- */
 var toastTimer = null;
@@ -2816,7 +2901,10 @@ function toast(msg) {
 var ovRender = null;
 function openOv(fn) { ovRender = fn; $('ov').style.display = 'block'; refreshOv(); }
 function refreshOv() { if (ovRender) $('ovBox').innerHTML = ovRender(); }
-function closeOv() { ovRender = null; $('ov').style.display = 'none'; $('ovBox').innerHTML = ''; $('ovBox').className = ''; }
+function closeOv() {
+  ovRender = null; $('ov').style.display = 'none'; $('ovBox').innerHTML = ''; $('ovBox').className = '';
+  if (HIDQ.length) setTimeout(showHidden, 600);
+}
 function ovHead(title) { return '<div class="ovh"><h2>' + title + '</h2><span class="x" data-act="close">關閉</span></div>'; }
 function keypad(prefix) {
   var k = ['1', '2', '3', '4', '5', '6', '7', '8', '9', 'C', '0', '⌫'], h = '<div class="keys">';
@@ -3032,6 +3120,35 @@ function missionReward(m, scores) {
   if (!n) return 0;
   return m.per === 'avg' && m.mode !== 'pass' ? scoreReward(m, sum / n) : tot;
 }
+/* 和上一次同類型考試比較（依日期找最近一次已完成的） */
+function prevExam(m) {
+  var a = specials(), best = null, md = String(m.date || '').slice(0, 10);
+  if (m.mode === 'pass' || !md) return null;
+  for (var i = 0; i < a.length; i++) {
+    var x = a[i], xd = String(x.date || '').slice(0, 10);
+    if (x.id === m.id || x.kind !== m.kind || x.status !== 'done' || x.mode === 'pass' || !xd || xd >= md) continue;
+    if (!best || xd > String(best.date).slice(0, 10)) best = x;
+  }
+  return best;
+}
+/* 每科升降（換算成 100 分）與進步加碼：進步 1 分 +1、5 分 +2、10 分 +3 */
+function examCmp(m, scores) {
+  var pv = prevExam(m);
+  if (!pv) return null;
+  var by = {}, n = 0, dsum = 0, bonus = 0, cs = 0, ps = 0;
+  for (var i = 0; i < m.subjects.length; i++) {
+    var sj = m.subjects[i], v = scores[sj], o = pv.scores ? pv.scores[sj] : undefined;
+    if (v === undefined || v === '' || isNaN(Number(v))) continue;
+    if (o === undefined || o === '' || isNaN(Number(o))) { by[sj] = { o: null, d: null }; continue; }
+    var pc = Number(v) / (m.full || 100) * 100, po = Number(o) / (pv.full || 100) * 100, d = Math.round((pc - po) * 10) / 10;
+    by[sj] = { o: Number(o), d: d };
+    n++; dsum += d; cs += pc; ps += po;
+    bonus += d >= 10 ? 3 : (d >= 5 ? 2 : (d >= 1 ? 1 : 0));
+  }
+  return { prev: pv, by: by, n: n, avgD: n ? Math.round(dsum / n * 10) / 10 : 0, avgNow: n ? Math.round(cs / n * 10) / 10 : 0, avgPrev: n ? Math.round(ps / n * 10) / 10 : 0, bonus: bonus };
+}
+function progRarity(d) { return d >= 10 ? 4 : (d >= 5 ? 3 : (d > 0 ? 2 : 0)); }   // 進步加碼的禮盒最高 ★4
+function arrowTxt(d) { return d === null || d === undefined ? '—' : (d > 0 ? '<b class="up">↑' + d + '</b>' : (d < 0 ? '<b class="down">↓' + (-d) + '</b>' : '<b class="same">＝</b>')); }
 /* 寶物等級：看平均表現（每科分數 ÷ 滿分；通過制看通過比例） */
 var SP_GRADE = [[95, 5], [90, 4], [80, 3], [70, 2], [0, 1]];
 function missionPerf(m, scores) {
@@ -3070,19 +3187,86 @@ function previewRows(m) {
   return out;
 }
 function spDays(m) { var d = parseYmd(m.date); return d ? dayDiff(new Date(), d) : null; }
+/* ===== 平常考：常駐任務，考完找爸媽登記（禮盒最高 ★★★） ===== */
+var QZ_SUBJ = ['國語', '數學', '英語', '自然', '社會', '生活', '其他'];
+var QZ_RULE = [[100, 3, 3], [90, 2, 2], [80, 1, 1], [70, 1, 0]];   // [換算成百分比幾分以上, 寶石, 禮盒稀有度]
+function quizzes() { return C.quizzes || []; }
+function quizReward(pct) { for (var i = 0; i < QZ_RULE.length; i++) if (pct >= QZ_RULE[i][0]) return { d: QZ_RULE[i][1], g: QZ_RULE[i][2] }; return { d: 0, g: 0 }; }
+function qpct(q) { return Math.round(Number(q.score) / (Number(q.full) || 100) * 1000) / 10; }
+function lastQuiz(subj, before) {               // 同一科的上一次（before＝這筆的 id，沒有就找最新）
+  var a = quizzes(), r = null;
+  for (var i = 0; i < a.length; i++) { if (a[i].id === before) break; if (a[i].subject === subj) r = a[i]; }
+  return r;
+}
+function quizCard() {
+  var a = quizzes(), h = '<div class="smis quizcard" data-act="quiz"><div class="smh"><b>📝 平常考登記</b><span class="sdate">常駐任務・隨時可以登記</span></div>' +
+    '<div class="smr rule">考完把考卷拿給爸爸媽媽，一起登記就能拿寶石：100 分 ' + SYM() + '3＋★★★ 禮盒・90 分 ' + SYM() + '2＋★★・80 分 ' + SYM() + '1＋★</div>';
+  if (a.length) {
+    h += '<div class="smr ok">最近：';
+    for (var i = a.length - 1; i >= 0 && i >= a.length - 3; i--) h += esc(a[i].subject) + ' ' + a[i].score + (Number(a[i].full) !== 100 ? '/' + a[i].full : '') + ' 分　';
+    h += '</div>';
+  }
+  return h + '</div>';
+}
+var QF = { subj: '', score: '', full: '100' };
+function openQuiz() {
+  openOv(function () {
+    var h = ovHead('📝 平常考（常駐任務）') + '<div class="spinfo">考完平常考，把考卷拿給爸爸媽媽看，一起登記就能拿到寶石！</div><div class="ovsub">怎麼算（滿分不是 100 會自動換算）</div><div class="grows">';
+    for (var i = 0; i < QZ_RULE.length; i++) h += '<span>' + (QZ_RULE[i][2] ? giftSvg(QZ_RULE[i][2], 26) : '<i style="width:32px;display:inline-block"></i>') + '<b>' + (QZ_RULE[i][0] === 100 ? '100 分' : QZ_RULE[i][0] + ' 分以上') + '</b>' + SYM() + ' ' + QZ_RULE[i][1] + (QZ_RULE[i][2] ? '＋' + new Array(QZ_RULE[i][2] + 1).join('★') + ' 禮盒' : '') + '</span>';
+    h += '</div><div class="phint">🚀 比上次同一科進步 10 分以上，再加碼 ' + SYM() + ' 1。平常考的禮盒最高是 ★★★ 稀有。</div>' +
+      '<div class="okbtn" data-act="quizNew">✏️ 登記平常考（需要家長密碼）</div><div class="ovsub">考試紀錄</div>';
+    var a = quizzes();
+    if (!a.length) h += '<div class="empty">還沒有紀錄，第一次平常考加油！</div>';
+    h += '<table class="sptab"><tr><th>日期</th><th>科目</th><th>分數</th><th>和上次比</th><th>獎勵</th></tr>';
+    for (i = a.length - 1; i >= 0 && i >= a.length - 40; i--) {
+      var q = a[i], lq = lastQuiz(q.subject, q.id), g = q.gem && TR_BY[q.gem];
+      h += '<tr><td>' + esc(String(q.time).slice(5, 10).replace('-', '/')) + '</td><td>' + esc(q.subject) + '</td><td>' + q.score + (Number(q.full) !== 100 ? '/' + q.full : '') + '</td><td>' +
+        (lq ? arrowTxt(Math.round((qpct(q) - qpct(lq)) * 10) / 10) : '—') + '</td><td>' + SYM() + ' ' + (q.dia || 0) + (g ? ' ' + gemSvg(g, 18) : '') + '</td></tr>';
+    }
+    return h + '</table>';
+  });
+}
+function openQuizForm() {
+  QF = { subj: '', score: '', full: '100' };
+  openOv(function () {
+    var h = '<div class="ovh"><span class="x" data-act="quiz">← 返回</span><h2>登記平常考</h2><span class="x" data-act="close">關閉</span></div><div class="ovsub">科目</div><div class="cats">', i;
+    for (i = 0; i < QZ_SUBJ.length; i++) h += '<span class="cat' + (QF.subj === QZ_SUBJ[i] ? ' sel' : '') + '" data-act="qzSubj" data-arg="' + QZ_SUBJ[i] + '">' + QZ_SUBJ[i] + '</span>';
+    h += '</div><div class="ovsub">滿分</div><div class="cats">';
+    var fs = ['100', '50', '20', '10'];
+    for (i = 0; i < fs.length; i++) h += '<span class="cat' + (QF.full === fs[i] ? ' sel' : '') + '" data-act="qzFull" data-arg="' + fs[i] + '">' + fs[i] + ' 分</span>';
+    return h + '</div><div class="srow"><span class="sname">考幾分</span><input data-qz="score" type="number" min="0" max="' + QF.full + '" placeholder="0～' + QF.full + '" value="' + esc(QF.score) + '"></div>' +
+      '<div class="sptotal" id="qzPrev"></div><div class="okbtn" data-act="qzSave">確認並發放寶石</div>';
+  });
+  quizPreview();
+}
+function quizCalc() {
+  var sc = Number(QF.score), full = Number(QF.full) || 100;
+  if (QF.score === '' || isNaN(sc) || !QF.subj) return null;
+  var pct = Math.round(sc / full * 1000) / 10, rw = quizReward(pct), lq = lastQuiz(QF.subj, null), up = lq ? Math.round((pct - qpct(lq)) * 10) / 10 : null;
+  return { pct: pct, d: rw.d, g: rw.g, lq: lq, up: up, plus: up !== null && up >= 10 ? 1 : 0 };
+}
+function quizPreview() {
+  var el = $('qzPrev');
+  if (!el) return;
+  var c = quizCalc();
+  if (!c) { el.textContent = QF.subj ? '請輸入分數' : '請先選科目'; return; }
+  el.innerHTML = '可得 ' + SYM() + ' ' + (c.d + c.plus) + (c.g ? '＋' + new Array(c.g + 1).join('★') + ' 禮盒' : '') +
+    (c.lq ? '<small>上次' + esc(QF.subj) + ' ' + c.lq.score + ' 分 ' + arrowTxt(c.up) + (c.plus ? '・進步加碼 +1' : '') + '</small>' : '');
+}
 function renderSpecialList() {
   var a = specials().slice(0), h = '', i;
   a.sort(function (x, y) {                          // 進行中排前面、依日期；沒填日期的排最後
     if (x.status !== y.status) return x.status === 'done' ? 1 : -1;
     return String(x.date || '9999') < String(y.date || '9999') ? -1 : 1;
   });
-  if (!a.length) return '<div class="empty">目前沒有特殊任務。<br>家長可以在「🎨 主題 → 家長設定 → 特殊任務」新增，例如段考、檢定考。</div>';
+  h = quizCard();
+  if (!a.length) return h + '<div class="empty">目前沒有其他特殊任務。<br>家長可以在「🎨 主題 → 家長設定 → 特殊任務」新增，例如段考、檢定考。</div>';
   for (i = 0; i < a.length; i++) {
     var m = a[i], dd = spDays(m), d = parseYmd(m.date);
     h += '<div class="smis' + (m.status === 'done' ? ' done' : '') + '" data-act="mis" data-arg="' + esc(m.id) + '"><div class="smh"><b>' + (SP_ICON[m.kind] || '⭐') + ' ' + esc(m.name) + '</b>' +
       '<span class="sdate">' + (d ? (d.getMonth() + 1) + '/' + d.getDate() : '') + (m.status === 'done' ? '' : (dd > 0 ? '・還有 ' + dd + ' 天' : (dd === 0 ? '・就是今天！' : '・等待登記成績'))) + '</span></div>' +
       '<div class="smr">' + esc(m.subjects.join('・')) + '</div>' +
-      (m.status === 'done' ? '<div class="smr ok">已完成：獲得 ' + SYM() + ' ' + m.earned + '</div>' : '<div class="smr rule">' + esc(ruleText(m)) + '</div>') + '</div>';
+      (m.status === 'done' ? '<div class="smr ok">已完成：獲得 ' + SYM() + ' ' + m.earned + (m.bonus ? '＋進步加碼 ' + m.bonus : '') + '</div>' : '<div class="smr rule">' + esc(ruleText(m)) + '</div>') + '</div>';
   }
   return h;
 }
@@ -3094,17 +3278,27 @@ function openMission(id) {
     h += '<div class="spinfo"><span class="badge">' + esc(m.kind) + '</span>' + (d ? '　' + (d.getMonth() + 1) + '月' + d.getDate() + '日' + (m.status !== 'done' && dd >= 0 ? '（還有 ' + dd + ' 天）' : '') : '') +
       '<div>科目：' + esc(m.subjects.join('、')) + '</div><div>獎勵方式：' + SP_MODE[m.mode] + '　' + esc(ruleText(m)) + '</div></div>';
     if (m.status === 'done') {
-      h += '<div class="ovsub">成績與獎勵</div><table class="sptab"><tr><th>科目</th><th>' + (m.mode === 'pass' ? '結果' : '分數') + '</th><th>寶石</th></tr>';
+      var cmp = examCmp(m, m.scores);
+      h += '<div class="ovsub">成績與獎勵' + (cmp ? '（和「' + esc(cmp.prev.name) + '」比較）' : '') + '</div><table class="sptab"><tr><th>科目</th><th>' + (m.mode === 'pass' ? '結果' : '分數') + '</th>' +
+        (cmp ? '<th>上次</th><th>升降</th>' : '') + '<th>寶石</th></tr>';
       for (i = 0; i < m.subjects.length; i++) {
-        var sc = m.scores[m.subjects[i]];
-        h += '<tr><td>' + esc(m.subjects[i]) + '</td><td>' + (sc === undefined || sc === '' ? '—' : (m.mode === 'pass' ? (Number(sc) >= 1 ? '通過' : '未通過') : sc)) + '</td><td>' +
+        var sc = m.scores[m.subjects[i]], cb = cmp && cmp.by[m.subjects[i]];
+        h += '<tr><td>' + esc(m.subjects[i]) + '</td><td>' + (sc === undefined || sc === '' ? '—' : (m.mode === 'pass' ? (Number(sc) >= 1 ? '通過' : '未通過') : sc)) + '</td>' +
+          (cmp ? '<td>' + (cb && cb.o !== null ? cb.o : '—') + '</td><td>' + (cb ? arrowTxt(cb.d) : '—') + '</td>' : '') + '<td>' +
           (m.per === 'avg' && m.mode !== 'pass' ? '' : SYM() + ' ' + scoreReward(m, sc)) + '</td></tr>';
       }
-      h += '</table><div class="sptotal">共獲得 ' + SYM() + ' ' + m.earned + '</div>';
+      h += '</table><div class="sptotal">共獲得 ' + SYM() + ' ' + m.earned + (m.bonus ? '<small>＋進步加碼 ' + SYM() + ' ' + m.bonus + '</small>' : '') + '</div>';
+      if (cmp && cmp.n) h += '<div class="cmpline">平均 ' + cmp.avgPrev + ' → ' + cmp.avgNow + ' 分　' + arrowTxt(cmp.avgD) + (cmp.avgD > 0 ? '　進步了，好棒！' : (cmp.avgD < 0 ? '　下次再加油！' : '')) + '</div>';
       var pf = missionPerf(m, m.scores), sg = S.spGot && S.spGot[m.id], sgid = sg ? (typeof sg === 'object' ? sg.id : sg) : '';
       if (pf >= 0) h += '<div class="phint" style="text-align:center">表現：' + (m.mode === 'pass' ? '通過 ' + Math.round(pf) + '%' : '平均 ' + Math.round(pf) + ' 分') +
         (sgid && TR_BY[sgid] ? '　🎁 獲得 ' + new Array(TR_BY[sgid].r + 1).join('★') + ' ' + TR_BY[sgid].name : '') + '</div>';
     } else {
+      var pv0 = prevExam(m);
+      if (pv0) {
+        h += '<div class="ovsub">上一次「' + esc(pv0.name) + '」的成績：這次要超越它！</div><div class="prev">';
+        for (i = 0; i < m.subjects.length; i++) if (pv0.scores && pv0.scores[m.subjects[i]] !== undefined) h += '<span><b>' + esc(m.subjects[i]) + '</b>' + pv0.scores[m.subjects[i]] + ' 分</span>';
+        h += '</div><div class="phint">🚀 進步加碼：每科比上次進步 1 分 +1、5 分 +2、10 分 +3；平均進步還會送禮盒（最高 ★★★★）。</div>';
+      }
       h += '<div class="ovsub">考幾分可以拿幾顆？' + (m.per === 'avg' && m.mode !== 'pass' ? '（平均分數）' : '（每科）') + '</div><div class="prev">';
       var pr = previewRows(m);
       for (i = 0; i < pr.length; i++) h += '<span><b>' + pr[i][0] + '</b>' + SYM() + ' ' + pr[i][1] + '</span>';
@@ -3137,12 +3331,15 @@ function openScore(id) {
 function scoreRefresh() {
   var m = findSp(SCORE.id);
   if (!m) return;
+  var cmpL = examCmp(m, SCORE.v);
   for (var i = 0; i < m.subjects.length; i++) {
     var el = $('sg_' + i), v = SCORE.v[m.subjects[i]];
-    if (el) el.textContent = v === undefined || v === '' ? '' : (m.per === 'avg' && m.mode !== 'pass' ? '' : '→ ' + SYM() + ' ' + scoreReward(m, v));
+    var cb = cmpL && cmpL.by[m.subjects[i]];
+    if (el) el.innerHTML = v === undefined || v === '' ? '' : (m.per === 'avg' && m.mode !== 'pass' ? '' : '→ ' + SYM() + ' ' + scoreReward(m, v)) +
+      (cb && cb.o !== null ? '<small>上次 ' + cb.o + ' ' + arrowTxt(cb.d) + '</small>' : '');
   }
   var t = $('spTot');
-  if (t) t.textContent = '合計 ' + SYM() + ' ' + missionReward(m, SCORE.v) + (m.status === 'done' ? '（上次 ' + m.earned + '）' : '');
+  if (t) t.textContent = '合計 ' + SYM() + ' ' + missionReward(m, SCORE.v) + (cmpL && cmpL.bonus ? '＋進步加碼 ' + cmpL.bonus : '') + (m.status === 'done' ? '（上次 ' + (m.earned + (m.bonus || 0)) + '）' : '');
 }
 /* 家長：特殊任務管理 */
 function blankMF() { return { id: '', name: '', kind: '段考', date: '', subjects: ['國語', '數學', '英語', '自然', '社會'], extra: '', mode: 'auto', min: '60', full: '100', lo: '1', hi: '10', tiers: [[90, 10], [80, 6], [70, 3]], per: 'each' }; }
@@ -3227,7 +3424,7 @@ function saveSpecialRemote(m, msg) {
   if (!found && m.status !== 'archive') C.specials.push(m);
   lsSet(K('pp_cache'), C);
   parentCall({ action: 'saveSpecial', id: m.id, name: m.name, kind: m.kind, date: m.date, subjects: m.subjects.join('、'), mode: m.mode, min: m.min, full: m.full,
-    lo: m.lo, hi: m.hi, tiers: tiers.join(','), per: m.per, status: m.status, scores: JSON.stringify(m.scores || {}), earned: m.earned || 0 }, msg);
+    lo: m.lo, hi: m.hi, tiers: tiers.join(','), per: m.per, status: m.status, scores: JSON.stringify(m.scores || {}), earned: m.earned || 0, bonus: m.bonus || 0 }, msg);
 }
 
 /* 自訂專注時間 */
@@ -3392,7 +3589,13 @@ var KID_LINES = {
   bonus: ["BONUS！因為你{x}，怪盜基德再送你額外的獎勵！", "等等——表演還沒結束！{x}，這是加碼獎勵！", "Ladies and gentlemen，加碼時間到！{x}，請收下！", "BINGO！{x}——完美主義者也要為你加分！", "對我怪盜基德而言沒有不可能，對你也是——{x}，加碼送上！", "帽子裡還藏著一份驚喜……{x}，加碼獎勵！", "{x}！這份加碼，是給一流表演者的掌聲。", "嘿，別急著走——{x}，還有 BONUS 喔！", "紳士說話算話：{x}，加碼寶石送到！", "月光為你多亮了一點：{x}，額外獎勵到手！"],
   moneyTip: ["理財小祕訣：買東西前先問自己——這是「需要」，還是「想要」？", "想要的東西，先等三天再決定。三天後還想要，才是真的想要。", "紳士的習慣：拿到零用錢，先存一部分，再花剩下的。", "小錢也會變大錢。每天省 10 元，一個月就有 300 元喔。", "買之前比一比價格，同樣的東西，聰明的人會買到更划算的。", "試試看把錢分成三份：存起來、花掉、分享給別人。", "把存錢目標寫下來，每天看一眼，就比較不會亂花。", "零食吃完就沒了，但存下來的錢，可以換到更大的夢想。", "朋友有的東西，不一定你也需要。不跟風，也是一種帥氣。", "記帳的人最厲害——因為你知道每一塊錢跑到哪裡去了。", "大目標可以拆成小目標，一步一步存，就一定到得了。", "借來的錢一定要還。守信用，是比寶石更珍貴的東西。", "好的東西可以用很久。買的時候想想：它能陪我多久？", "花錢買經驗也很棒，例如一本好書，或一次學習的機會。", "如果今天沒有花錢，那也是一種勝利喔。", "東西壞了先想想能不能修好，修好再用也很酷。", "等待的時間，會讓你更珍惜得到的東西。", "看到「限時特價」先冷靜。真正需要的東西，不怕等一下。", "存錢就像收集寶石，一顆一顆，最後會變成寶藏。", "錢是工具，不是目標。把它用在讓你和別人開心的地方吧。", "冰淇淋很冰，但也很甜；存錢一開始很辛苦，最後也會很甜。", "像潘多拉的盒子一樣，衝動購物前先停一下，想清楚再打開錢包。", "怪盜是不會說謊的：存下來的每一塊錢，都會守護你的夢想。"],
   specialDone: ["成績登記完成！這次一共拿到 {x} 顆寶石，努力有回報！", "了不起！{x} 顆寶石，是你認真準備換來的。", "考試辛苦了！{x} 顆寶石送給你。", "這份成績單，比任何寶石都閃亮——{x} 顆收下吧！", "準備考試的每一天都沒有白費，{x} 顆寶石到手！", "漂亮的成績！今晚的月亮也為你驕傲。", "{x} 顆寶石入庫！一流的實力，就是這樣練出來的。", "太棒了！下次的目標，我們一起再往上挑戰。", "辛苦了，好好休息一下吧。{x} 顆寶石是你的。", "成績出爐！你的努力，我都看在眼裡。", "BINGO！{x} 顆寶石到手，這份成績完美！", "對我怪盜基德而言沒有不可能——你用實力證明了！", "我是完美主義者，但這份成績，我給滿分。", "準備的每一天都沒有白費。{x} 顆寶石，收下吧！"],
-  specialGreat: ["太精彩了！這次的成績，連名偵探都要脫帽致敬。一共 {x} 顆寶石，還有一個超稀有的禮盒！", "不可思議的表現！{x} 顆寶石送給你，還有特別準備的傳說級禮盒。", "這就是實力！{x} 顆寶石加上稀有禮盒，快拆開看看吧。"],
+  specialGreat: ["太精彩了！這次的成績，連名偵探都要脫帽致敬。一共 {x} 顆寶石，還有一個超稀有的禮盒！", "不可思議的表現！{x} 顆寶石送給你，還有特別準備的超稀有禮盒。", "這就是實力！{x} 顆寶石加上稀有禮盒，快拆開看看吧。"],
+  quizDone: ["平常考登記完成！{x}考得不錯，寶石送給你。", "每一次小考都是練習，你做得很好！", "{x}的努力，我都看見了。繼續保持！", "漂亮！平常的累積，就是段考的實力。"],
+  quizFull: ["一百分！{x}滿分！這可是名偵探等級的表現！", "滿分！連怪盜基德都要向你脫帽致敬。", "完美的一百分——今晚的月亮都為你發光！"],
+  quizZero: ["這次分數不太理想，沒關係！把錯的地方弄懂，下次一定會更好。", "誠實登記成績，就是最棒的勇氣。下次一起加油！", "失誤也是一種線索——找出錯在哪裡，下次就能破案！"],
+  mailNew: ["早安！今天的任務預告函已經投進信箱了，去看看吧！", "📮 叮咚！今日預告函送達。今天的行程，都寫在裡面囉。", "新的一天開始了！我把今天的預告函放進信箱了。"],
+  mailParent: ["📮 信箱裡好像多了一封神祕的信……署名是「怪盜基德的父母」？", "咦？有人偷偷在信箱裡藏了一封信，快去看看！", "叮咚！有一封特別的信寄給你喔。"],
+  mailSent: ["信已經投進信箱了！爸爸媽媽看到一定會很開心。", "收到！我會幫你把這封信好好送到。", "寫信是很棒的魔法——把心意變成文字。"],
   specialZero: ["這次沒有拿到寶石，但努力的過程一樣重要。下次一起加油！", "分數不是全部，願意面對結果的你很勇敢。", "這次差一點點，我們找出不會的地方，下次就會進步。", "一流的魔術師也失敗過很多次，重要的是再試一次。", "沒關係，這次的經驗就是下次的祕密武器。", "比起分數，我更在意你有沒有盡力——你有，對吧？", "下次的舞台，一定能更精彩。", "跌倒了就站起來，這才是真正的帥氣。", "我們把這次當作練習，下一次正式表演再發光！", "別灰心，月亮也有圓有缺，下次一定會更好。", "雖然結果不如預期，但記得——無論何時都要保持撲克臉。", "冰淇淋很冰，但它是甜的；這次的經驗，也會變成甜甜的收穫。", "怪盜也有失手的時候，下一次的舞台，我們一定會再見面。"],
   specialNew: ["新的特殊任務出現了：{x}！準備好接受挑戰了嗎？", "特殊任務「{x}」已經送達，好好準備吧！", "預告：{x}。這次的寶石，等你來拿！", "{x} 要來了！每天準備一點點，就不怕。", "新的挑戰：{x}。我相信你可以的！", "特殊任務登場——{x}！", "{x} 的獎勵已經準備好了，就看你的表現囉。", "準備好了嗎？{x}，Show Time！", "{x}，是展現實力的好機會。", "接下來的大舞台：{x}！", "預告：{x}。對我們而言，沒有不可能！", "Ladies and gentlemen，下一場大表演是——{x}！"],
   taskOntime: ["準時完成！還多拿了 {x} 顆加碼寶石，漂亮！", "比預告的時間還早，真是一流的手法。", "準時抵達！紳士最重要的，就是守時。", "時間還沒到就完成了，連我都佩服。", "趕在時間內完成！加碼寶石送給你。", "準時交件！這就是專業。", "你跑贏了時鐘，漂亮的一擊！", "時間管理大師就是你！", "在截止前完成，這份從容，很帥氣。", "準時達成！今晚的月亮也在為你鼓掌。", "BINGO！準時登場，完美！", "紳士的守時，就是這個樣子。"],
@@ -3502,6 +3705,9 @@ function rpgChoice(a) {
   if (parts[0] === 'gem') openTreasure(parts[1]);
   else if (parts[0] === 'shop') openShop();
   else if (parts[0] === 'collect') openCollect('gem');
+  else if (parts[0] === 'quiz') openQuiz();
+  else if (parts[0] === 'mail') openMail('in');
+  else if (parts[0] === 'hid') showHidden();
   else if (parts[0] === 'again') ACTS.pomo('f' + (parts[1] || 25));
   else if (parts[0] === 'rest') ACTS.pomo('r5');
   else if (parts[0] === 'limit') ACTS.limitGo(parts[1] || 10);
@@ -3512,7 +3718,7 @@ function rpgNext() {
   clearTimeout(RPG.timer);
   RPG.typing = null;
   var it = RPG.queue.shift(), el = $('rpgText'), i = 0;
-  if (!it) { $('rpg').style.display = 'none'; return; }
+  if (!it) { $('rpg').style.display = 'none'; if (HIDQ.length) setTimeout(showHidden, 500); return; }
   var t = it.t;
   RPG.full = t;
   RPG.cur = it;
@@ -3737,6 +3943,174 @@ function sync() {
   });
 }
 
+
+/* ================= 信箱：預告函、爸媽的祕密信、小布丁的回信 ================= */
+var KID_NAME = '小布丁';
+var PARENT_SIGNS = ['怪盜基德的父母', '怪盜爸爸', '怪盜媽媽'];
+function nowStamp() { var d = new Date(); return ymd(d) + ' ' + hm(d); }
+function mailAll() { return C.mail || []; }
+function mailRead(L) { return !!((S.mailRead && S.mailRead[L.id]) || L.status === '已讀'); }
+function inbox() {                                  // 寄給小布丁、而且已經到了投遞時間的信
+  var out = [], i, ns = nowStamp(), L = S.letters || [], M = mailAll();
+  for (i = 0; i < L.length; i++) out.push(L[i]);
+  for (i = 0; i < M.length; i++) if (M[i].to !== 'parent' && String(M[i].at || '') <= ns) out.push(M[i]);
+  out.sort(function (a, b) { return a.at < b.at ? 1 : (a.at > b.at ? -1 : 0); });
+  return out;
+}
+function outbox() { var out = [], M = mailAll(); for (var i = 0; i < M.length; i++) if (M[i].to === 'parent') out.push(M[i]); return out.reverse(); }
+function unreadN() { var a = inbox(), n = 0; for (var i = 0; i < a.length; i++) if (!mailRead(a[i])) n++; return n; }
+function renderMailDot() { var d = $('mailDot'), n = unreadN(); if (!d) return; d.textContent = n > 9 ? '9+' : n; d.style.display = n ? 'block' : 'none'; }
+function findLetter(id) {
+  var L = S.letters || [], M = mailAll(), i;
+  for (i = 0; i < L.length; i++) if (L[i].id === id) return L[i];
+  for (i = 0; i < M.length; i++) if (M[i].id === id) return M[i];
+  return null;
+}
+var DAILY_OPEN = ['今天，我將依照以下行程，前來收下你努力的光芒：', '本日預告——怪盜基德將在你完成以下任務時現身：', '今天的舞台已經準備好了。節目單如下：',
+  '親愛的小助手，今天的寶物清單如下，請準時赴約：', '月光還沒升起之前，請先完成這些任務：'];
+var DAILY_CLOSE = ['全部完成的那一刻，就是我現身的時刻。', '我會在今晚的月光下，等你帶著寶石出現。', '別忘了保持撲克臉，祝你演出順利。', '期待今晚，在預告函上寫下「全部完成」。'];
+function dailyBody(d) {
+  var tl = todayTasks().slice(0), lines = [], i, n = Number(ymd(d).replace(/-/g, '')) || 0;
+  tl.sort(function (a, b) { var x = taskTime(a), y = taskTime(b); return (x < 0 ? 9999 : x) - (y < 0 ? 9999 : y); });
+  lines.push(DAILY_OPEN[n % DAILY_OPEN.length], '');
+  if (!tl.length) lines.push('今天沒有任務——好好休息，也是很重要的修行。');
+  for (i = 0; i < tl.length; i++) {
+    var t = tl[i], k = taskTime(t);
+    if (t.pre) { lines.push('・？？？　隱藏任務（完成「' + t.pre + '」後出現）'); continue; }
+    lines.push('・' + (k >= 0 ? fmtMin(k) : '隨時') + '　' + t.name + '（' + SYM() + t.stars + '）');
+  }
+  lines.push('', DAILY_CLOSE[n % DAILY_CLOSE.length]);
+  return lines.join('\n');
+}
+/* 每天早上 6:00 投遞「今日任務預告函」；爸媽排定時間的信到了也會通知 */
+function checkMail() {
+  if (!S.letters) S.letters = [];
+  if (!S.mailTold) S.mailTold = {};
+  var d = new Date(), id = 'D' + ymd(d), has = false, i;
+  for (i = 0; i < S.letters.length; i++) if (S.letters[i].id === id) has = true;
+  if (!has && nowMin() >= 360) {
+    S.letters.push({ id: id, at: ymd(d) + ' 06:00', from: '怪盜基德', to: 'kid', kind: 'daily', title: '今日任務預告函・' + (d.getMonth() + 1) + '/' + d.getDate() + '（' + WD.charAt(d.getDay()) + '）', body: dailyBody(d) });
+    while (S.letters.length > 40) S.letters.shift();
+    S.mailTold[id] = 1;
+    saveS();
+    kidSay('mailNew', null, { c: [['mail', '打開信箱'], ['thanks', '等一下再看']] });
+  }
+  var a = inbox(), fresh = 0;
+  for (i = 0; i < a.length; i++) if (!mailRead(a[i]) && !S.mailTold[a[i].id]) { S.mailTold[a[i].id] = 1; fresh++; }
+  if (fresh) { saveS(); kidSay('mailParent', null, { c: [['mail', '打開信箱'], ['thanks', '等一下再看']] }); }
+  renderMailDot();
+}
+function markRead(L) {
+  if (mailRead(L)) return;
+  if (!S.mailRead) S.mailRead = {};
+  S.mailRead[L.id] = 1;
+  saveS();
+  if (L.kind !== 'daily') { L.status = '已讀'; lsSet(K('pp_cache'), C); addEvent({ kind: 'mailRead', mid: L.id }); }
+  renderMailDot();
+}
+function parentsSvg() {
+  return '<svg viewBox="0 0 80 50" width="96" height="60"><path d="M6,40 L10,14 Q20,10 30,14 L33,40 Z" fill="#fff" stroke="#212529" stroke-width="2"/><ellipse cx="20" cy="41" rx="17" ry="4" fill="#fff" stroke="#212529" stroke-width="2"/><rect x="9" y="32" width="23" height="4" fill="#1c7ed6"/>' +
+    '<path d="M47,40 L50,14 Q60,10 70,14 L74,40 Z" fill="#fff" stroke="#212529" stroke-width="2"/><ellipse cx="60" cy="41" rx="17" ry="4" fill="#fff" stroke="#212529" stroke-width="2"/><rect x="49" y="32" width="23" height="4" fill="#e64980"/>' +
+    '<path d="M40,30 C34,24 34,19 37,18 C39,17 40,19 40,20 C40,19 41,17 43,18 C46,19 46,24 40,30 Z" fill="#e03131"/></svg>';
+}
+var MAILTAB = 'in';
+function mailIcon(L) { return L.kind === 'daily' ? '📜' : (L.to === 'parent' ? '✉️' : '💌'); }
+function mailRow(L, act) {
+  var unread = L.to !== 'parent' && !mailRead(L);
+  return '<div class="mlrow' + (unread ? ' unread' : '') + '" data-act="' + act + '" data-arg="' + esc(L.id) + '"><span class="mic">' + mailIcon(L) + '</span><span class="mmain"><b>' + esc(L.title || '預告函') + '</b>' +
+    '<small>' + esc(L.from || '') + '・' + esc(String(L.at || '').slice(5).replace('-', '/')) + (L.to === 'parent' ? (L.status === '已讀' ? '・爸媽已讀 ✓' : '・爸媽還沒看') : '') + '</small></span>' +
+    (unread ? '<span class="mnew">NEW</span>' : '') + '</div>';
+}
+function openMail(tab) {
+  if (tab) MAILTAB = tab;
+  checkMail();
+  openOv(function () {
+    var a = MAILTAB === 'in' ? inbox() : outbox(), h = '<div class="ovh"><h2>📮 怪盜信箱</h2><span class="x" data-act="close">關閉</span></div>' +
+      '<div class="ctabs"><span class="ctab' + (MAILTAB === 'in' ? ' sel' : '') + '" data-act="mailTab" data-arg="in">📬 收到的信' + (unreadN() ? '（' + unreadN() + ' 封新信）' : '') + '</span>' +
+      '<span class="ctab' + (MAILTAB === 'out' ? ' sel' : '') + '" data-act="mailTab" data-arg="out">✉️ 我寄出的信</span></div>' +
+      '<div class="okbtn" data-act="mailWrite" style="margin:0 0 8px">✏️ 寫信給爸爸媽媽</div>';
+    if (!a.length) h += '<div class="empty">' + (MAILTAB === 'in' ? '信箱還是空的。每天早上 6 點，怪盜基德會送來今日任務預告函喔！' : '還沒有寄過信。寫一封給爸爸媽媽吧！') + '</div>';
+    for (var i = 0; i < a.length && i < 60; i++) h += mailRow(a[i], 'letter');
+    return h;
+  });
+}
+function letterHtml(L, back) {
+  var sign = L.from === '怪盜基德' ? '<img src="' + KID_IMG.doodle + '" alt="">' : (L.to === 'parent' ? '<span class="ksign">🍮</span>' : parentsSvg());
+  var body = esc(L.body || '').replace(/\n/g, '<br>');
+  return '<div class="yokoku yk-letter' + (L.to === 'parent' ? ' kidpaper' : (L.kind === 'daily' ? '' : ' parentpaper')) + '"><div class="yk-title">' + esc(L.kind === 'daily' ? '預告函' : (L.title || '預告函')) + '</div>' +
+    (L.kind === 'daily' ? '<div class="yk-sub">' + esc(L.title) + '</div>' : '') +
+    '<div class="yk-div"><svg viewBox="0 0 220 14"><line x1="0" y1="7" x2="92" y2="7" stroke="#b8902b" stroke-width="1.5"/><line x1="128" y1="7" x2="220" y2="7" stroke="#b8902b" stroke-width="1.5"/><path d="M110,1 L117,7 L110,13 L103,7 Z" fill="#b8902b"/></svg></div>' +
+    '<div class="yk-ltext">' + body + '</div><div class="yk-sign"><span>' + esc(L.from || '') + '</span>' + sign + '</div>' +
+    '<div class="yk-tip">' + esc(String(L.at || '').replace(/-/g, '/')) + '</div></div>' +
+    '<div class="yk-btns"><span class="yk-btn" data-act="' + back + '">← 回信箱</span>' + (L.to !== 'parent' && L.kind !== 'daily' && back === 'mailBack' ? '<span class="yk-btn red" data-act="mailWrite">✏️ 回信</span>' : '') + '</div>';
+}
+function openLetter(id, back) {
+  var L = findLetter(id);
+  if (!L) return;
+  if (back !== 'mailAdmin') markRead(L);                // 小朋友在信箱打開才算已讀
+  $('ovBox').className = 'wide';
+  openOv(function () { return letterHtml(L, back || 'mailBack'); });
+}
+/* 小布丁寫信給爸媽 */
+var WR = { body: '' };
+var WR_PHRASES = ['謝謝爸爸媽媽', '我今天很努力喔', '我想要一個大大的抱抱', '我愛你們', '今天在學校發生了一件事', '我有一個小祕密', '對不起，我下次會改進', '晚安，作個好夢'];
+function openWrite() {
+  WR = { body: '' };
+  $('ovBox').className = '';
+  openOv(function () {
+    var h = '<div class="ovh"><span class="x" data-act="mailBack">← 信箱</span><h2>✏️ 寫信給爸爸媽媽</h2><span class="x" data-act="close">關閉</span></div>' +
+      '<div class="ovsub">點一下可以加進信裡</div><div class="cats">';
+    for (var i = 0; i < WR_PHRASES.length; i++) h += '<span class="cat" data-act="wrAdd" data-arg="' + esc(WR_PHRASES[i]) + '">' + WR_PHRASES[i] + '</span>';
+    var st = ['❤️', '😊', '🌟', '🎩', '🌙', '💎', '🍮', '🌈'];
+    h += '</div><div class="cats">';
+    for (i = 0; i < st.length; i++) h += '<span class="cat stk" data-act="wrAdd" data-arg="' + st[i] + '">' + st[i] + '</span>';
+    return h + '</div><textarea class="wrbox" data-wr="body" placeholder="想跟爸爸媽媽說什麼呢？">' + esc(WR.body) + '</textarea>' +
+      '<div class="okbtn" data-act="wrSend">📮 投進信箱</div><div class="pend">署名：' + KID_NAME + '。爸爸媽媽會在家長設定的信箱裡看到。</div>';
+  });
+}
+/* 家長：寫信給小布丁（可以排定時間，偷偷藏起來） */
+var PM = { title: '', body: '', from: PARENT_SIGNS[0], when: 'now', date: '', time: '06:30' };
+function pmAt() {
+  var d = new Date(), t;
+  if (PM.when === 'now') return nowStamp();
+  if (PM.when === 'tonight') return ymd(d) + ' 20:00';
+  if (PM.when === 'morning') { t = new Date(d.getFullYear(), d.getMonth(), d.getDate() + 1); return ymd(t) + ' 06:30'; }
+  if (PM.when === 'after') return ymd(d) + ' 16:30';
+  return PM.date && PM.time ? PM.date + ' ' + PM.time : '';
+}
+function openMailAdmin() {
+  openOv(function () {
+    var h = '<div class="ovh"><span class="x" data-act="parentBack">← 家長設定</span><h2>📮 信箱管理</h2><span class="x" data-act="close">關閉</span></div>', i;
+    var kidL = outbox(), toKid = [], M = mailAll(), ns = nowStamp(), un = 0;
+    for (i = M.length - 1; i >= 0; i--) if (M[i].to !== 'parent') toKid.push(M[i]);
+    for (i = 0; i < kidL.length; i++) if (kidL[i].status !== '已讀') un++;
+    h += '<div class="ovsub">💌 ' + KID_NAME + '寄來的信' + (un ? '（' + un + ' 封還沒看）' : '') + '</div>';
+    if (!kidL.length) h += '<div class="empty">還沒有收到信</div>';
+    for (i = 0; i < kidL.length && i < 20; i++) h += '<div class="mlrow' + (kidL[i].status !== '已讀' ? ' unread' : '') + '" data-act="pmRead" data-arg="' + esc(kidL[i].id) + '"><span class="mic">✉️</span><span class="mmain"><b>' + esc(String(kidL[i].body || '').slice(0, 24)) + '</b><small>' + esc(String(kidL[i].at).slice(5).replace('-', '/')) + '</small></span>' + (kidL[i].status !== '已讀' ? '<span class="mnew">NEW</span>' : '') + '</div>';
+    h += '<div class="ovsub">✏️ 寫一封預告函給' + KID_NAME + '</div><div class="pform">' +
+      '<label><span>標題</span><input data-pm="title" value="' + esc(PM.title) + '" placeholder="例如：預告函、給最棒的你"></label>' +
+      '<label class="tall"><span>內容</span><textarea class="wrbox" data-pm="body" placeholder="可以用怪盜基德的口吻，例如：今晚，我們將前來收下你最燦爛的笑容。">' + esc(PM.body) + '</textarea></label>' +
+      '<label><span>署名</span><select data-pm="from">';
+    for (i = 0; i < PARENT_SIGNS.length; i++) h += '<option' + (PM.from === PARENT_SIGNS[i] ? ' selected' : '') + '>' + PARENT_SIGNS[i] + '</option>';
+    var ws = [['now', '馬上送到信箱'], ['after', '今天放學後 16:30'], ['tonight', '今天晚上 20:00'], ['morning', '明天早上 06:30'], ['custom', '指定日期和時間…']];
+    h += '</select></label><label><span>投遞時間</span><select data-pm="when">';
+    for (i = 0; i < ws.length; i++) h += '<option value="' + ws[i][0] + '"' + (PM.when === ws[i][0] ? ' selected' : '') + '>' + ws[i][1] + '</option>';
+    h += '</select></label>';
+    if (PM.when === 'custom') {
+      h += '<label><span>日期</span><input data-pm="date" type="date" value="' + esc(PM.date) + '"></label><label><span>時間</span><select data-pm="time">';
+      for (var tm = 5 * 60; tm <= 23 * 60; tm += 30) h += '<option' + (fmtMin(tm) === PM.time ? ' selected' : '') + '>' + fmtMin(tm) + '</option>';
+      h += '</select></label>';
+    }
+    h += '</div><div class="okbtn" data-act="pmSend">💌 偷偷藏進信箱</div><div class="ovsub">寄給' + KID_NAME + '的信</div>';
+    if (!toKid.length) h += '<div class="empty">還沒有寄過信</div>';
+    for (i = 0; i < toKid.length && i < 30; i++) {
+      var L = toKid[i], st = String(L.at) > ns ? '⏰ 排程中' : (mailRead(L) ? '✓ 已讀' : '未讀');
+      h += '<div class="mlrow"><span class="mic">💌</span><span class="mmain" data-act="pmView" data-arg="' + esc(L.id) + '"><b>' + esc(L.title || '預告函') + '</b><small>' + esc(String(L.at).replace(/-/g, '/')) + '・' + esc(L.from) + '・' + st + '</small></span>' +
+        (st !== '✓ 已讀' ? '<span class="mdel" data-act="pmDel" data-arg="' + esc(L.id) + '">收回</span>' : '') + '</div>';
+    }
+    return h + '<div class="pend" style="margin-top:6px">也可以直接在試算表的 Mail 分頁新增一列：投遞時間、寄件人、收件人填「' + KID_NAME + '」、標題、內容。</div>';
+  });
+}
 /* ================= 點擊動作 ================= */
 var ACTS = {
   task: function (name) {
@@ -3863,6 +4237,80 @@ var ACTS = {
   rpgChoice: function (a) { rpgChoice(a); },
   ttab: function (t) { S.ttab = t; saveS(); renderTasks(); },
   mis: function (id) { openMission(id); },
+  mail: function () { $('ovBox').className = ''; openMail('in'); },
+  mailTab: function (t) { MAILTAB = t; refreshOv(); },
+  mailBack: function () { $('ovBox').className = ''; openMail(); },
+  letter: function (id) { openLetter(id, 'mailBack'); },
+  mailWrite: function () { openWrite(); },
+  wrAdd: function (t) { var ta = document.querySelector('[data-wr=body]'); WR.body = (ta ? ta.value : WR.body); WR.body += (WR.body && t.length > 2 ? (/[。！？\n]$/.test(WR.body) ? '' : '，') : '') + t + (t.length > 2 ? '' : ''); refreshOv(); },
+  wrSend: function () {
+    var ta = document.querySelector('[data-wr=body]'), body = String(ta ? ta.value : WR.body).replace(/^\s+|\s+$/g, '');
+    if (!body) { toast('先寫一點內容吧'); return; }
+    var rec = { id: uid(), at: nowStamp(), from: KID_NAME, to: 'parent', title: KID_NAME + '的信', body: body, status: '未讀' };
+    if (!C.mail) C.mail = [];
+    C.mail.push(rec);
+    lsSet(K('pp_cache'), C);
+    addEvent({ kind: 'mail', id: rec.id, at: rec.at, from: rec.from, to: 'parent', title: rec.title, body: rec.body });
+    MAILTAB = 'out';
+    openMail('out');
+    if (!kidSay('mailSent')) toast('信已經投進信箱了！');
+  },
+  mailAdmin: function () { $('ovBox').className = ''; openMailAdmin(); },
+  parentBack: function () { openParent(); },
+  pmRead: function (id) { var L = findLetter(id); if (L && L.status !== '已讀') { L.status = '已讀'; lsSet(K('pp_cache'), C); addEvent({ kind: 'mailRead', mid: id }); } openLetter(id, 'mailAdmin'); },
+  pmView: function (id) { openLetter(id, 'mailAdmin'); },
+  pmDel: function (id) {
+    if (!confirm('要收回這封信嗎？')) return;
+    var M = mailAll();
+    for (var i = 0; i < M.length; i++) if (M[i].id === id) { M.splice(i, 1); break; }
+    lsSet(K('pp_cache'), C);
+    addEvent({ kind: 'mailDel', mid: id });
+    refreshOv();
+  },
+  pmSend: function () {
+    var ta = document.querySelector('[data-pm=body]'), ti = document.querySelector('[data-pm=title]');
+    if (ta) PM.body = ta.value;
+    if (ti) PM.title = ti.value;
+    var body = String(PM.body).replace(/^\s+|\s+$/g, ''), at = pmAt();
+    if (!body) { toast('請寫信的內容'); return; }
+    if (!at) { toast('請選擇日期和時間'); return; }
+    var rec = { id: uid(), at: at, from: PM.from, to: 'kid', title: PM.title || '預告函', body: body, status: '未讀' };
+    if (!C.mail) C.mail = [];
+    C.mail.push(rec);
+    lsSet(K('pp_cache'), C);
+    addEvent({ kind: 'mail', id: rec.id, at: rec.at, from: rec.from, to: 'kid', title: rec.title, body: rec.body });
+    PM = { title: '', body: '', from: PM.from, when: 'now', date: '', time: '06:30' };
+    toast(at > nowStamp() ? '已經藏好了！' + at.slice(5).replace('-', '/') + ' 會出現在信箱' : '已經送到信箱了！');
+    refreshOv();
+  },
+  hidGo: function (name) { closeOv(); setTimeout(function () { ACTS.task(name); }, 50); },
+  hidLater: function () { closeOv(); toast('好的！隱藏任務已經放進今日任務清單，記得回來挑戰喔'); },
+  quiz: function () { openQuiz(); },
+  quizNew: function () { askPin('登記平常考', openQuizForm); },
+  qzSubj: function (s) { QF.subj = s; refreshOv(); quizPreview(); },
+  qzFull: function (f) { QF.full = f; refreshOv(); quizPreview(); },
+  qzSave: function () {
+    var c = quizCalc();
+    if (!c) { toast(QF.subj ? '請輸入分數' : '請先選科目'); return; }
+    if (Number(QF.score) > Number(QF.full) || Number(QF.score) < 0) { toast('分數要在 0～' + QF.full + ' 之間'); return; }
+    var d = new Date(), rec = { id: uid(), time: ymd(d) + ' ' + hm(d), subject: QF.subj, score: Number(QF.score), full: Number(QF.full), dia: c.d + c.plus, gem: '' }, dr = null;
+    if (c.g) { dr = dropInfo(randomDrop(Math.min(3, c.g))); rec.gem = dr.gem.id; }
+    if (!C.quizzes) C.quizzes = [];
+    C.quizzes.push(rec);
+    lsSet(K('pp_cache'), C);
+    addEvent({ kind: 'quiz', id: rec.id, time: rec.time, subject: rec.subject, score: rec.score, full: rec.full, dia: rec.dia, gem: rec.gem, gemName: dr ? dr.gem.name : '' });
+    if (c.d) starEvent(c.d, '平常考：' + rec.subject + ' ' + rec.score + ' 分', 'quiz', 'QZ|' + rec.id);
+    if (c.plus) starEvent(c.plus, '平常考進步加碼：' + rec.subject, 'quiz', 'QZB|' + rec.id);
+    closeOv();
+    renderTasks();
+    var r = { n: c.d, line: '📝 ' + rec.subject + ' ' + rec.score + ' 分' + (c.lq ? '（上次 ' + c.lq.score + ' 分）' : '') };
+    if (dr) { r.gem = dr.gem; r.first = dr.first; r.cnt = dr.cnt; }
+    LAST_BONUS = c.plus ? { reason: '這次' + rec.subject + '比上次進步了 ' + c.up + ' 分', r: { n: c.plus, bonusTag: true, drops: [], line: '🎁 進步加碼 +' + c.plus + '！' } } : null;
+    var ch = [['quiz', '看考試紀錄'], ['thanks', '謝謝基德']];
+    if (c.d) { if (c.g >= 3) celebrate(false); kidSay(c.pct >= 100 ? 'quizFull' : 'quizDone', rec.subject, { r: r, c: LAST_BONUS ? null : ch, quick: !!LAST_BONUS }); }
+    else kidSay('quizZero', rec.subject, { c: LAST_BONUS ? null : ch });
+    sayBonus(ch);
+  },
   spScore: function (id) { askPin('登記成績', function () { openScore(id); }); },
   spSave: function () {
     var m = findSp(SCORE.id);
@@ -3871,9 +4319,11 @@ var ACTS = {
     for (k in SCORE.v) if (SCORE.v.hasOwnProperty(k) && SCORE.v[k] !== '') has = true;
     if (!has) { toast('請至少輸入一個分數'); return; }
     var earned = missionReward(m, SCORE.v), diff = earned - (m.status === 'done' ? m.earned : 0);
+    var cmp = examCmp(m, SCORE.v), bonus = cmp ? cmp.bonus : 0, bdiff = bonus - (m.status === 'done' ? (m.bonus || 0) : 0);
     var nm = JSON.parse(JSON.stringify(m));
-    nm.scores = SCORE.v; nm.earned = earned; nm.status = 'done';
+    nm.scores = SCORE.v; nm.earned = earned; nm.status = 'done'; nm.bonus = bonus;
     if (diff) starEvent(diff, '特殊任務：' + m.name + (m.status === 'done' ? '（修改成績）' : ''), 'special', 'SP|' + m.id);
+    if (bdiff) starEvent(bdiff, '進步加碼：' + m.name + (m.status === 'done' ? '（修改成績）' : ''), 'special', 'SPB|' + m.id);
     saveSpecialRemote(nm, '成績已登記，' + (diff >= 0 ? '發放' : '扣回') + ' ' + SYM() + ' ' + Math.abs(diff));
     closeOv();
     renderTasks();
@@ -3890,9 +4340,19 @@ var ACTS = {
         '　🎁 ' + (m.mode === 'pass' ? '通過 ' + Math.round(perf) + '%' : '平均 ' + Math.round(perf) + ' 分') + '，得到 ' + new Array(rr + 1).join('★') + ' ' + RARITY[rr][0] + '禮盒！';
     }
     var spc = [['collect', '看收藏區'], ['shop', '去商店逛逛'], ['thanks', '謝謝基德']];
-    if (earned > 0) { celebrate(rr >= 4); kidSay(rr >= 4 ? 'specialGreat' : 'specialDone', earned, { r: spr, c: spc }); }
-    else if (spr.gem) kidSayText('這次沒有拿到寶石，但你的表現值得一個禮盒！', { r: spr, c: spc });
-    else kidSay('specialZero', null, { c: [['thanks', '謝謝基德']] });
+    LAST_BONUS = null;                                  // 進步加碼：交給 BONUS 對話框，禮盒最高 ★4
+    if (cmp && cmp.n) {
+      var pr = progRarity(cmp.avgD), drops = [];
+      if (!S.spBonusGot) S.spBonusGot = {};
+      if (pr && pr > (S.spBonusGot[m.id] || 0)) { drops.push(dropInfo(randomDrop(pr))); S.spBonusGot[m.id] = pr; saveS(); }
+      if (bdiff > 0 || drops.length) LAST_BONUS = { reason: '比上次「' + cmp.prev.name + '」平均進步了 ' + cmp.avgD + ' 分',
+        r: { n: bdiff > 0 ? bdiff : 0, bonusTag: true, drops: drops, line: bonusLine(bdiff > 0 ? bdiff : 0, drops) + '（進步加碼的禮盒最高 ★★★★）' } };
+    }
+    var later = LAST_BONUS ? null : spc;
+    if (earned > 0) { celebrate(rr >= 4); kidSay(rr >= 4 ? 'specialGreat' : 'specialDone', earned, { r: spr, c: later, quick: !!LAST_BONUS }); }
+    else if (spr.gem) kidSayText('這次沒有拿到寶石，但你的表現值得一個禮盒！', { r: spr, c: later, quick: !!LAST_BONUS });
+    else if (!LAST_BONUS) kidSay('specialZero', null, { c: [['thanks', '謝謝基德']] });
+    sayBonus(spc);
   },
   specialAdmin: function () { MF = blankMF(); openSpecialAdmin(); },
   spEdit: function (id) { MF = mfFrom(findSp(id)); refreshOv(); var t = $('mfTop'); if (t) $('ovBox').scrollTop = t.offsetTop - 10; },
@@ -4273,6 +4733,7 @@ function tick() {
   if (d.getMinutes() !== lastMin) {
     lastMin = d.getMinutes();
     if (ymd(d) !== lastDay) { lastDay = ymd(d); sync(); }
+    checkMail();
     if (!ovRender) renderAll();
     if (now() - (S.lastSync || 0) > 5 * 60000) sync();
     if (kidOn() && d.getHours() >= 21 && S.sleepTold !== ymd(d)) { S.sleepTold = ymd(d); saveS(); kidSay('sleep'); }
@@ -4313,6 +4774,9 @@ $('ov').addEventListener('click', onTap, false);
 function formSync(e) {
   var el = e.target;
   if (el && el.getAttribute && el.getAttribute('data-score') !== null) { SCORE.v[el.getAttribute('data-score')] = el.value; scoreRefresh(); return; }
+  if (el && el.getAttribute && el.getAttribute('data-qz')) { QF[el.getAttribute('data-qz')] = el.value; quizPreview(); return; }
+  if (el && el.getAttribute && el.getAttribute('data-wr')) { WR[el.getAttribute('data-wr')] = el.value; return; }
+  if (el && el.getAttribute && el.getAttribute('data-pm')) { PM[el.getAttribute('data-pm')] = el.value; if (el.tagName === 'SELECT' && e.type === 'change') refreshOv(); return; }
   var mf = el && el.getAttribute && el.getAttribute('data-mf');
   if (mf) {
     var tm = /^tier([SR])_(\d+)$/.exec(mf);
