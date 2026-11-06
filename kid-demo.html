@@ -1002,7 +1002,7 @@ var API_URL = 'https://script.google.com/macros/s/AKfycbxY-7ZoZfDN-pRjV-p0rnsqRY
 var API_KEY = 'change-me-1234';
 /* ======================================== */
 
-var APP_VERSION = '1106-v26';   // 每次更新都改這個，用來確認 iPad 載入的是新版
+var APP_VERSION = '1107-v27';   // 每次更新都改這個，用來確認 iPad 載入的是新版
 var WD = '日一二三四五六';
 var SPEND_CATS = ['零食', '文具', '玩具', '捐款', '其他'];
 var INCOME_CATS = ['零用錢', '紅包', '獎勵', '其他'];
@@ -4131,20 +4131,43 @@ function renderSync() {
   $('syncInfo').textContent = t;
 }
 function syncSoon() { clearTimeout(syncTimer); syncTimer = setTimeout(sync, 1500); }
-function pushAll(cb) {
-  if (!OUT.length) { cb(true); return; }
-  var batch = OUT.slice(0, 6);
+var KIND_NAME = { star: '星星', ledger: '記帳', ledgerFix: '記帳修正', quiz: '平常考', mail: '信件', mailRead: '信件已讀', mailDel: '收回信件' };
+/* 一批一批上傳；後端不認得的紀錄（例如後端還沒更新）先留著，不擋住其他紀錄 */
+function pushAll(cb, tried) {
+  tried = tried || {};
+  var batch = [], i;
+  for (i = 0; i < OUT.length && batch.length < 6; i++) if (!tried[OUT[i].id]) batch.push(OUT[i]);
+  if (!batch.length) {
+    if (!OUT.length) { cb(true); return; }
+    var kinds = {};
+    for (i = 0; i < OUT.length; i++) kinds[KIND_NAME[OUT[i].kind] || OUT[i].kind] = 1;
+    cb(false, '有 ' + OUT.length + ' 筆「' + Object.keys(kinds).join('、') + '」紀錄後端還不認得，請把 Apps Script 更新成最新版並「部署新版本」', true);
+    return;
+  }
   call({ action: 'push', ev: JSON.stringify(batch) }, function (err, d) {
     if (err) { cb(false, err); return; }
-    var acked = {}, n = 0;
-    for (var i = 0; i < d.acked.length; i++) { acked[d.acked[i]] = 1; n++; }
+    var acked = {};
+    for (i = 0; i < (d.acked || []).length; i++) acked[d.acked[i]] = 1;
+    for (i = 0; i < batch.length; i++) if (!acked[batch[i].id]) tried[batch[i].id] = 1;
     var keep = [];
     for (i = 0; i < OUT.length; i++) if (!acked[OUT[i].id]) keep.push(OUT[i]);
     OUT = keep;
     saveOut();
-    if (!n) { cb(false, '後端沒有收下任何紀錄'); return; }
-    pushAll(cb);
+    pushAll(cb, tried);
   });
+}
+/* 還沒上傳成功的平常考、信件，讀取後補回畫面上，才不會看起來不見了 */
+function applyPending() {
+  if (!C.quizzes) C.quizzes = [];
+  if (!C.mail) C.mail = [];
+  function has(a, id) { for (var k = 0; k < a.length; k++) if (a[k].id === id) return k; return -1; }
+  for (var i = 0; i < OUT.length; i++) {
+    var e = OUT[i], k;
+    if (e.kind === 'quiz' && has(C.quizzes, e.id) < 0) C.quizzes.push({ id: e.id, time: e.time, subject: e.subject, score: e.score, full: e.full, dia: e.dia, gem: e.gem });
+    else if (e.kind === 'mail' && has(C.mail, e.id) < 0) C.mail.push({ id: e.id, at: e.at, from: e.from, logo: e.logo || '', to: e.to, title: e.title, body: e.body, status: '未讀' });
+    else if (e.kind === 'mailRead' && (k = has(C.mail, e.mid)) >= 0) C.mail[k].status = '已讀';
+    else if (e.kind === 'mailDel' && (k = has(C.mail, e.mid)) >= 0) C.mail.splice(k, 1);
+  }
 }
 function sync() {
   if (DEMO) { syncMsg = '模擬模式（不連線）'; renderSync(); return; }
@@ -4152,20 +4175,22 @@ function sync() {
   syncing = true;
   syncMsg = '同步中…';
   renderSync();
-  pushAll(function (ok, why) {
-    if (!ok) { syncing = false; syncMsg = '上傳失敗：' + why; renderSync(); if (manualSync) toast('上傳失敗：' + why); manualSync = false; return; }
+  pushAll(function (ok, why, soft) {
+    if (!ok && !soft) { syncing = false; syncMsg = '上傳失敗：' + why; renderSync(); if (manualSync) toast('上傳失敗：' + why); manualSync = false; return; }
+    var warn = ok ? '' : '⚠️ ' + why;                 // 只是有幾筆後端不認得：照樣讀取最新資料
     var date = ymd(new Date());
     call({ action: 'load', date: date }, function (err, d) {
       syncing = false;
       if (err) { syncMsg = '讀取失敗：' + err; renderSync(); if (manualSync) toast('讀取失敗：' + err); manualSync = false; return; }
-      if (manualSync) toast('同步完成！');
+      if (manualSync) toast(warn ? warn : '同步完成！');
       manualSync = false;
       C = d;
+      applyPending();
       normAll();
       lsSet(K('pp_cache'), C);
       S.lastSync = now();
       saveS();
-      syncMsg = '';
+      syncMsg = warn;
       if (ovRender) refreshOv();
       renderAll();
     });
