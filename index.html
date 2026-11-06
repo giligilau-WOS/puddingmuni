@@ -100,6 +100,7 @@
   body.L-tall .tbtn { padding: 0 9px; margin-left: 5px; }
   body.L-tall .pbtn, body.L-narrow .pbtn { font-size: 13px; margin: 0 2px; }
   .pbtn { font-size: 16px; margin: 0 3px; }
+  .prow .pbtn { font-size: 16px; margin: 0 2px; }
   body.L-tall .mbtn { font-size: 16px; }
 
   /* ===== 小螢幕（手機）：一張一張往下排，可以捲動 ===== */
@@ -148,6 +149,27 @@
   }
   .pbtn.rest { background: #2f9e44; }
   .pbtn.stop { background: #c92a2a; }
+  /* 限時挑戰 */
+  .pbtn.lim { background: #e8590c; }
+  .pbtn.win { background: #2f9e44; flex: 2; font-size: 20px; }
+  .pmsg.lim { color: #e8590c; font-weight: bold; }
+  #cdFull { display: none; position: fixed; left: 0; top: 0; right: 0; bottom: 0; z-index: 60; background: rgba(120,0,0,0.55); border: 16px solid #e03131;
+    -webkit-animation: cdflash 0.5s steps(1) infinite; animation: cdflash 0.5s steps(1) infinite; }
+  @-webkit-keyframes cdflash { 0% { border-color: #e03131; background-color: rgba(120,0,0,0.55); } 50% { border-color: #ffd43b; background-color: rgba(170,0,0,0.75); } }
+  @keyframes cdflash { 0% { border-color: #e03131; background-color: rgba(120,0,0,0.55); } 50% { border-color: #ffd43b; background-color: rgba(170,0,0,0.75); } }
+  #cdFull.on { display: block; }
+  .cdin { position: absolute; left: 0; top: 0; right: 0; bottom: 0; display: -webkit-flex; display: flex; -webkit-flex-direction: column; flex-direction: column;
+    -webkit-align-items: center; align-items: center; -webkit-justify-content: center; justify-content: center; text-align: center; color: #fff; }
+  .cdtop { font-size: 34px; font-weight: bold; text-shadow: 0 2px 6px #000; }
+  .cdsub { text-shadow: 0 1px 4px #000; }
+  .cdnum { font-size: 260px; font-weight: bold; line-height: 1; text-shadow: 0 0 30px #ff0000, 0 6px 0 #7a0000; font-family: -apple-system, "Helvetica Neue", sans-serif; }
+  .cdnum.go { -webkit-animation: cdpop 0.9s ease-out; animation: cdpop 0.9s ease-out; }
+  @-webkit-keyframes cdpop { 0% { -webkit-transform: scale(1.6); opacity: 0.3; } 30% { -webkit-transform: scale(1); opacity: 1; } 100% { -webkit-transform: scale(0.9); } }
+  @keyframes cdpop { 0% { transform: scale(1.6); opacity: 0.3; } 30% { transform: scale(1); opacity: 1; } 100% { transform: scale(0.9); } }
+  .cdbtn { display: inline-block; margin-top: 10px; font-size: 34px; font-weight: bold; background: #2f9e44; color: #fff; border: 4px solid #fff; border-radius: 40px; padding: 14px 40px; }
+  .cdsub { font-size: 16px; margin-top: 10px; opacity: 0.85; }
+  body.L-narrow .cdnum { font-size: 170px; }
+
 
   /* 課表 */
   .periods { display: flex; flex-wrap: wrap; }
@@ -249,6 +271,12 @@
 
   /* 任務提示、家長設定 */
   .tname { line-height: 1.2; }
+
+  .tgroup { display: flex; align-items: center; font-size: 15px; font-weight: bold; color: #7b8794; margin: 6px 4px 0; padding-bottom: 2px; border-bottom: 2px dashed #dee2e6; }
+  .tgroup.now { color: #e8590c; border-bottom-color: #ffc078; }
+  .tgroup em { font-style: normal; font-size: 12px; background: #e8590c; color: #fff; border-radius: 8px; padding: 1px 8px; margin-left: 6px; }
+  .ttime { display: inline-block; font-size: 14px; background: #e7f5ff; color: #1971c2; border-radius: 8px; padding: 1px 7px; margin-right: 6px; vertical-align: 3px; }
+  .task.done .ttime { background: #ebfbee; color: #2f9e44; }
   .tchip { display: block; font-size: 13px; color: #1971c2; margin-top: 2px; text-decoration: none; }
   .task.done .tchip { color: #2f9e44; }
   .tchip.warn { color: #e8590c; font-weight: bold; } .tchip.late { color: #e03131; font-weight: bold; } .tchip.lock { color: #868e96; }
@@ -550,6 +578,11 @@
   .tcell b { display: block; font-size: 12px; line-height: 1.25; height: 30px; overflow: hidden; }
   .tcell.lock b { color: #adb5bd; }
   .tdetail { text-align: center; }
+  .grows { display: flex; flex-wrap: wrap; margin: 4px 0 8px; }
+  .grows span { display: flex; align-items: center; width: 50%; font-size: 15px; padding: 3px 4px; }
+  .grows .giftsvg { margin-right: 6px; flex-shrink: 0; }
+  .grows b { margin-right: 6px; white-space: nowrap; }
+
   /* 寶物互動 */
   .tbig { position: relative; }
   .tbig.play { -webkit-tap-highlight-color: rgba(0,0,0,0); }
@@ -776,6 +809,25 @@
   .rchip.gem { background: #ffffff; color: #1c3d8f; }
   .rchip .gem { vertical-align: -5px; }
   .rline { font-size: 18px; color: #c5d3ff; }
+  /* 禮盒 */
+  .rchip.gift { background: #fff; color: #1c3d8f; border: 3px dashed #fff; padding: 3px 14px 3px 6px; -webkit-animation: gbob 1.2s ease-in-out infinite; animation: gbob 1.2s ease-in-out infinite; }
+  .rchip.gift .giftsvg { vertical-align: middle; margin-right: 6px; }
+  .gtx { display: inline-block; vertical-align: middle; line-height: 1.15; }
+  .gtx small { display: block; font-size: 14px; color: #e8590c; margin: 0; }
+  .rchip.gift.r5 { background: #fff9db; -webkit-animation: gbob 1.2s ease-in-out infinite, g5glow 0.9s ease-in-out infinite alternate; animation: gbob 1.2s ease-in-out infinite, g5glow 0.9s ease-in-out infinite alternate; }
+  .rchip.gift.r4 { background: #f3f0ff; }
+  .rchip.gift.opening { -webkit-animation: gopen 0.95s ease-in forwards; animation: gopen 0.95s ease-in forwards; }
+  .rchip.reveal { -webkit-animation: grev 0.6s ease-out; animation: grev 0.6s ease-out; }
+  .rchip.reveal.r4, .rchip.reveal.r5 { -webkit-animation: grev 0.6s ease-out, g5glow 0.9s ease-in-out 3 alternate; animation: grev 0.6s ease-out, g5glow 0.9s ease-in-out 3 alternate; }
+  @-webkit-keyframes gbob { 0%,100% { -webkit-transform: translateY(0); } 50% { -webkit-transform: translateY(-3px); } }
+  @keyframes gbob { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
+  @-webkit-keyframes g5glow { from { box-shadow: 0 0 0 #ffd43b; } to { box-shadow: 0 0 18px #ffd43b; } }
+  @keyframes g5glow { from { box-shadow: 0 0 0 #ffd43b; } to { box-shadow: 0 0 18px #ffd43b; } }
+  @-webkit-keyframes gopen { 0% { -webkit-transform: rotate(0); } 10%,30%,50% { -webkit-transform: rotate(-10deg); } 20%,40%,60% { -webkit-transform: rotate(10deg); } 75% { -webkit-transform: scale(1.25); opacity: 1; } 100% { -webkit-transform: scale(1.7); opacity: 0; } }
+  @keyframes gopen { 0% { transform: rotate(0); } 10%,30%,50% { transform: rotate(-10deg); } 20%,40%,60% { transform: rotate(10deg); } 75% { transform: scale(1.25); opacity: 1; } 100% { transform: scale(1.7); opacity: 0; } }
+  @-webkit-keyframes grev { 0% { -webkit-transform: scale(0.3); opacity: 0; } 70% { -webkit-transform: scale(1.2); opacity: 1; } 100% { -webkit-transform: scale(1); } }
+  @keyframes grev { 0% { transform: scale(0.3); opacity: 0; } 70% { transform: scale(1.2); opacity: 1; } 100% { transform: scale(1); } }
+
   .rchoices { display: flex; flex-wrap: wrap; margin-top: 6px; }
   .rchoice { margin: 0 10px 6px 0; padding: 9px 18px; border-radius: 20px; border: 2px solid #ffffff; font-size: 20px; color: #ffffff; background: rgba(255,255,255,0.12); }
   .rchoice:active, .rchoice.tapped { background: #ffffff; color: #1c3d8f; }
@@ -830,6 +882,7 @@
 <div id="rpg"><div id="rpgBadge" class="rpg-badge">✨ BONUS! ✨</div><div id="rpgBox" class="rpg-box"><img id="rpgAva" class="rpg-ava" alt="">
   <div class="rpg-main"><span class="rpg-name">怪盜基德</span><div id="rpgText" class="rpg-text"></div><div id="rpgExtra"></div></div>
   <div class="rpg-next">▼</div></div></div>
+<div id="cdFull"><div class="cdin" data-act="limitDone"><div class="cdtop">⏱ 快沒時間了！</div><div id="cdNum" class="cdnum">10</div><div class="cdbtn">✅ 我完成了！</div><div class="cdsub">點畫面任何地方都算完成</div></div></div>
 <div id="demoBar"></div>
 <div id="errbar"></div>
 
@@ -841,7 +894,7 @@ var API_URL = 'https://script.google.com/macros/s/AKfycbxY-7ZoZfDN-pRjV-p0rnsqRY
 var API_KEY = 'change-me-1234';
 /* ======================================== */
 
-var APP_VERSION = '1105-v18';   // 每次更新都改這個，用來確認 iPad 載入的是新版
+var APP_VERSION = '1106-v19';   // 每次更新都改這個，用來確認 iPad 載入的是新版
 var WD = '日一二三四五六';
 var SPEND_CATS = ['零食', '文具', '玩具', '捐款', '其他'];
 var INCOME_CATS = ['零用錢', '紅包', '獎勵', '其他'];
@@ -929,14 +982,14 @@ var TIME_SCALE = DEMO ? 60 : 1;
 function K(k) { return (DEMO ? 'demo_' : '') + k; }
 var DEMO_DATA = {
   date: '', starTotal: 12, taskNet: {}, ledgerBalance: 380,
-  tasks: [{ name: '寫功課', days: '每天', stars: 2, type: '準時', cond: '20:00', bonus: 1 },
-    { name: '刷牙挑戰', days: '每天', stars: 1, type: '限時挑戰', cond: '3', bonus: 1 },
+  tasks: [{ name: '寫功課', days: '每天', stars: 2, type: '準時', cond: '20:00', bonus: 1, time: '18:30' },
+    { name: '刷牙挑戰', days: '每天', stars: 1, type: '限時挑戰', cond: '3', bonus: 1, time: '07:00' },
     { name: '喝水', days: '每天', stars: 1, type: '次數', cond: '6' },
-    { name: '閱讀 20 分鐘', days: '每天', stars: 1, type: '計時', cond: '20' },
-    { name: '看卡通', days: '每天', stars: 1, type: '一般', pre: '寫功課' },
+    { name: '閱讀 20 分鐘', days: '每天', stars: 1, type: '計時', cond: '20', time: '20:30' },
+    { name: '看卡通', days: '每天', stars: 1, type: '一般', pre: '寫功課', time: '19:30' },
     { name: '專注 2 次', days: '每天', stars: 1, type: '專注', cond: '2' },
-    { name: '整理房間', days: '每天', stars: 2, type: '一般', parent: true },
-    { name: '練習鋼琴', days: '每天', stars: 1, treasure: 80 }],
+    { name: '整理房間', days: '每天', stars: 2, type: '一般', parent: true, time: '16:30' },
+    { name: '練習鋼琴', days: '每天', stars: 1, treasure: 80, time: '17:30' }],
   schedule: [
     { period: '1', time: '08:40', d: ['國語', '數學', '國語', '英語', '數學'] },
     { period: '2', time: '09:30', d: ['數學', '國語', '體育', '國語', '社會'] },
@@ -1188,6 +1241,7 @@ function normTask(t) {
   if (TASK_TYPES.indexOf(t.type) < 0) t.type = '一般';
   t.cond = String(t.cond || '');
   t.pre = String(t.pre || '');
+  t.time = parseHM(t.time) >= 0 ? fmtMin(parseHM(t.time)) : '';
   t.parent = t.parent === true || t.parent === '是';
   t.stars = Number(t.stars) || 0;
   t.bonus = BONUS_DESC[t.type] ? (Number(t.bonus) || 0) : 0;      // 只有準時、限時挑戰、連續有加碼
@@ -1207,6 +1261,15 @@ function tstate() {
   if (!S.tst.tm) S.tst.tm = {};
   return S.tst;
 }
+/* 任務的排序時間：家長填的「什麼時候做」→ 準時的截止時間 → 時段打卡的開始時間；都沒有就是「隨時」 */
+function taskTime(t) {
+  if (t.time) return parseHM(t.time);
+  if (t.type === '準時') return parseHM(t.cond);
+  if (t.type === '時段打卡') return parseHM(String(t.cond).split(/[-~～到]/)[0]);
+  return -1;
+}
+var PERIODS = ['🌅 早上', '☀️ 下午', '🌙 晚上', '✨ 隨時都可以'];
+function periodOf(k) { return k < 0 ? 3 : (k < 720 ? 0 : (k < 1080 ? 1 : 2)); }
 function findTask(name) { for (var i = 0; i < C.tasks.length; i++) if (C.tasks[i].name === name) return C.tasks[i]; return null; }
 function focusToday() { return S.fday && S.fday.d === ymd(new Date()) ? S.fday.n : 0; }
 function streakOf(t) {
@@ -1327,9 +1390,9 @@ function completeTask(t, bonus, line, x) {
     reasons.push('今天的任務全部完成');
   }
   LAST_BONUS = reasons.length ? { reason: reasons.join('，而且'), r: { n: bonus || 0, bonusTag: !!bonus, drops: drops, line: bonusLine(bonus, drops) } } : null;
-  var choices = [['next', '下一個任務！'], ['gem:' + gem.id, '看看寶物'], ['thanks', '謝謝基德']];
+  var choices = [['next', '下一個任務！'], ['thanks', '謝謝基德']];
   if (all && kidOn()) showCard('new');
-  else if (kidSay(line || 'task', x || gem.name, { r: LAST_REWARD, c: LAST_BONUS ? null : choices, quick: !!LAST_BONUS })) sayBonus(choices);
+  else if (kidSay(line || 'task', x || '神祕寶物', { r: LAST_REWARD, c: LAST_BONUS ? null : choices, quick: !!LAST_BONUS })) sayBonus(choices);
   else toast('太棒了！+' + n + SYM() + (bonus ? '（含加碼 ' + bonus + '）' : '') + '・' + gem.name + (drops.length ? '・額外掉落 ' + drops[0].gem.name : ''));
 }
 var LAST_BONUS = null;
@@ -1377,7 +1440,7 @@ var TPL = [
   ['👪 整理房間（家長確認）', { name: '整理房間', type: '一般', stars: 2, days: '週末', parent: true }],
   ['⏰ 21:00 前上床', { name: '準時上床', type: '準時', cond: '21:00', stars: 1, bonus: 1, days: '每天' }]
 ];
-function blankPF() { return { orig: '', name: '', type: '一般', cond: '', c2: '', stars: '1', bonus: '0', days: '每天', treasure: '', pre: '', parent: false }; }
+function blankPF() { return { orig: '', name: '', type: '一般', cond: '', c2: '', stars: '1', bonus: '0', days: '每天', time: '', treasure: '', pre: '', parent: false }; }
 var PF = blankPF();
 function pfFrom(t) {
   var f = blankPF(), k;
@@ -1451,7 +1514,9 @@ function openParent() {
     var ds = ['每天', '平日', '週末', '一三五', '二四', '一二三四五六'];
     h += '<label><span>出現的日子</span><select name="days">';
     for (i = 0; i < ds.length; i++) h += '<option' + (PF.days === ds[i] ? ' selected' : '') + '>' + ds[i] + '</option>';
-    h += '</select></label><label><span>解鎖條件</span><select name="pre"><option value="">不需要（隨時可以做）</option>';
+    h += '</select></label><label><span>什麼時候做</span><select name="time"><option value="">不指定（' + (PF.type === '準時' ? '照截止時間排' : (PF.type === '時段打卡' ? '照開始時間排' : '排在「隨時都可以」')) + '）</option>';
+    for (var tm = 6 * 60; tm <= 22 * 60; tm += 15) h += '<option' + (fmtMin(tm) === PF.time ? ' selected' : '') + '>' + fmtMin(tm) + '</option>';
+    h += '</select><small class="pnote">任務會照早上到晚上的順序排列</small></label><label><span>解鎖條件</span><select name="pre"><option value="">不需要（隨時可以做）</option>';
     var all = C.tasksAll || C.tasks;
     for (i = 0; i < all.length; i++) if (all[i].name !== PF.orig && all[i].name !== PF.name) h += '<option value="' + esc(all[i].name) + '"' + (PF.pre === all[i].name ? ' selected' : '') + '>先完成「' + esc(all[i].name) + '」才能做</option>';
     var auto = taskGem({ name: PF.name, treasure: 0 });
@@ -1476,9 +1541,20 @@ function parentCall(params, okMsg) {
 
 function renderTasks() {
   var all = todayTasks(), total = starTotal(), rw = pinnedReward(), list = [], doneN = 0, i;
-  for (i = 0; i < all.length; i++) if (!taskDone(all[i].name)) list.push(all[i]);
-  doneN = all.length - list.length;
-  for (i = 0; i < all.length; i++) if (taskDone(all[i].name)) list.push(all[i]);    // 完成的沉到最下面
+  var ud = [], dd = [];
+  for (i = 0; i < all.length; i++) (taskDone(all[i].name) ? dd : ud).push({ t: all[i], k: taskTime(all[i]), o: i });
+  function byTime(a, b) { return (a.k < 0 ? 9999 : a.k) - (b.k < 0 ? 9999 : b.k) || a.o - b.o; }
+  ud.sort(byTime); dd.sort(byTime);                                   // 從早上排到晚上，完成的沉到最下面
+  var heads = {}, showHead = false, lastP = -1, nowP = periodOf(nowMin());
+  for (i = 0; i < ud.length; i++) if (ud[i].k >= 0) showHead = true;
+  for (i = 0; i < ud.length; i++) {
+    var pi = periodOf(ud[i].k);
+    if (showHead && pi !== lastP) { heads[i] = '<div class="tgroup' + (pi === nowP ? ' now' : '') + '">' + PERIODS[pi] + (pi === nowP ? '<em>現在</em>' : '') + '</div>'; lastP = pi; }
+    list.push(ud[i].t);
+  }
+  if (dd.length && ud.length && showHead) heads[ud.length] = '<div class="tgroup">✅ 已完成</div>';
+  for (i = 0; i < dd.length; i++) list.push(dd[i].t);
+  doneN = dd.length;
   var spOpen = 0, sp = specials();
   for (i = 0; i < sp.length; i++) if (sp[i].status !== 'done') spOpen++;
   var tab = S.ttab === 'special' ? 'special' : 'daily';
@@ -1492,10 +1568,11 @@ function renderTasks() {
   if (!list.length) h += '<div class="empty">' + (C.tasks.length ? '今天沒有任務，好好休息！' : '尚未同步任務資料') + '</div>';
   for (i = 0; i < list.length; i++) {
     var done = taskDone(list[i].name), inf = taskInfo(list[i]);
+    if (heads[i]) h += heads[i];
     h += '<div class="task' + (done ? ' done' : '') + (inf.lock && !done ? ' locked' : '') + '" data-act="task" data-arg="' + esc(list[i].name) + '"' + (inf.bg ? ' style="' + inf.bg + '"' : '') + '>' +
-      '<span class="box">' + (done ? '✓' : (inf.lock ? '🔒' : '')) + '</span><span class="tname">' + esc(list[i].name) +
+      '<span class="box">' + (done ? '✓' : (inf.lock ? '🔒' : '')) + '</span><span class="tname">' + (list[i].time ? '<b class="ttime">' + list[i].time + '</b>' : '') + esc(list[i].name) +
       (inf.chip ? '<small class="tchip ' + inf.cls + '">' + inf.chip + '</small>' : '') + '</span>' +
-      '<span class="tstar">+' + list[i].stars + (isKid() ? gemSvg(taskGem(list[i]), 22) : '★') + '</span></div>';
+      '<span class="tstar">+' + list[i].stars + (isKid() ? (done ? gemSvg(taskGem(list[i]), 22) : giftSvg(taskGem(list[i]).r, 24)) : '★') + '</span></div>';
   }
   h += '</div>';
   $('cTasks').innerHTML = h;
@@ -1503,7 +1580,8 @@ function renderTasks() {
 
 function renderPomo() {
   var p = S.pomo, h = '<h2>' + ic(1) + '專注蕃茄鐘</h2>';
-  h += '<div class="pmsg">' + (p ? (p.kind === 'focus' ? '專注中…完成可得 ' + C.config.pomoStars + SYM() : '休息一下，喝口水')
+  h += '<div class="pmsg' + (p && p.kind === 'limit' ? ' lim' : '') + '">' + (p ? (p.kind === 'focus' ? '專注中…完成可得 ' + C.config.pomoStars + SYM() :
+    (p.kind === 'limit' ? '⏱ 限時挑戰！時間內按「我完成了」才有獎勵' : '休息一下，喝口水'))
     : '選一個時間開始吧') + '</div>';
   var st = pomoStyle(), rest = p && p.kind === 'rest' ? ' rest' : '';
   if (st.id === 'digit') {
@@ -1515,9 +1593,11 @@ function renderPomo() {
     h += '<div id="pwrap" data-act="pstyle">' + graphic(st.id, rest) + '<div id="pomoTime" class="ptime-side">00:00</div></div>';
   }
   h += '<div class="prow">';
-  if (p) h += '<div class="pbtn stop" data-act="pstop">停止</div>';
+  if (p && p.kind === 'limit') h += '<div class="pbtn win" data-act="limitDone">✅ 我完成了！</div><div class="pbtn stop" data-act="pstop">放棄</div>';
+  else if (p) h += '<div class="pbtn stop" data-act="pstop">停止</div>';
   else {
-    h += '<div class="pbtn" data-act="pomo" data-arg="f5">專注 5</div>' +
+    h += '<div class="pbtn lim" data-act="limitPick">⏱ 限時</div>' +
+      '<div class="pbtn" data-act="pomo" data-arg="f5">專注 5</div>' +
       '<div class="pbtn" data-act="pomo" data-arg="f10">專注 10</div>' +
       '<div class="pbtn" data-act="pomo" data-arg="f30">專注 30</div>' +
       '<div class="pbtn" data-act="pomoCustom">自訂</div>' +
@@ -1525,6 +1605,7 @@ function renderPomo() {
   }
   h += '</div>';
   $('cPomo').innerHTML = h;
+  if (!p || p.kind !== 'limit') hideCd();
   fitDial();
   trailLen = 0;
   if (!p) moveKid(1, false);
@@ -2023,7 +2104,7 @@ function gemHint(g) {
   var names = [];
   for (var i = 0; i < C.tasks.length; i++) if (taskGem(C.tasks[i]).id === g.id) names.push('「' + C.tasks[i].name + '」');
   if (names.length) return '完成' + names.join('、');
-  if (g.r >= 4) return '完成特殊任務（段考、檢定考…）時有機會獲得' + (g.r === 5 ? '，分數越高機會越大' : '');
+  if (g.r >= 4) return '特殊任務（段考、檢定考…）表現' + (g.r === 5 ? '平均 95 分以上' : '平均 90 分以上') + '時獲得';
   if (g.r === 3) return '加碼成功，或當天任務全部完成時，有機會掉落';
   if (g.r === 2) return '每日任務全部完成時有機會掉落，或留給新的準時／挑戰／連續任務';
   return '預留給未來的新任務';
@@ -2951,6 +3032,26 @@ function missionReward(m, scores) {
   if (!n) return 0;
   return m.per === 'avg' && m.mode !== 'pass' ? scoreReward(m, sum / n) : tot;
 }
+/* 寶物等級：看平均表現（每科分數 ÷ 滿分；通過制看通過比例） */
+var SP_GRADE = [[95, 5], [90, 4], [80, 3], [70, 2], [0, 1]];
+function missionPerf(m, scores) {
+  var n = 0, sum = 0, k, v;
+  for (k in scores) if (scores.hasOwnProperty(k) && scores[k] !== '' && !isNaN(Number(scores[k]))) {
+    v = Number(scores[k]); n++;
+    sum += m.mode === 'pass' ? (v >= 1 ? 100 : 0) : Math.min(100, v / (m.full || 100) * 100);
+  }
+  return n ? sum / n : -1;
+}
+function perfRarity(p) { for (var i = 0; i < SP_GRADE.length; i++) if (p >= SP_GRADE[i][0]) return SP_GRADE[i][1]; return 1; }
+function gradeRows(m) {
+  var h = '<div class="grows">', pass = m.mode === 'pass';
+  for (var i = 0; i < SP_GRADE.length; i++) {
+    var g = SP_GRADE[i], r = g[1];
+    h += '<span>' + giftSvg(r, 26) + '<b style="color:' + RARITY[r][1] + '">' + new Array(r + 1).join('★') + ' ' + RARITY[r][0] + '</b>' +
+      (pass ? (g[0] === 100 || i === 0 ? '全部通過' : (g[0] ? '通過 ' + g[0] + '% 以上' : '其他')) : (g[0] ? '平均 ' + g[0] + ' 分以上' : '其他')) + '</span>';
+  }
+  return h + '</div>';
+}
 function ruleText(m) {
   var unit = m.per === 'avg' && m.mode !== 'pass' ? '（用平均分數算一次）' : (m.subjects.length > 1 ? '（每科分開算）' : '');
   if (m.mode === 'pass') return '通過就得 ' + SYM() + ' ' + m.hi + unit;
@@ -3000,12 +3101,16 @@ function openMission(id) {
           (m.per === 'avg' && m.mode !== 'pass' ? '' : SYM() + ' ' + scoreReward(m, sc)) + '</td></tr>';
       }
       h += '</table><div class="sptotal">共獲得 ' + SYM() + ' ' + m.earned + '</div>';
+      var pf = missionPerf(m, m.scores), sg = S.spGot && S.spGot[m.id], sgid = sg ? (typeof sg === 'object' ? sg.id : sg) : '';
+      if (pf >= 0) h += '<div class="phint" style="text-align:center">表現：' + (m.mode === 'pass' ? '通過 ' + Math.round(pf) + '%' : '平均 ' + Math.round(pf) + ' 分') +
+        (sgid && TR_BY[sgid] ? '　🎁 獲得 ' + new Array(TR_BY[sgid].r + 1).join('★') + ' ' + TR_BY[sgid].name : '') + '</div>';
     } else {
       h += '<div class="ovsub">考幾分可以拿幾顆？' + (m.per === 'avg' && m.mode !== 'pass' ? '（平均分數）' : '（每科）') + '</div><div class="prev">';
       var pr = previewRows(m);
       for (i = 0; i < pr.length; i++) h += '<span><b>' + pr[i][0] + '</b>' + SYM() + ' ' + pr[i][1] + '</span>';
       h += '</div>';
     }
+    h += '<div class="ovsub">🎁 表現越好，禮盒越稀有（平均分數＝分數 ÷ 滿分）</div>' + gradeRows(m);
     return h + '<div class="okbtn" data-act="spScore" data-arg="' + esc(m.id) + '">✏️ ' + (m.status === 'done' ? '修改成績' : '登記成績') + '（需要家長密碼）</div>';
   });
 }
@@ -3217,6 +3322,7 @@ function tickPomo() {
   if (!tEl || !p) return;
   var left = p.end - now();
   if (left <= 0) { finishPomo(); return; }
+  if (p.kind === 'limit' && left <= 10500) showCd(Math.ceil(left / 1000));   // 最後 10 秒：全螢幕倒數
   var sec = Math.ceil(left * TIME_SCALE / 1000), f = left / p.dur, el;
   tEl.textContent = pad(Math.floor(sec / 60)) + ':' + pad(sec % 60);
   if ((el = $('pomoBar'))) el.style.width = pct(p.dur - left, p.dur) + '%';
@@ -3269,6 +3375,10 @@ var KID_LINES = {
   end_battery: ["電池用完了！這些能量全都變成你的實力。", "電量歸零——代表你全力以赴了。", "完成！記得休息一下，幫自己充充電。", "一格都沒浪費，這才是高效率。", "放電完畢！你的專注力真是驚人。", "電池見底了，你的成就卻滿格了。", "時間到！現在換你補充能量，喝口水吧。", "漂亮！這顆電池用得比我的滑翔翼還值得。", "完成！充個電，下一場表演再見。", "全力以赴的你，比任何寶石都耀眼。", "BINGO！專注時間完美結束。", "對我怪盜基德而言沒有不可能——你剛剛也證明了這一點。", "從頭到尾都保持撲克臉、專心到最後，漂亮！"],
   start_digit: ["計時開始。數字在跳，你的專注也在跳動。", "倒數開始！看清楚目標，然後全力前進。", "時間在走，我們也出發吧。", "專注模式啟動。就從現在這一秒開始。", "每一秒都是寶石，好好收集起來。", "大大的數字，大大的決心。開始！", "準備好了嗎？舞台已經為你準備好了。", "時間開始倒數，魔術也開始了。", "我不偷時間，我只偷懶惰——開始專心吧！", "這段時間只屬於你，別讓任何事打擾。", "Ladies and gentlemen, it's show time！專注表演開始！", "保持微笑、保持撲克臉——開始專心吧。", "怪盜神出鬼沒，連分心的念頭都會被我偷走，放心專注吧。"],
   end_digit: ["數字歸零！你完美地完成了這段專注。", "時間到！剛剛的你超級專心。", "完成！每一秒都被你好好收藏了。", "倒數結束，掌聲響起——為你鼓掌！", "漂亮！這段時間，你用得一點都不浪費。", "時間到！休息一下，你值得。", "專注完成！這就是一流的表現。", "零秒了。你剛剛創造了好多價值。", "完美收尾，連我都想學你的專注力。", "倒數完成！今天的你又更進步了。", "BINGO！專注時間完美結束。", "對我怪盜基德而言沒有不可能——你剛剛也證明了這一點。", "從頭到尾都保持撲克臉、專心到最後，漂亮！"],
+  limitStart: ["限時挑戰開始！{x} 分鐘內完成，就能拿到獎勵！", "It's show time！計時 {x} 分鐘，做完記得按「我完成了」。", "倒數開始——動作快，但也要做好喔！", "{x} 分鐘的挑戰，讓我看看你的速度！"],
+  limitWin: ["挑戰成功！在時間內完成了，帥氣！", "漂亮！時鐘輸給你了。", "準時完成！這就是一流的效率。", "BINGO！又快又好，獎勵送給你。"],
+  limitClose: ["好險！最後幾秒完成，簡直像魔術一樣驚險！", "千鈞一髮！但你做到了，挑戰成功！", "差一點點……成功了！心臟都要跳出來了吧？"],
+  limitLose: ["時間到了……這次沒有獎勵。沒關係，再挑戰一次一定可以！", "啊，差一點！下次動作再快一點，獎勵就是你的。", "這次時間不夠，但你有努力了。要不要再試一次？", "就算是怪盜，也會有失手的時候。下次一起加油！"],
   restStart: ["休息時間到。紳士也需要喝杯茶。", "閉上眼睛、伸個懶腰，放鬆一下吧。", "休息五分鐘！去喝口水，看看窗外。", "表演中場休息，觀眾也要上廁所的。", "休息不是偷懶，是為了下一場表演做準備。", "讓眼睛休息一下，看看遠方吧。", "中場休息！不過別跑去玩手機喔。", "深呼吸三次，把剛剛的疲勞吐出去。", "就連怪盜也會在屋頂上休息一下。", "休息時間，給自己一個小小的獎勵吧。", "表演中場休息。紳士也要保持優雅地喝杯水。"],
   rest: ["休息結束！準備好了嗎？下一場表演要開始囉。", "中場休息結束，請回到座位上。", "充電完成！再來一輪吧。", "休息夠了，月亮也在等你回來。", "好了，喝完水了嗎？繼續出發！", "休息時間到此結束，主角請上台。", "精神恢復了吧？下一個任務在等你。", "休息完畢！接下來會更順利的。", "很好，帶著好心情繼續吧。", "中場結束，第二幕即將開演！", "中場休息結束——保持微笑，第二幕開演！"],
   task: ["漂亮！又一項任務到手，還順便收下了一顆{x}。", "{x}到手！這份認真，連月亮都在看著你。", "漂亮！又一項任務到手，手法乾淨俐落。", "完成！魔術的秘密，就是每天多練習一點點。", "任務達成！一流的怪盜從不拖延，你也是。", "做得好！下一個舞台，也交給你了。", "又解決一項！你的手法越來越熟練了。", "收下這顆{x}吧，這是你應得的。", "完成一項！照這個速度，今晚就能收工了。", "太棒了！連我都想把你寫進預告函裡。", "這項任務，被你漂亮地拿下了。", "一項完成！紳士做事，就是這麼乾脆。", "BINGO！又一項任務到手，完美。", "我是個完美主義者——而你今天的表現，也很完美。", "保持微笑、保持撲克臉，任務就這樣漂亮地完成了。", "對怪盜基德而言沒有不可能，對你也一樣！", "神出鬼沒地完成任務，這手法我欣賞。", "任務到手。怪盜是不會說謊的——你真的很棒。", "好奇心是最好的老師，繼續保持喔。", "一項接一項，就像魔術一樣俐落。"],
@@ -3282,6 +3392,7 @@ var KID_LINES = {
   bonus: ["BONUS！因為你{x}，怪盜基德再送你額外的獎勵！", "等等——表演還沒結束！{x}，這是加碼獎勵！", "Ladies and gentlemen，加碼時間到！{x}，請收下！", "BINGO！{x}——完美主義者也要為你加分！", "對我怪盜基德而言沒有不可能，對你也是——{x}，加碼送上！", "帽子裡還藏著一份驚喜……{x}，加碼獎勵！", "{x}！這份加碼，是給一流表演者的掌聲。", "嘿，別急著走——{x}，還有 BONUS 喔！", "紳士說話算話：{x}，加碼寶石送到！", "月光為你多亮了一點：{x}，額外獎勵到手！"],
   moneyTip: ["理財小祕訣：買東西前先問自己——這是「需要」，還是「想要」？", "想要的東西，先等三天再決定。三天後還想要，才是真的想要。", "紳士的習慣：拿到零用錢，先存一部分，再花剩下的。", "小錢也會變大錢。每天省 10 元，一個月就有 300 元喔。", "買之前比一比價格，同樣的東西，聰明的人會買到更划算的。", "試試看把錢分成三份：存起來、花掉、分享給別人。", "把存錢目標寫下來，每天看一眼，就比較不會亂花。", "零食吃完就沒了，但存下來的錢，可以換到更大的夢想。", "朋友有的東西，不一定你也需要。不跟風，也是一種帥氣。", "記帳的人最厲害——因為你知道每一塊錢跑到哪裡去了。", "大目標可以拆成小目標，一步一步存，就一定到得了。", "借來的錢一定要還。守信用，是比寶石更珍貴的東西。", "好的東西可以用很久。買的時候想想：它能陪我多久？", "花錢買經驗也很棒，例如一本好書，或一次學習的機會。", "如果今天沒有花錢，那也是一種勝利喔。", "東西壞了先想想能不能修好，修好再用也很酷。", "等待的時間，會讓你更珍惜得到的東西。", "看到「限時特價」先冷靜。真正需要的東西，不怕等一下。", "存錢就像收集寶石，一顆一顆，最後會變成寶藏。", "錢是工具，不是目標。把它用在讓你和別人開心的地方吧。", "冰淇淋很冰，但也很甜；存錢一開始很辛苦，最後也會很甜。", "像潘多拉的盒子一樣，衝動購物前先停一下，想清楚再打開錢包。", "怪盜是不會說謊的：存下來的每一塊錢，都會守護你的夢想。"],
   specialDone: ["成績登記完成！這次一共拿到 {x} 顆寶石，努力有回報！", "了不起！{x} 顆寶石，是你認真準備換來的。", "考試辛苦了！{x} 顆寶石送給你。", "這份成績單，比任何寶石都閃亮——{x} 顆收下吧！", "準備考試的每一天都沒有白費，{x} 顆寶石到手！", "漂亮的成績！今晚的月亮也為你驕傲。", "{x} 顆寶石入庫！一流的實力，就是這樣練出來的。", "太棒了！下次的目標，我們一起再往上挑戰。", "辛苦了，好好休息一下吧。{x} 顆寶石是你的。", "成績出爐！你的努力，我都看在眼裡。", "BINGO！{x} 顆寶石到手，這份成績完美！", "對我怪盜基德而言沒有不可能——你用實力證明了！", "我是完美主義者，但這份成績，我給滿分。", "準備的每一天都沒有白費。{x} 顆寶石，收下吧！"],
+  specialGreat: ["太精彩了！這次的成績，連名偵探都要脫帽致敬。一共 {x} 顆寶石，還有一個超稀有的禮盒！", "不可思議的表現！{x} 顆寶石送給你，還有特別準備的傳說級禮盒。", "這就是實力！{x} 顆寶石加上稀有禮盒，快拆開看看吧。"],
   specialZero: ["這次沒有拿到寶石，但努力的過程一樣重要。下次一起加油！", "分數不是全部，願意面對結果的你很勇敢。", "這次差一點點，我們找出不會的地方，下次就會進步。", "一流的魔術師也失敗過很多次，重要的是再試一次。", "沒關係，這次的經驗就是下次的祕密武器。", "比起分數，我更在意你有沒有盡力——你有，對吧？", "下次的舞台，一定能更精彩。", "跌倒了就站起來，這才是真正的帥氣。", "我們把這次當作練習，下一次正式表演再發光！", "別灰心，月亮也有圓有缺，下次一定會更好。", "雖然結果不如預期，但記得——無論何時都要保持撲克臉。", "冰淇淋很冰，但它是甜的；這次的經驗，也會變成甜甜的收穫。", "怪盜也有失手的時候，下一次的舞台，我們一定會再見面。"],
   specialNew: ["新的特殊任務出現了：{x}！準備好接受挑戰了嗎？", "特殊任務「{x}」已經送達，好好準備吧！", "預告：{x}。這次的寶石，等你來拿！", "{x} 要來了！每天準備一點點，就不怕。", "新的挑戰：{x}。我相信你可以的！", "特殊任務登場——{x}！", "{x} 的獎勵已經準備好了，就看你的表現囉。", "準備好了嗎？{x}，Show Time！", "{x}，是展現實力的好機會。", "接下來的大舞台：{x}！", "預告：{x}。對我們而言，沒有不可能！", "Ladies and gentlemen，下一場大表演是——{x}！"],
   taskOntime: ["準時完成！還多拿了 {x} 顆加碼寶石，漂亮！", "比預告的時間還早，真是一流的手法。", "準時抵達！紳士最重要的，就是守時。", "時間還沒到就完成了，連我都佩服。", "趕在時間內完成！加碼寶石送給你。", "準時交件！這就是專業。", "你跑贏了時鐘，漂亮的一擊！", "時間管理大師就是你！", "在截止前完成，這份從容，很帥氣。", "準時達成！今晚的月亮也在為你鼓掌。", "BINGO！準時登場，完美！", "紳士的守時，就是這個樣子。"],
@@ -3321,14 +3432,44 @@ function kidSayText(text, extra, now) {
   if ($('rpg').style.display !== 'block') rpgNext();
   return true;
 }
+/* ===== 禮盒：寶物先裝在禮盒裡，拆開才知道是什麼（盒子顏色代表稀有度） ===== */
+var GIFT_STYLE = { 1: ['#c8a27a', '#e03131', '牛皮紙禮盒'], 2: ['#51cf66', '#ffffff', '綠色禮盒'], 3: ['#339af0', '#ffd43b', '藍色禮盒'],
+  4: ['#845ef7', '#ffd43b', '紫色寶箱'], 5: ['#fcc419', '#e03131', '黃金傳說禮盒'] };
+var GIFTS = {}, giftSeq = 0;
+function giftSvg(r, size) {
+  var g = GIFT_STYLE[r] || GIFT_STYLE[1], c = g[0], k = g[1], dots = '';
+  if (r >= 4) dots = '<circle cx="11" cy="23" r="1.6" fill="#fff"/><circle cx="29" cy="31" r="1.6" fill="#fff"/><circle cx="12" cy="32" r="1.1" fill="#fff"/><circle cx="28" cy="22" r="1.1" fill="#fff"/>';
+  if (r === 5) dots += '<path d="M33,4 l1.2,2.8 l2.8,1.2 l-2.8,1.2 l-1.2,2.8 l-1.2,-2.8 l-2.8,-1.2 l2.8,-1.2 Z" fill="#fff3bf"/>';
+  return '<svg class="giftsvg" viewBox="0 0 40 40" width="' + size + '" height="' + size + '">' +
+    '<rect x="6" y="17" width="28" height="19" rx="2" fill="' + c + '" stroke="#000" stroke-opacity="0.2"/>' +
+    '<rect x="4" y="11" width="32" height="7" rx="2" fill="' + c + '" stroke="#000" stroke-opacity="0.2"/>' +
+    '<rect x="4" y="11" width="32" height="2.5" fill="#fff" opacity="0.3"/>' + dots +
+    '<rect x="17.5" y="11" width="5" height="25" fill="' + k + '"/>' +
+    '<path d="M20,11 C15,2 7,5 11,10 Z M20,11 C25,2 33,5 29,10 Z" fill="' + k + '" stroke="#000" stroke-opacity="0.2"/>' +
+    '<circle cx="20" cy="11" r="2.5" fill="' + k + '"/></svg>';
+}
+function gemChipHtml(x, drop, extra) {
+  return '<span class="rchip gem' + (drop ? ' drop' : '') + (extra || '') + '" style="border-color:' + RARITY[x.gem.r][1] + '" data-act="rpgChoice" data-arg="gem:' + x.gem.id + '">' + gemSvg(x.gem, 22) + ' ' + x.gem.name +
+    '<small style="color:' + RARITY[x.gem.r][1] + '">' + new Array(x.gem.r + 1).join('★') + '</small>' + (x.first ? '<small>新收藏！</small>' : '<small>×' + x.cnt + '</small>') + '</span>';
+}
+function giftChip(x, drop) {
+  if (!x._gid) { x._gid = 'gift' + (++giftSeq); GIFTS[x._gid] = { x: x, drop: drop, open: false }; }
+  if (GIFTS[x._gid].open) return gemChipHtml(x, drop, '');
+  var r = x.gem.r;
+  return '<span class="rchip gift r' + r + '" id="' + x._gid + '" data-act="unwrap" data-arg="' + x._gid + '" style="border-color:' + RARITY[r][1] + '">' + giftSvg(r, 34) +
+    '<span class="gtx"><b style="color:' + RARITY[r][1] + '">' + new Array(r + 1).join('★') + '</b> ' + GIFT_STYLE[r][2] + '<small>點我拆開！</small></span></span>';
+}
+function giftsLeft() { var e = $('rpgExtra'); return e ? e.querySelectorAll('.gift').length : 0; }
+function rpgArm() {
+  var it = RPG.cur || {};
+  clearTimeout(RPG.timer);
+  RPG.timer = setTimeout(rpgNext, giftsLeft() ? 30000 : (it.c ? 15000 : (it.quick ? 3500 : (it.r ? 8000 : 5000))));
+}
 /* 對話框裡的獎勵明細 */
 function rewardHtml(o) {
   var h = '<div class="rwd">';
   if (o.n) h += '<span class="rchip dia">' + SYM() + ' +' + o.n + (o.bonusTag ? '<small>加碼</small>' : (o.bonus ? '<small>（含加碼 ' + o.bonus + '）</small>' : '')) + '</span>';
-  function chip(x, drop) {
-    return '<span class="rchip gem' + (drop ? ' drop' : '') + '" style="border-color:' + RARITY[x.gem.r][1] + '">' + gemSvg(x.gem, 22) + ' ' + x.gem.name +
-      '<small style="color:' + RARITY[x.gem.r][1] + '">' + new Array(x.gem.r + 1).join('★') + '</small>' + (x.first ? '<small>新收藏！</small>' : '<small>×' + x.cnt + '</small>') + '</span>';
-  }
+  function chip(x, drop) { return giftChip(x, drop); }
   if (o.gem) h += chip(o, false);
   if (o.drops) for (var di = 0; di < o.drops.length; di++) h += chip(o.drops[di], true);
   h += '</div>';
@@ -3353,7 +3494,7 @@ function rpgChoice(a) {
     for (var i = 0; i < tl.length; i++) if (!taskDone(tl[i].name) && !taskInfo(tl[i]).lock && tl[i].type !== '專注') { nx = tl[i]; break; }
     if (!nx) { kidSayText('今天能做的任務都完成了！去商店逛逛，或好好休息一下吧。', { c: [['shop', '去商店逛逛'], ['thanks', '謝謝基德']] }, true); return; }
     var inf = taskInfo(nx), gem = taskGem(nx);
-    kidSayText('下一個目標：「' + nx.name + '」！完成就能拿到 ' + SYM() + ' ' + nx.stars + (nx.bonus ? '（加碼再 +' + nx.bonus + '）' : '') + '，還有一顆' + gem.name + '。' +
+    kidSayText('下一個目標：「' + nx.name + '」！完成就能拿到 ' + SYM() + ' ' + nx.stars + (nx.bonus ? '（加碼再 +' + nx.bonus + '）' : '') + '，還有一個' + GIFT_STYLE[gem.r][2] + '（' + new Array(gem.r + 1).join('★') + '）喔。' +
       (inf.chip && inf.chip.indexOf('<') < 0 ? '　' + inf.chip : '') + '　It\'s show time！', { c: [['thanks', '好，我去做！']] }, true);
     return;
   }
@@ -3363,6 +3504,7 @@ function rpgChoice(a) {
   else if (parts[0] === 'collect') openCollect('gem');
   else if (parts[0] === 'again') ACTS.pomo('f' + (parts[1] || 25));
   else if (parts[0] === 'rest') ACTS.pomo('r5');
+  else if (parts[0] === 'limit') ACTS.limitGo(parts[1] || 10);
 }
 function hideRpg() { RPG.queue = []; clearInterval(RPG.typing); clearTimeout(RPG.timer); RPG.typing = null; $('rpg').style.display = 'none'; }
 function rpgNext() {
@@ -3399,12 +3541,17 @@ function rpgExtra() {
     h += '</div>';
   }
   $('rpgExtra').innerHTML = h;
-  clearTimeout(RPG.timer);
-  RPG.timer = setTimeout(rpgNext, it.c ? 15000 : (it.quick ? 3500 : (it.r ? 8000 : 5000)));
+  var gl = $('rpgExtra').querySelectorAll('.gift');               // 已經拆過的禮盒，重畫時直接顯示寶物
+  for (var j = 0; j < gl.length; j++) { var G = GIFTS[gl[j].id]; if (G && G.open) gl[j].outerHTML = gemChipHtml(G.x, G.drop, ''); }
+  rpgArm();
 }
 function rpgTap(e) {
   var el = e && e.target;
   while (el && el.getAttribute && el.id !== 'rpg') { if (el.getAttribute('data-act')) { onTap(e); return; } el = el.parentNode; }   // 點到按鈕
+  if (!RPG.typing) {                                 // 還有沒拆的禮盒：點對話框就先拆禮物
+    var g0 = $('rpgExtra').querySelector('.gift');
+    if (g0) { ACTS.unwrap(g0.id); return; }
+  }
   if (RPG.typing) {                                  // 還在打字：先顯示全部
     clearInterval(RPG.typing);
     RPG.typing = null;
@@ -3413,10 +3560,43 @@ function rpgTap(e) {
   } else rpgNext();
 }
 
+/* ===== 限時挑戰：時間內按「我完成了」才有獎勵 ===== */
+var LIMIT = { min: 10 };
+function openLimit() {
+  openOv(function () {
+    var h = ovHead('⏱ 限時挑戰') + '<div class="phint" style="margin:0 0 8px">選好時間就開始做事（例如收玩具、洗澡、寫一頁作業）。<br>' +
+      '<b>在時間結束前按「✅ 我完成了！」才拿得到獎勵</b>，時間到還沒完成就沒有獎勵。<br>最後 10 秒會全螢幕倒數提醒。</div><div class="cats">';
+    var q = [3, 5, 10, 15, 20, 30, 45];
+    for (var i = 0; i < q.length; i++) h += '<span class="cat' + (LIMIT.min === q[i] ? ' sel' : '') + '" data-act="limitMin" data-arg="' + q[i] + '">' + q[i] + ' 分鐘</span>';
+    return h + '</div><div class="phint">成功可得：' + SYM() + ' ' + limitStars() + '＋一個 ★★ 禮盒</div><div class="okbtn" data-act="limitGo" data-arg="' + LIMIT.min + '">⏱ 開始 ' + LIMIT.min + ' 分鐘挑戰</div>';
+  });
+}
+function limitStars() { return Number(C.config.pomoStars) || 1; }
+function showCd(sec) {
+  var el = $('cdFull');
+  if (sec < 1) sec = 1;
+  if (el.className !== 'on') el.className = 'on';
+  if (String(sec) !== $('cdNum').textContent) {
+    $('cdNum').textContent = sec;
+    var n = $('cdNum');
+    n.className = 'cdnum';
+    void n.offsetWidth;
+    n.className = 'cdnum go';
+    beep(1, sec <= 3 ? 0.25 : 0.1);
+  }
+}
+function hideCd() { var el = $('cdFull'); if (el) el.className = ''; }
 function finishPomo() {
   var p = S.pomo;
   S.pomo = null;
   saveS();
+  if (p.kind === 'limit') {                          // 時間到還沒按完成：沒有獎勵
+    hideCd();
+    tsound('poof');
+    renderPomo();
+    if (!kidSay('limitLose', p.min, { c: [['limit:' + p.min, '再挑戰一次'], ['thanks', '好，下次加油']] })) toast('時間到了！這次沒有獎勵，下次加油');
+    return;
+  }
   beep(3);
   if (p.kind === 'focus') {
     var n = Number(C.config.pomoStars) || 0;
@@ -3639,9 +3819,9 @@ var ACTS = {
     if (PF.type === '一般') cond = '';
     if (PF.pre && PF.pre === PF.name) { toast('解鎖條件不能是自己'); return; }
     var nt = normTask({ name: PF.name, days: PF.days, stars: Number(PF.stars) || 0, bonus: Number(PF.bonus) || 0, type: PF.type, cond: cond,
-      treasure: Number(PF.treasure) || 0, pre: PF.pre, parent: PF.parent === true || PF.parent === '1', on: true });
+      treasure: Number(PF.treasure) || 0, pre: PF.pre, time: PF.time, parent: PF.parent === true || PF.parent === '1', on: true });
     var params = { action: PF.orig ? 'editTask' : 'addTask', orig: PF.orig, name: nt.name, days: nt.days, stars: nt.stars, bonus: nt.bonus,
-      type: nt.type, cond: nt.cond, treasure: nt.treasure || '', pre: nt.pre, parent: nt.parent ? '1' : '0' };
+      type: nt.type, cond: nt.cond, treasure: nt.treasure || '', pre: nt.pre, parent: nt.parent ? '1' : '0', time: nt.time };
     if (DEMO) {
       var lists = [C.tasks, C.tasksAll || []], k, i;
       for (k = 0; k < lists.length; k++) {
@@ -3699,17 +3879,19 @@ var ACTS = {
     renderTasks();
     var spr = { n: diff > 0 ? diff : 0, line: '「' + m.name + '」共獲得 ' + SYM() + ' ' + earned + (m.status === 'done' && diff ? '（這次修改 ' + (diff > 0 ? '補發' : '扣回') + ' ' + Math.abs(diff) + '）' : '') };
     if (!S.spGot) S.spGot = {};
-    if (earned > 0 && !S.spGot[m.id]) {                 // 特殊任務：一定掉落 ★4／★5，分數越高越可能是 ★5
-      var full = {};
-      for (var fi = 0; fi < m.subjects.length; fi++) full[m.subjects[fi]] = m.mode === 'pass' ? 1 : m.full;
-      var best = missionReward(m, full) || earned, p5 = Math.min(0.6, 0.15 + 0.45 * earned / best);
-      var dr = dropInfo(randomDrop(Math.random() < p5 ? 5 : 4));
-      S.spGot[m.id] = dr.gem.id;
+    var perf = missionPerf(m, SCORE.v), rr = perfRarity(perf), prev = S.spGot[m.id];
+    var prevR = prev ? (typeof prev === 'object' ? prev.r : (TR_BY[prev] ? TR_BY[prev].r : 0)) : 0;
+    if ((earned > 0 || rr >= 2) && rr > prevR) {        // 依表現決定禮盒稀有度；改成績變好會升級
+      var dr = dropInfo(randomDrop(rr));
+      S.spGot[m.id] = { id: dr.gem.id, r: rr };
       saveS();
       spr.gem = dr.gem; spr.first = dr.first; spr.cnt = dr.cnt;
-      spr.line += '　🎁 特殊任務限定寶物！';
+      spr.line += prevR ? '　🎁 成績進步，禮盒升級成 ' + RARITY[rr][0] + '！' :
+        '　🎁 ' + (m.mode === 'pass' ? '通過 ' + Math.round(perf) + '%' : '平均 ' + Math.round(perf) + ' 分') + '，得到 ' + new Array(rr + 1).join('★') + ' ' + RARITY[rr][0] + '禮盒！';
     }
-    if (earned > 0) { celebrate(false); kidSay('specialDone', earned, { r: spr, c: [['collect', '看收藏區'], ['shop', '去商店逛逛'], ['thanks', '謝謝基德']] }); }
+    var spc = [['collect', '看收藏區'], ['shop', '去商店逛逛'], ['thanks', '謝謝基德']];
+    if (earned > 0) { celebrate(rr >= 4); kidSay(rr >= 4 ? 'specialGreat' : 'specialDone', earned, { r: spr, c: spc }); }
+    else if (spr.gem) kidSayText('這次沒有拿到寶石，但你的表現值得一個禮盒！', { r: spr, c: spc });
     else kidSay('specialZero', null, { c: [['thanks', '謝謝基德']] });
   },
   specialAdmin: function () { MF = blankMF(); openSpecialAdmin(); },
@@ -3789,6 +3971,22 @@ var ACTS = {
   },
   catFilter: function (c) { CAT.f = c; refreshOv(); },
   treasure: function (id) { openTreasure(id); },
+  unwrap: function (id) {
+    var G = GIFTS[id], el = $(id);
+    if (!G || !el || G.busy || G.open) return;
+    G.busy = 1;
+    clearTimeout(RPG.timer);
+    el.className += ' opening';
+    tsound('whoosh');
+    setTimeout(function () {
+      G.open = true;
+      var e2 = $(id);
+      if (e2) e2.outerHTML = gemChipHtml(G.x, G.drop, ' reveal r' + G.x.gem.r);
+      tsound(G.x.gem.r >= 4 ? 'fanfare' : (G.x.gem.r === 3 ? 'ting' : 'chime'));
+      if (G.x.gem.r >= 4) celebrate(false);
+      rpgArm();
+    }, 950);
+  },
   tplay: function (id) {
     var t = TR_BY[id], P = TPLAY[id] || ['pop', '✦'], art = $('tart'), box = $('tbig'), cap = $('tact');
     if (!t || !art) return;
@@ -3817,7 +4015,7 @@ var ACTS = {
     if (mode === 'view') { openCollect('card'); return; }
     closeOv();
     if (mode === 'new') {
-      var ch = LAST_REWARD ? [['shop', '去商店逛逛'], ['gem:' + LAST_REWARD.gem.id, '看看寶物'], ['thanks', '謝謝基德']] : null;
+      var ch = LAST_REWARD ? [['shop', '去商店逛逛'], ['collect', '看收藏區'], ['thanks', '謝謝基德']] : null;
       kidSay('taskAll', null, LAST_REWARD ? { r: LAST_REWARD, c: LAST_BONUS ? null : ch, quick: !!LAST_BONUS } : null);
       sayBonus(ch);
     }
@@ -3870,7 +4068,34 @@ var ACTS = {
     if (!confirm('確定要停止嗎？（不會得到星星）')) return;
     S.pomo = null;
     saveS();
+    hideCd();
     renderPomo();
+  },
+  limitPick: function () { unlockAudio(); openLimit(); },
+  limitMin: function (m) { LIMIT.min = +m; refreshOv(); },
+  limitGo: function (m) {
+    unlockAudio();
+    closeOv();
+    var min = +m || 10, dur = min * 60000 / TIME_SCALE;
+    S.pomo = { kind: 'limit', min: min, dur: dur, end: now() + dur };
+    saveS();
+    renderPomo();
+    if (!kidSay('limitStart', min)) toast('⏱ 限時挑戰開始！' + min + ' 分鐘');
+  },
+  limitDone: function () {
+    var p = S.pomo;
+    if (!p || p.kind !== 'limit') return;
+    var left = p.end - now();
+    if (left <= 0) { finishPomo(); return; }
+    S.pomo = null;
+    hideCd();
+    var n = limitStars(), dr = dropInfo(randomDrop(2)), sec = Math.ceil(left * TIME_SCALE / 1000);
+    starEvent(n, '限時挑戰 ' + p.min + ' 分鐘成功', 'pomo');
+    saveS();
+    renderPomo();
+    celebrate(false);
+    var rw = { n: n, gem: dr.gem, first: dr.first, cnt: dr.cnt, line: '⏱ 還剩 ' + pad(Math.floor(sec / 60)) + ':' + pad(sec % 60) + ' 就完成了！' };
+    if (!kidSay(sec <= 10 ? 'limitClose' : 'limitWin', p.min, { r: rw, c: [['limit:' + p.min, '再挑戰一次'], ['thanks', '謝謝基德']] })) toast('限時挑戰成功！+' + n + SYM());
   },
   bag: function (i) {
     var item = bagFor(schedTarget()).items[+i];
@@ -4059,6 +4284,8 @@ $('app').addEventListener('click', onTap, false);
 fastTap($('app'));
 fastTap($('ov'));
 $('rpg').addEventListener('click', rpgTap, false);
+$('cdFull').addEventListener('click', onTap, false);
+fastTap($('cdFull'));
 fastTap($('rpg'));
 /* 零用錢卡片左右滑動 */
 (function () {
