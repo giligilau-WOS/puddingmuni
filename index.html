@@ -28,7 +28,7 @@
   }
   #time { font-size: 38px; font-weight: bold; margin-right: 10px; }
   #date { font-size: 17px; color: #52606d; }
-  #exam { flex: 1; text-align: center; font-size: 20px; font-weight: bold; }
+  #exam { flex: 1; min-width: 0; text-align: center; font-size: 20px; font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .e-green { color: #2b8a3e; } .e-orange { color: #e8590c; } .e-red { color: #c92a2a; }
   #syncInfo { font-size: 13px; color: #7b8794; margin-right: 4px; max-width: 230px; overflow: hidden; white-space: nowrap; }
   .tbtn {
@@ -959,6 +959,30 @@
   .swb { background: #e8590c; color: #fff; border-radius: 16px; padding: 7px 12px; font-size: 15px; font-weight: bold; white-space: nowrap; } .swb .giftsvg { vertical-align: middle; }
   .swb.no { background: #e9ecef; color: #868e96; font-weight: normal; }
   .ctab { font-size: 15px; }
+
+  /* 家長特區 */
+  .parentbtn { background: #fff3bf !important; color: #8a5a00 !important; }
+  .htiles { display: flex; flex-wrap: wrap; margin: 0 -4px; }
+  .htile { position: relative; width: 31.33%; margin: 1%; padding: 12px 8px; border-radius: 14px; background: #f8f9fa; border: 2px solid #e9ecef; text-align: center; }
+  .htile .hic { display: block; font-size: 32px; } .htile b { display: block; font-size: 17px; margin-top: 2px; } .htile small { display: block; font-size: 12px; color: #868e96; line-height: 1.3; }
+  .htile em { position: absolute; top: 6px; right: 8px; background: #e03131; color: #fff; font-style: normal; font-size: 13px; font-weight: bold; border-radius: 10px; padding: 1px 7px; }
+  .htile.tapped { background: #e7f5ff; }
+  body.L-narrow .htile { width: 48%; }
+  /* 許願池 */
+  .goalbox.empty { text-align: center; font-size: 15px; color: #7048e8; background: #f3f0ff; border-color: #d0bfff; }
+  .gtop small { font-size: 12px; color: #c2255c; margin-left: 4px; }
+  .wcard { border: 2px solid #e9ecef; border-radius: 14px; padding: 10px; margin: 6px 0; background: #fff; }
+  .wcard.st-ok { border-color: #b197fc; background: #f8f0fc; } .wcard.st-wish { border-color: #ffd43b; background: #fff9db; } .wcard.st-done { border-color: #b2f2bb; background: #f4fce3; }
+  .wtop { display: flex; align-items: center; } .wic { font-size: 34px; margin-right: 8px; }
+  .wname { flex: 1; } .wname b { display: block; font-size: 19px; } .wname small { color: #868e96; }
+  .wst { font-size: 13px; font-weight: bold; background: #fff; border-radius: 10px; padding: 2px 8px; border: 1px solid #dee2e6; }
+  .wsplit { display: flex; justify-content: space-between; font-size: 15px; margin: 6px 0 4px; }
+  .wreply { font-size: 15px; margin-top: 6px; color: #5f3dc4; }
+  .wbtns { display: flex; flex-wrap: wrap; margin-top: 6px; }
+  .wb { margin: 3px 6px 3px 0; padding: 8px 14px; border-radius: 18px; background: #e9ecef; font-size: 15px; font-weight: bold; }
+  .wb.go { background: #e8590c; color: #fff; } .wb.on { background: #7048e8; color: #fff; }
+  .wadmin { margin-top: 8px; padding-top: 6px; border-top: 1px dashed #ced4da; }
+  .wadmin label { display: flex; align-items: center; font-size: 15px; margin: 4px 0; } .wadmin input { flex: 1; margin-left: 8px; font-size: 17px; padding: 6px; border-radius: 8px; border: 1px solid #ced4da; }
 </style>
 </head>
 <body>
@@ -969,8 +993,9 @@
     <span id="syncInfo"></span>
     <span class="tbtn mailbtn" data-act="mail">📮 信箱<i id="mailDot" class="mdot"></i></span>
     <span class="tbtn" data-act="sync">同步</span>
+    <span class="tbtn parentbtn" data-act="hub">👪 家長</span>
     <span class="tbtn" data-act="theme">🎨 主題</span>
-    <span class="tbtn" data-act="night" id="nightBtn">夜間：自動</span>
+    <span class="tbtn" data-act="night" id="nightBtn">🌙 自動</span>
     <span class="tbtn" data-act="reload">重整</span>
   </div>
   <div id="main">
@@ -1002,7 +1027,7 @@ var API_URL = 'https://script.google.com/macros/s/AKfycbxY-7ZoZfDN-pRjV-p0rnsqRY
 var API_KEY = 'change-me-1234';
 /* ======================================== */
 
-var APP_VERSION = '1107-v27';   // 每次更新都改這個，用來確認 iPad 載入的是新版
+var APP_VERSION = '1107-v28';   // 每次更新都改這個，用來確認 iPad 載入的是新版
 var WD = '日一二三四五六';
 var SPEND_CATS = ['零食', '文具', '玩具', '捐款', '其他'];
 var INCOME_CATS = ['零用錢', '紅包', '獎勵', '其他'];
@@ -1111,6 +1136,8 @@ var DEMO_DATA = {
     pin: '0000', pomoStars: 1, nightStart: 21, nightEnd: 6 },
   rewards: [{ name: '零用錢 50 元', stars: 20, money: 50, top: true }, { name: '看卡通 30 分鐘', stars: 10, money: 0, top: false }],
   ledgerRecent: [{ date: '2026-11-01', type: '收入', desc: '每週零用錢', amt: 100 }],
+  wishes: [{ id: 'W1', at: '2026-11-01 19:00', name: '兔子娃娃', price: 300, kid: 200, sponsor: 100, status: 'ok', icon: '🧸', note: '想抱著睡覺', reply: '存到了一起去買！' },
+    { id: 'W2', at: '2026-11-05 19:00', name: '彩色鉛筆', price: 250, kid: 0, sponsor: 0, status: 'wish', icon: '🎨', note: '', reply: '' }],
   quizzes: [{ id: 'Q1', time: '2026-10-20 18:10', subject: '數學', score: 85, full: 100, dia: 1, gem: '' }, { id: 'Q2', time: '2026-10-27 18:30', subject: '國語', score: 92, full: 100, dia: 2, gem: 'emerald' }],
   mail: [{ id: 'M1', at: '2026-11-01 07:00', from: '怪盜基德的父母', to: 'kid', title: '給最棒的小布丁', body: '今晚，我們將前來收下你最燦爛的笑容。\n這個禮拜你每天都準時寫完功課，爸爸媽媽都看在眼裡。\n繼續加油，你是我們心中最閃亮的寶石！', status: '未讀' }],
   specials: [
@@ -1318,7 +1345,7 @@ function renderTop() {
     el.className = bestDays <= 7 ? 'e-red' : (bestDays <= 14 ? 'e-orange' : 'e-green');
     el.textContent = bestDays === 0 ? '今天' + best.name + '，加油！' : best.name + ' 還有 ' + bestDays + ' 天';
   }
-  $('nightBtn').textContent = '夜間：' + ({ auto: '自動', on: '開', off: '關' })[S.night];
+  $('nightBtn').textContent = '🌙 ' + ({ auto: '自動', on: '開', off: '關' })[S.night];
   applyFont();
   document.body.className = bodyClass();
 }
@@ -1622,7 +1649,7 @@ function taskSummary(t) {
 }
 function openParent() {
   openOv(function () {
-    var list = C.tasksAll || C.tasks, h = ovHead('👪 家長設定') + '<div class="okbtn" data-act="mailAdmin" style="margin:0 0 6px">📮 信箱（寫信給小布丁・看回信）</div><div class="okbtn" data-act="specialAdmin" style="margin:0 0 6px">⭐ 特殊任務（段考、檢定考…）</div><div class="okbtn" data-act="shopAdmin" style="margin:0 0 6px">🛍 商店管理（價格、上下架）</div>', i;
+    var list = C.tasksAll || C.tasks, h = '<div class="ovh"><span class="x" data-act="hub">← 家長特區</span><h2>📋 任務設定</h2><span class="x" data-act="close">關閉</span></div>', i;
     h += '<div class="ovsub">目前的任務（開關＝今天出不出現；✏️ 可以修改）</div>';
     for (i = 0; i < list.length; i++) {
       var t = list[i], on = t.on !== false, g = taskGem(t);
@@ -2950,7 +2977,12 @@ function tiles(L, type) {
     '<div><small>本月</small><b class="' + cls + '">$' + money(sumWhere(L, type, P.month, P.today)) + '</b></div></div>';
 }
 function goalInfo() {
-  var cfg = C.config, bal = balance();
+  var cfg = C.config, bal = balance(), w = pinnedWish();
+  if (w) {
+    var lw = Math.max(0, w.kid - Math.max(0, bal)), aw = avgDailySave(30);
+    return { wish: w, name: (w.icon || '') + ' ' + w.name, amt: w.kid, p: w.kid > 0 ? pct(Math.min(bal, w.kid), w.kid) : 100, left: lw,
+      eta: !lw ? '存夠了！去許願池實現願望吧' : (aw > 0 ? '照最近的速度，大約 ' + Math.ceil(lw / aw) + ' 天後達成' : '加油，一點一點存！') };
+  }
   if (!(cfg.goalAmount > 0)) return null;
   var left = Math.max(0, cfg.goalAmount - Math.max(0, bal)), avg = avgDailySave(30), eta = '';
   if (!left) eta = '已經達成目標了！';
@@ -2964,10 +2996,11 @@ function moneyPage(pg) {
     var g = goalInfo();
     h += '<div class="mbal"><small>目前存款</small><b id="bal">$' + money(balance()) + '</b></div>';
     if (g) {
-      h += '<div class="goalbox"><div class="gtop">🎯 存錢目標：<b>' + esc(g.name) + '</b><span>$' + money(g.amt) + '</span></div>' +
+      h += '<div class="goalbox" data-act="wish"><div class="gtop">' + (g.wish ? '🌠 願望：' : '🎯 存錢目標：') + '<b>' + esc(g.name) + '</b><span>$' + money(g.amt) + (g.wish && g.wish.sponsor ? '<small>＋爸媽 $' + money(g.wish.sponsor) + '</small>' : '') + '</span></div>' +
         '<div class="gbar"><i style="width:' + g.p + '%"></i><span>' + g.p + '%</span></div>' +
         '<div class="gsub">' + (g.left ? '還差 <b>$' + money(g.left) + '</b>・' : '') + g.eta + '</div></div>';
     }
+    else h += '<div class="goalbox empty" data-act="wish">🌠 許願池：把想要的禮物寫下來，當作存錢的目標吧！</div>';
     h += '<div class="recent">';
     for (i = L.length - 1, n = 0; i >= 0 && n < 3; i--, n++) h += recRow(L[i]);
     if (!L.length) h += '<div class="empty">還沒有紀錄</div>';
@@ -3124,6 +3157,7 @@ var ovRender = null;
 function openOv(fn) { ovRender = fn; $('ov').style.display = 'block'; refreshOv(); }
 function refreshOv() { if (ovRender) $('ovBox').innerHTML = ovRender(); }
 function closeOv() {
+  PARENT_ON = false;                                  // 離開家長特區：自動上鎖
   ovRender = null; $('ov').style.display = 'none'; $('ovBox').innerHTML = ''; $('ovBox').className = '';
   if (HIDQ.length) setTimeout(showHidden, 600);
 }
@@ -3147,7 +3181,9 @@ function pinCode() {
   if (/^\d{1,3}$/.test(p)) p = ('0000' + p).slice(-4);
   return p;
 }
+var PARENT_ON = false;
 function askPin(title, cb) {
+  if (PARENT_ON) { cb(); return; }
   PIN = { buf: '', msg: '', cb: cb, title: title, bad: false };
   openOv(function () {
     var dots = '', len = pinCode().length;
@@ -3288,7 +3324,7 @@ function openProd(id) {
 var SADM = { f: '娛樂時間' };
 function openShopAdmin() {
   openOv(function () {
-    var h = '<div class="ovh"><span class="x" data-act="parentBack">← 家長設定</span><h2>🛍 商店管理</h2><span class="x" data-act="close">關閉</span></div><div class="cats">', i;
+    var h = '<div class="ovh"><span class="x" data-act="parentBack">← 家長特區</span><h2>🛍 商店管理</h2><span class="x" data-act="close">關閉</span></div><div class="cats">', i;
     var cats = SHOP_CATS.slice(2, 8);
     for (i = 0; i < cats.length; i++) h += '<span class="cat' + (SADM.f === cats[i] ? ' sel' : '') + '" data-act="sadmCat" data-arg="' + cats[i] + '">' + cats[i] + '</span>';
     h += '</div>';
@@ -3482,7 +3518,7 @@ function renderSpecialList() {
     return String(x.date || '9999') < String(y.date || '9999') ? -1 : 1;
   });
   h = quizCard();
-  if (!a.length) return h + '<div class="empty">目前沒有其他特殊任務。<br>家長可以在「🎨 主題 → 家長設定 → 特殊任務」新增，例如段考、檢定考。</div>';
+  if (!a.length) return h + '<div class="empty">目前沒有其他特殊任務。<br>家長可以在「👪 家長特區 → 特殊任務」新增，例如段考、檢定考。</div>';
   for (i = 0; i < a.length; i++) {
     var m = a[i], dd = spDays(m), d = parseYmd(m.date);
     h += '<div class="smis' + (m.status === 'done' ? ' done' : '') + '" data-act="mis" data-arg="' + esc(m.id) + '"><div class="smh"><b>' + (SP_ICON[m.kind] || '⭐') + ' ' + esc(m.name) + '</b>' +
@@ -3591,7 +3627,7 @@ function sel(name, arr, cur, fmt) {
 function range(a, b, st) { var o = []; for (var v = a; v <= b; v += st) o.push(v); return o; }
 function openSpecialAdmin() {
   openOv(function () {
-    var h = '<div class="ovh"><span class="x" data-act="parentBack">← 家長設定</span><h2>⭐ 特殊任務</h2><span class="x" data-act="close">關閉</span></div>', i, a = specials();
+    var h = '<div class="ovh"><span class="x" data-act="parentBack">← 家長特區</span><h2>⭐ 特殊任務</h2><span class="x" data-act="close">關閉</span></div>', i, a = specials();
     for (i = 0; i < a.length; i++) {
       h += '<div class="ptrow' + (MF.id === a[i].id ? ' editing' : '') + '"><div class="pn"><b>' + (SP_ICON[a[i].kind] || '') + ' ' + esc(a[i].name) + '</b><div class="pmeta">' +
         '<span class="badge">' + esc(a[i].date) + '</span><span class="badge">' + SP_MODE[a[i].mode] + '</span><span class="badge star">' + (a[i].status === 'done' ? '已完成 ' + SYM() + a[i].earned : '進行中') + '</span></div></div>' +
@@ -3672,7 +3708,7 @@ function openRewards() {
 /* 主題與字型選擇 */
 function openTheme() {
   openOv(function () {
-    var h = ovHead('換個主題吧！') + '<div class="okbtn" data-act="parent" style="margin:0 0 8px">👪 家長設定：任務管理（需要密碼）</div><div class="ovsub">外框主題</div><div class="thgrid">';
+    var h = ovHead('換個主題吧！') + '<div class="okbtn" data-act="hub" style="margin:0 0 8px">👪 家長特區（需要密碼）</div><div class="ovsub">外框主題</div><div class="thgrid">';
     for (var i = 0; i < THEMES.length; i++) {
       var t = THEMES[i];
       h += '<div class="thc' + (t.id === theme().id ? ' sel' : '') + '" data-act="setTheme" data-arg="' + t.id + '">' +
@@ -3824,6 +3860,10 @@ var KID_LINES = {
   setFull: ["你集滿「{x}」系列了！快去收藏區的「系列」領取獎勵吧！", "BINGO！「{x}」全員到齊——系列獎勵等你來領！", "了不起，「{x}」收集完成了！別忘了去領獎勵喔。"],
   setDone: ["「{x}」系列收集完成！這是給收藏家的特別獎勵。", "全員到齊！「{x}」的獎勵送給你。", "收集達人誕生！「{x}」系列完成。"],
   swapDone: ["交換成功！「{x}」變成了一個新的禮盒，快拆開看看。", "魔術交換——三個「{x}」，變成一個神祕禮盒！", "好主意！重複的寶物也能變出驚喜。"],
+  wishAdd: ["「{x}」投進許願池了！我已經偷偷告訴爸爸媽媽了。", "好棒的願望！「{x}」，我們一起努力把它變成真的吧。", "許願成功！接下來就看爸爸媽媽怎麼說囉。"],
+  wishOk: ["好消息！爸爸媽媽答應「{x}」的願望了！快去許願池看看要存多少。", "叮咚！「{x}」的願望被答應了，開始存錢吧！"],
+  wishNo: ["爸爸媽媽回覆了「{x}」的願望，去許願池看看他們說什麼吧。", "關於「{x}」，爸爸媽媽有話想跟你說喔。"],
+  wishDone: ["願望實現了！「{x}」是你一塊一塊存出來的，太了不起了！", "恭喜！「{x}」的願望成真了。自己存錢換來的禮物，最珍貴。", "BINGO！「{x}」到手！這就是存錢的魔法。"],
   specialZero: ["這次沒有拿到寶石，但努力的過程一樣重要。下次一起加油！", "分數不是全部，願意面對結果的你很勇敢。", "這次差一點點，我們找出不會的地方，下次就會進步。", "一流的魔術師也失敗過很多次，重要的是再試一次。", "沒關係，這次的經驗就是下次的祕密武器。", "比起分數，我更在意你有沒有盡力——你有，對吧？", "下次的舞台，一定能更精彩。", "跌倒了就站起來，這才是真正的帥氣。", "我們把這次當作練習，下一次正式表演再發光！", "別灰心，月亮也有圓有缺，下次一定會更好。", "雖然結果不如預期，但記得——無論何時都要保持撲克臉。", "冰淇淋很冰，但它是甜的；這次的經驗，也會變成甜甜的收穫。", "怪盜也有失手的時候，下一次的舞台，我們一定會再見面。"],
   specialNew: ["新的特殊任務出現了：{x}！準備好接受挑戰了嗎？", "特殊任務「{x}」已經送達，好好準備吧！", "預告：{x}。這次的寶石，等你來拿！", "{x} 要來了！每天準備一點點，就不怕。", "新的挑戰：{x}。我相信你可以的！", "特殊任務登場——{x}！", "{x} 的獎勵已經準備好了，就看你的表現囉。", "準備好了嗎？{x}，Show Time！", "{x}，是展現實力的好機會。", "接下來的大舞台：{x}！", "預告：{x}。對我們而言，沒有不可能！", "Ladies and gentlemen，下一場大表演是——{x}！"],
   taskOntime: ["準時完成！還多拿了 {x} 顆加碼寶石，漂亮！", "比預告的時間還早，真是一流的手法。", "準時抵達！紳士最重要的，就是守時。", "時間還沒到就完成了，連我都佩服。", "趕在時間內完成！加碼寶石送給你。", "準時交件！這就是專業。", "你跑贏了時鐘，漂亮的一擊！", "時間管理大師就是你！", "在截止前完成，這份從容，很帥氣。", "準時達成！今晚的月亮也在為你鼓掌。", "BINGO！準時登場，完美！", "紳士的守時，就是這個樣子。"],
@@ -3855,7 +3895,7 @@ function kidSay(kind, x, extra) {
   return kidSayText(L[Math.floor(Math.random() * L.length)].replace('{x}', x === undefined || x === null ? '' : x), extra);
 }
 function kidSayText(text, extra, now) {
-  if (!kidOn()) return false;
+  if (!kidOn() || PARENT_ON) return false;           // 家長操作時不打擾
   var it = { t: text, r: extra && extra.r ? rewardHtml(extra.r) : '', c: extra && extra.c ? extra.c : null, quick: extra && extra.quick, bonus: extra && extra.bonus };
   if (now) { RPG.queue = [it]; rpgNext(); return true; }       // 回應按鈕：馬上換成這一句
   RPG.queue.push(it);
@@ -3935,6 +3975,7 @@ function rpgChoice(a) {
   else if (parts[0] === 'collect') openCollect('gem');
   else if (parts[0] === 'quiz') openQuiz();
   else if (parts[0] === 'sets') openCollect('set');
+  else if (parts[0] === 'wish') openWish();
   else if (parts[0] === 'mail') openMail('in');
   else if (parts[0] === 'hid') showHidden();
   else if (parts[0] === 'again') ACTS.pomo('f' + (parts[1] || 25));
@@ -4131,7 +4172,7 @@ function renderSync() {
   $('syncInfo').textContent = t;
 }
 function syncSoon() { clearTimeout(syncTimer); syncTimer = setTimeout(sync, 1500); }
-var KIND_NAME = { star: '星星', ledger: '記帳', ledgerFix: '記帳修正', quiz: '平常考', mail: '信件', mailRead: '信件已讀', mailDel: '收回信件' };
+var KIND_NAME = { star: '星星', ledger: '記帳', ledgerFix: '記帳修正', quiz: '平常考', mail: '信件', mailRead: '信件已讀', mailDel: '收回信件', wish: '許願池' };
 /* 一批一批上傳；後端不認得的紀錄（例如後端還沒更新）先留著，不擋住其他紀錄 */
 function pushAll(cb, tried) {
   tried = tried || {};
@@ -4160,6 +4201,7 @@ function pushAll(cb, tried) {
 function applyPending() {
   if (!C.quizzes) C.quizzes = [];
   if (!C.mail) C.mail = [];
+  if (!C.wishes) C.wishes = [];
   function has(a, id) { for (var k = 0; k < a.length; k++) if (a[k].id === id) return k; return -1; }
   for (var i = 0; i < OUT.length; i++) {
     var e = OUT[i], k;
@@ -4167,6 +4209,10 @@ function applyPending() {
     else if (e.kind === 'mail' && has(C.mail, e.id) < 0) C.mail.push({ id: e.id, at: e.at, from: e.from, logo: e.logo || '', to: e.to, title: e.title, body: e.body, status: '未讀' });
     else if (e.kind === 'mailRead' && (k = has(C.mail, e.mid)) >= 0) C.mail[k].status = '已讀';
     else if (e.kind === 'mailDel' && (k = has(C.mail, e.mid)) >= 0) C.mail.splice(k, 1);
+    else if (e.kind === 'wish') {
+      var w = { id: e.wid, at: e.at, name: e.name, price: e.price, kid: e.kid, sponsor: e.sponsor, status: e.status, reply: e.reply, note: e.note, icon: e.icon, doneAt: e.doneAt };
+      if ((k = has(C.wishes, e.wid)) >= 0) C.wishes[k] = w; else C.wishes.push(w);
+    }
   }
 }
 function sync() {
@@ -4335,7 +4381,7 @@ function openWrite() {
     for (i = 0; i < own.length; i++) h += '<span class="lp' + (WR.stamp === own[i].id ? ' sel' : '') + '" data-act="wrStamp" data-arg="' + own[i].id + '"><img src="' + BADGE_IMG[own[i].id] + '" alt=""><small>' + own[i].name + '</small></span>';
     h += '</div>' + (lock ? '<div class="pend">還有 ' + lock + ' 個人物徽章沒收集到，收集到就能拿來蓋章喔！</div>' : '');
     return h +
-      '<div class="okbtn" data-act="wrSend">📮 投進信箱</div><div class="pend">署名：' + KID_NAME + '。爸爸媽媽會在家長設定的信箱裡看到。</div>';
+      '<div class="okbtn" data-act="wrSend">📮 投進信箱</div><div class="pend">署名：' + KID_NAME + '。爸爸媽媽會在家長特區的信箱裡看到。</div>';
   });
 }
 /* 家長：寫信給小布丁（可以排定時間，偷偷藏起來） */
@@ -4350,7 +4396,7 @@ function pmAt() {
 }
 function openMailAdmin() {
   openOv(function () {
-    var h = '<div class="ovh"><span class="x" data-act="parentBack">← 家長設定</span><h2>📮 信箱管理</h2><span class="x" data-act="close">關閉</span></div>', i;
+    var h = '<div class="ovh"><span class="x" data-act="parentBack">← 家長特區</span><h2>📮 信箱管理</h2><span class="x" data-act="close">關閉</span></div>', i;
     var kidL = outbox(), toKid = [], M = mailAll(), ns = nowStamp(), un = 0;
     for (i = M.length - 1; i >= 0; i--) if (M[i].to !== 'parent') toKid.push(M[i]);
     for (i = 0; i < kidL.length; i++) if (kidL[i].status !== '已讀') un++;
@@ -4385,6 +4431,117 @@ function openMailAdmin() {
     }
     return h + '<div class="pend" style="margin-top:6px">也可以直接在試算表的 Mail 分頁新增一列：投遞時間、寄件人、收件人填「' + KID_NAME + '」、標題、內容。</div>';
   });
+}
+
+/* ===== 家長特區：家長專屬功能都在這裡 ===== */
+function openHub() {
+  $('ovBox').className = '';
+  openOv(function () {
+    var wp = 0, kl = 0, W = wishes(), M = mailAll(), i;
+    for (i = 0; i < W.length; i++) if (W[i].status === 'wish') wp++;
+    for (i = 0; i < M.length; i++) if (M[i].to === 'parent' && M[i].status !== '已讀') kl++;
+    function tile(act, ic, name, sub, badge) {
+      return '<div class="htile" data-act="' + act + '"><span class="hic">' + ic + '</span><b>' + name + '</b><small>' + sub + '</small>' + (badge ? '<em>' + badge + '</em>' : '') + '</div>';
+    }
+    return '<div class="ovh"><h2>👪 家長特區</h2><span class="x" data-act="close">🔒 上鎖離開</span></div>' +
+      '<div class="phint" style="margin:0 0 8px">只有爸爸媽媽能用。在這裡的操作不會算成小布丁的紀錄，也不會跳出基德的對話；按「上鎖離開」或關閉視窗就會自動上鎖。</div><div class="htiles">' +
+      tile('pTasks', '📋', '任務設定', '新增、修改、開關每日任務') +
+      tile('specialAdmin', '⭐', '特殊任務', '段考、檢定考、登記成績') +
+      tile('pQuiz', '📝', '登記平常考', '小布丁拿考卷來找你時') +
+      tile('wishAdmin', '🌠', '許願池', '回覆願望、設定贊助金額', wp) +
+      tile('mailAdmin', '📮', '信箱', '寫信給小布丁、看回信', kl) +
+      tile('income', '💰', '記收入', '零用錢、紅包') +
+      tile('shopAdmin', '🛍', '商店管理', '價格、上下架') +
+      '</div>';
+  });
+}
+
+/* ===== 許願池：小布丁許願 → 爸媽決定要存多少、贊助多少 → 存夠了就實現 ===== */
+var WISH_IC = ['🧸', '🎮', '📚', '🚲', '🎨', '🧩', '👗', '🎧', '⚽', '🎹', '🍰', '🎁'];
+var WISH_ST = { wish: '等爸媽回覆', ok: '存錢中', done: '已實現', no: '先不要' };
+function wishes() { return C.wishes || []; }
+function findWish(id) { var W = wishes(); for (var i = 0; i < W.length; i++) if (W[i].id === id) return W[i]; return null; }
+function saveWish(w) {
+  if (!C.wishes) C.wishes = [];
+  var W = C.wishes, f = false;
+  for (var i = 0; i < W.length; i++) if (W[i].id === w.id) { W[i] = w; f = true; }
+  if (!f) W.push(w);
+  lsSet(K('pp_cache'), C);
+  addEvent({ kind: 'wish', wid: w.id, at: w.at, name: w.name, price: w.price, kid: w.kid, sponsor: w.sponsor, status: w.status, reply: w.reply || '', note: w.note || '', icon: w.icon || '', doneAt: w.doneAt || '' });
+}
+function pinnedWish() {
+  var w = S.wishPin && findWish(S.wishPin);
+  if (w && w.status === 'ok') return w;
+  var W = wishes();                             // 還沒選的話：用最新一個爸媽答應的願望
+  for (var i = W.length - 1; i >= 0; i--) if (W[i].status === 'ok') return W[i];
+  return null;
+}
+var WF = { name: '', price: '', icon: '🧸', note: '' };
+function wishCard(w, admin) {
+  var bal = Math.max(0, balance()), h = '<div class="wcard st-' + w.status + '"><div class="wtop"><span class="wic">' + esc(w.icon || '🎁') + '</span><span class="wname"><b>' + esc(w.name) + '</b><small>大約 $' + money(w.price) + (w.note ? '・' + esc(w.note) : '') + '</small></span><span class="wst">' + WISH_ST[w.status] + '</span></div>';
+  if (w.status === 'ok') {
+    var p = w.kid > 0 ? Math.min(100, Math.round(bal / w.kid * 100)) : 100;
+    h += '<div class="wsplit"><span>🐷 小布丁存 <b>$' + money(w.kid) + '</b></span><span>💝 爸媽贊助 <b>$' + money(w.sponsor) + '</b></span></div>' +
+      '<div class="gbar"><i style="width:' + p + '%"></i><span>' + (p >= 100 ? '存夠了！' : '已存 $' + money(Math.min(bal, w.kid)) + '（' + p + '%）') + '</span></div>';
+    if (!admin) h += '<div class="wbtns">' + (pinnedWish() === w ? '<span class="wb on">🎯 目前的存錢目標</span>' : '<span class="wb" data-act="wishPin" data-arg="' + w.id + '">🎯 設成存錢目標</span>') +
+      (p >= 100 ? '<span class="wb go" data-act="wishDone" data-arg="' + w.id + '">✨ 實現願望！</span>' : '') + '</div>';
+  } else if (w.status === 'no' && w.reply) h += '<div class="wreply">💬 爸媽說：' + esc(w.reply) + '</div>';
+  else if (w.status === 'done') h += '<div class="wreply">🎉 ' + esc(String(w.doneAt || '').slice(0, 10)) + ' 實現了這個願望！</div>';
+  else if (w.status === 'wish' && !admin) h += '<div class="wreply">📨 已經告訴爸爸媽媽了，等他們回覆喔！</div>';
+  if (w.status === 'ok' && w.reply) h += '<div class="wreply">💬 爸媽說：' + esc(w.reply) + '</div>';
+  if (admin) {
+    h += '<div class="wadmin"><label>總價 <input type="number" data-wf="price_' + w.id + '" value="' + w.price + '"></label>' +
+      '<label>🐷 小布丁存 <input type="number" data-wf="kid_' + w.id + '" value="' + (w.status === 'wish' ? Math.round(w.price * 0.7) : w.kid) + '"></label>' +
+      '<label>💬 想說的話 <input data-wf="reply_' + w.id + '" value="' + esc(w.reply || '') + '" placeholder="例如：存到了一起去買！"></label>' +
+      '<div class="wbtns"><span class="wb go" data-act="wishOk" data-arg="' + w.id + '">✅ ' + (w.status === 'ok' ? '更新金額' : '答應，開始存錢') + '</span>' +
+      (w.status !== 'no' ? '<span class="wb" data-act="wishNo" data-arg="' + w.id + '">💬 先不要</span>' : '') +
+      (w.status === 'ok' ? '<span class="wb" data-act="wishFin" data-arg="' + w.id + '">🎁 直接標示已實現</span>' : '') + '</div>' +
+      '<div class="pend">贊助金額＝總價 − 小布丁存的錢，會自動算。</div></div>';
+  }
+  return h + '</div>';
+}
+function openWish() {
+  openOv(function () {
+    var W = wishes(), h = ovHead('🌠 許願池') + '<div class="phint" style="margin:0 0 6px">把想要的禮物寫下來！爸爸媽媽會決定你要存多少錢、他們贊助多少，存夠了就能實現願望。</div>' +
+      '<div class="ovsub">✏️ 許一個新願望</div><div class="cats">', i;
+    for (i = 0; i < WISH_IC.length; i++) h += '<span class="cat stk' + (WF.icon === WISH_IC[i] ? ' sel' : '') + '" data-act="wfIcon" data-arg="' + WISH_IC[i] + '">' + WISH_IC[i] + '</span>';
+    h += '</div><div class="pform"><label><span>想要什麼</span><input data-wf="name" value="' + esc(WF.name) + '" placeholder="例如：兔子娃娃"></label>' +
+      '<label><span>大約多少錢</span><input data-wf="price" type="number" value="' + esc(WF.price) + '" placeholder="例如：300"></label>' +
+      '<label><span>為什麼想要</span><input data-wf="note" value="' + esc(WF.note) + '" placeholder="可以不寫"></label></div>' +
+      '<div class="okbtn" data-act="wishAdd">🌠 投進許願池</div>';
+    var act = [], old = [];
+    for (i = W.length - 1; i >= 0; i--) (W[i].status === 'done' || W[i].status === 'no' ? old : act).push(W[i]);
+    h += '<div class="ovsub">我的願望</div>';
+    if (!act.length) h += '<div class="empty">還沒有願望，許一個吧！</div>';
+    for (i = 0; i < act.length; i++) h += wishCard(act[i], false);
+    if (old.length) { h += '<div class="ovsub">實現過的願望與回覆</div>'; for (i = 0; i < old.length && i < 20; i++) h += wishCard(old[i], false); }
+    return h;
+  });
+}
+function openWishAdmin() {
+  openOv(function () {
+    var W = wishes(), h = '<div class="ovh"><span class="x" data-act="hub">← 家長特區</span><h2>🌠 許願池（家長）</h2><span class="x" data-act="close">關閉</span></div>' +
+      '<div class="phint" style="margin:0 0 6px">設定小布丁要自己存多少，剩下的由爸媽贊助。答應後，願望會變成她的存錢目標，存夠了她可以按「實現願望」（需要家長密碼，會從零用錢扣掉她存的部分）。</div>', i, n = 0;
+    for (i = W.length - 1; i >= 0; i--) if (W[i].status === 'wish' || W[i].status === 'ok') { h += wishCard(W[i], true); n++; }
+    if (!n) h += '<div class="empty">目前沒有新的願望</div>';
+    var done = [];
+    for (i = W.length - 1; i >= 0; i--) if (W[i].status === 'done' || W[i].status === 'no') done.push(W[i]);
+    if (done.length) { h += '<div class="ovsub">已實現／先不要</div>'; for (i = 0; i < done.length && i < 20; i++) h += wishCard(done[i], false); }
+    return h;
+  });
+}
+function wfVal(k) { var e = document.querySelector('[data-wf="' + k + '"]'); return e ? e.value : ''; }
+function checkWish() {                       // 爸媽回覆了：告訴小布丁
+  if (!S.wishTold) S.wishTold = {};
+  var W = wishes();
+  for (var i = 0; i < W.length; i++) {
+    var w = W[i], k = w.id + ':' + w.status;
+    if ((w.status === 'ok' || w.status === 'no') && !S.wishTold[k]) {
+      S.wishTold[k] = 1; saveS();
+      if (w.status === 'ok') kidSay('wishOk', w.name, { c: [['wish', '去許願池看看'], ['thanks', '謝謝爸爸媽媽']] });
+      else kidSay('wishNo', w.name, { c: [['wish', '去許願池看看'], ['thanks', '好']] });
+    }
+  }
 }
 /* ================= 點擊動作 ================= */
 var ACTS = {
@@ -4447,7 +4604,59 @@ var ACTS = {
     }
     finish(function () { completeTask(t, 0, t.parent ? 'parentOk' : 'task'); });
   },
-  parent: function () { PF = blankPF(); askPin('家長設定', openParent); },
+  parent: function () { ACTS.hub(); },
+  hub: function () { if (PARENT_ON) { openHub(); return; } askPin('家長特區', function () { PARENT_ON = true; openHub(); }); },
+  pTasks: function () { PF = blankPF(); openParent(); },
+  pQuiz: function () { openQuizForm(); },
+  wish: function () { openWish(); },
+  wishAdmin: function () { openWishAdmin(); },
+  wfIcon: function (ic) { WF.name = wfVal('name'); WF.price = wfVal('price'); WF.note = wfVal('note'); WF.icon = ic; refreshOv(); },
+  wishAdd: function () {
+    var name = String(wfVal('name')).replace(/^\s+|\s+$/g, ''), price = Math.round(Number(wfVal('price')) || 0);
+    if (!name) { toast('寫下想要的禮物吧'); return; }
+    if (price <= 0) { toast('大約多少錢呢？'); return; }
+    var w = { id: uid(), at: nowStamp(), name: name, price: price, kid: 0, sponsor: 0, status: 'wish', icon: WF.icon, note: String(wfVal('note')), reply: '' };
+    WF = { name: '', price: '', icon: '🧸', note: '' };
+    saveWish(w);
+    refreshOv();
+    if (!kidSay('wishAdd', name)) toast('願望已經投進許願池了！');
+  },
+  wishPin: function (id) { S.wishPin = id; saveS(); refreshOv(); renderMoney(); toast('🎯 已經設成存錢目標！'); },
+  wishOk: function (id) {
+    var w = findWish(id);
+    if (!w) return;
+    var price = Math.round(Number(wfVal('price_' + id)) || w.price), kid = Math.round(Number(wfVal('kid_' + id)));
+    if (isNaN(kid) || kid < 0 || kid > price) { toast('小布丁存的金額要在 0～' + price + ' 之間'); return; }
+    var nw = JSON.parse(JSON.stringify(w));
+    nw.price = price; nw.kid = kid; nw.sponsor = price - kid; nw.status = 'ok'; nw.reply = String(wfVal('reply_' + id));
+    saveWish(nw);
+    if (!S.wishPin || !pinnedWish()) S.wishPin = id;
+    saveS();
+    toast('已答應！小布丁存 $' + kid + '，爸媽贊助 $' + (price - kid));
+    refreshOv(); renderMoney();
+  },
+  wishNo: function (id) {
+    var w = findWish(id), r = String(wfVal('reply_' + id));
+    if (!w) return;
+    if (!r) { toast('請在「想說的話」寫一下原因，讓小布丁知道為什麼'); return; }
+    var nw = JSON.parse(JSON.stringify(w)); nw.status = 'no'; nw.reply = r;
+    saveWish(nw); refreshOv();
+  },
+  wishFin: function (id) { var w = findWish(id); if (!w || !confirm('標示「' + w.name + '」已經實現？（不會扣零用錢）')) return; var nw = JSON.parse(JSON.stringify(w)); nw.status = 'done'; nw.doneAt = nowStamp(); saveWish(nw); refreshOv(); },
+  wishDone: function (id) {
+    var w = findWish(id);
+    if (!w || w.status !== 'ok') return;
+    if (balance() < w.kid) { toast('還差 $' + (w.kid - balance()) + ' 喔，再加油！'); return; }
+    askPin('實現願望：' + w.name, function () {
+      var nw = JSON.parse(JSON.stringify(w)); nw.status = 'done'; nw.doneAt = nowStamp();
+      if (w.kid > 0) ledgerEvent('支出', '實現願望：' + w.name, w.kid);
+      saveWish(nw);
+      if (S.wishPin === id) { S.wishPin = ''; saveS(); }
+      celebrate(true);
+      if (!kidSay('wishDone', w.name, { c: [['thanks', '謝謝爸爸媽媽！']] })) toast('願望實現了！');
+      renderAll();
+    });
+  },
   ptpl: function (i) { PF = pfFrom(TPL[+i][1]); refreshOv(); },
   pedit: function (name) {
     var list = C.tasksAll || C.tasks;
@@ -4533,7 +4742,7 @@ var ACTS = {
     if (!kidSay('mailSent')) toast('信已經投進信箱了！');
   },
   mailAdmin: function () { $('ovBox').className = ''; openMailAdmin(); },
-  parentBack: function () { openParent(); },
+  parentBack: function () { openHub(); },
   pmRead: function (id) { var L = findLetter(id); if (L && L.status !== '已讀') { L.status = '已讀'; lsSet(K('pp_cache'), C); addEvent({ kind: 'mailRead', mid: id }); } openLetter(id, 'mailAdmin'); },
   pmView: function (id) { openLetter(id, 'mailAdmin'); },
   pmLogo: function (k) {
@@ -4704,7 +4913,7 @@ var ACTS = {
   shopAdmin: function () { openShopAdmin(); },
   sadmCat: function (c) { SADM.f = c; refreshOv(); },
   sadmToggle: function (id) { var q = findProd(id); if (q) saveShop(q, q.price, !q.on); refreshOv(); },
-  parentBack: function () { openParent(); },
+  parentBack: function () { openHub(); },
   catalog: function () { openCatalog(); },
   calm: function (d) {
     CALM.m += +d;
@@ -5090,6 +5299,7 @@ function tick() {
     lastMin = d.getMinutes();
     if (ymd(d) !== lastDay) { lastDay = ymd(d); sync(); }
     checkMail();
+    checkWish();
     if (!ovRender) renderAll();
     if (now() - (S.lastSync || 0) > 5 * 60000) sync();
     if (kidOn() && d.getHours() >= 21 && S.sleepTold !== ymd(d)) { S.sleepTold = ymd(d); saveS(); kidSay('sleep'); }
