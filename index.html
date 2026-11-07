@@ -1017,6 +1017,11 @@
   .mkok, .mkno { margin-left: 6px; padding: 7px 12px; border-radius: 14px; font-size: 15px; font-weight: bold; }
   .mkok { background: #d3f9d8; color: #2b8a3e; } .mkno { background: #f1f3f5; color: #868e96; }
   .mkok.tapped { background: #2f9e44; color: #fff; }
+
+  /* 雲端備份 */
+  .cloudinfo { background: #f8f9fa; border-radius: 12px; padding: 8px 12px; margin-bottom: 8px; }
+  .cloudinfo div { display: flex; font-size: 16px; padding: 3px 0; } .cloudinfo b { width: 90px; flex-shrink: 0; color: #495057; }
+  .cloudinfo .cerr { color: #c92a2a; }
 </style>
 </head>
 <body>
@@ -1061,7 +1066,7 @@ var API_URL = 'https://script.google.com/macros/s/AKfycbxY-7ZoZfDN-pRjV-p0rnsqRY
 var API_KEY = 'change-me-1234';
 /* ======================================== */
 
-var APP_VERSION = '1107-v30';   // 每次更新都改這個，用來確認 iPad 載入的是新版
+var APP_VERSION = '1107-v31';   // 每次更新都改這個，用來確認 iPad 載入的是新版
 var WD = '日一二三四五六';
 var SPEND_CATS = ['零食', '文具', '玩具', '捐款', '其他'];
 var INCOME_CATS = ['零用錢', '紅包', '獎勵', '其他'];
@@ -1212,7 +1217,7 @@ var S = lsGet(K('pp_state'), DEMO ? { theme: 'kid', font: 'naikai', pomoStyle: '
   }
 })();
 function saveOut() { lsSet(K('pp_outbox'), OUT); }
-function saveS() { lsSet(K('pp_state'), S); }
+function saveS() { S.chg = new Date().getTime(); lsSet(K('pp_state'), S); }   // chg：最後一次修改的時間（雲端合併用）
 
 function starTotal() {
   var t = Number(C.starTotal) || 0;
@@ -4214,6 +4219,126 @@ function viaFrame(params, cb) {
   f.src = buildUrl(params);
   document.body.appendChild(f);
 }
+/* 大量資料（收藏備份）用表單 POST 送到隱藏的 iframe，網址才不會太長 */
+function viaPost(params, cb) {
+  var n = 'p' + (++seq) + '_' + now(), name = 'pf_' + n, f = document.createElement('iframe'), form = document.createElement('form'), done = false, t, k;
+  f.name = name; f.style.display = 'none';
+  function onMsg(ev) {
+    var d = null;
+    try { d = typeof ev.data === 'string' ? JSON.parse(ev.data) : ev.data; } catch (e) { return; }
+    if (d && d.n === n) finish(null, d);
+  }
+  function finish(err, d) {
+    if (done) return;
+    done = true;
+    clearTimeout(t);
+    window.removeEventListener('message', onMsg, false);
+    setTimeout(function () { if (f.parentNode) f.parentNode.removeChild(f); if (form.parentNode) form.parentNode.removeChild(form); }, 100);
+    if (!err && (!d || d.app !== 'ipad-panel')) err = '回應不正確';
+    if (!err && !d.ok) err = d.error || '後端錯誤';
+    cb(err, d);
+  }
+  t = setTimeout(function () { finish('逾時'); }, 30000);
+  window.addEventListener('message', onMsg, false);
+  params = copy(params);
+  params.mode = 'frame'; params.n = n; params.key = API_KEY;
+  form.method = 'POST'; form.action = API_URL; form.target = name; form.style.display = 'none';
+  for (k in params) if (params.hasOwnProperty(k)) { var inp = document.createElement('input'); inp.type = 'hidden'; inp.name = k; inp.value = params[k]; form.appendChild(inp); }
+  document.body.appendChild(f);
+  document.body.appendChild(form);
+  form.submit();
+}
+/* ===== 收藏雲端備份：寶物、預告函等本機紀錄存到試算表，換裝置也看得到 ===== */
+var CLOUD_FLAGS = ['setDone', 'setTold', 'mkSkip', 'mkDone', 'cardQ', 'spGot', 'spBonusGot', 'mailTold', 'mailRead', 'wishTold', 'routes'];
+var CLOUD_NEWER = ['showcase', 'wishPin', 'route', 'lastStamp', 'gemNew', 'allDrop'];
+function cloudPack() {
+  var o = { v: 1, chg: S.chg || 0, got: {} }, i, k;
+  for (k in (S.got || {})) if (S.got.hasOwnProperty(k)) { var g = S.got[k]; o.got[k] = { n: g.n, first: g.first, log: (g.log || []).slice(-5) }; }
+  o.cards = S.cards || [];
+  for (i = 0; i < CLOUD_FLAGS.length; i++) if (S[CLOUD_FLAGS[i]]) o[CLOUD_FLAGS[i]] = S[CLOUD_FLAGS[i]];
+  for (i = 0; i < CLOUD_NEWER.length; i++) if (S[CLOUD_NEWER[i]] !== undefined) o[CLOUD_NEWER[i]] = S[CLOUD_NEWER[i]];
+  o.tplay = S.tplay || {}; o.coupons = S.coupons || []; o.week = S.week; o.fday = S.fday; o.mkSince = S.mkSince;
+  o.letters = (S.letters || []).slice(-15);
+  return o;
+}
+/* 合併：寶物取多的、收集紀錄取聯集；只能選一個的（展示櫃等）以比較新的為準 */
+function cloudMerge(r) {
+  if (!r || typeof r !== 'object') return false;
+  var before = JSON.stringify(cloudPack()), i, k, newer = !S.cloudDown || (r.chg || 0) > (S.chg || 0);   // 這台第一次讀回：以雲端為準
+  if (!S.got) S.got = {};
+  for (k in (r.got || {})) if (r.got.hasOwnProperty(k)) {
+    var a = S.got[k], b = r.got[k];
+    if (!a) { S.got[k] = { n: b.n, first: b.first || '', log: (b.log || []).slice(0) }; continue; }
+    if (b.n > a.n) a.n = b.n;
+    if (b.first && (!a.first || b.first < a.first)) a.first = b.first;
+    var lg = (a.log || []).concat(b.log || []), seen = {}, nl = [];
+    lg.sort();
+    for (i = 0; i < lg.length; i++) if (!seen[lg[i]]) { seen[lg[i]] = 1; nl.push(lg[i]); }
+    a.log = nl.slice(-10);
+  }
+  var cs = S.cards || [];
+  for (i = 0; i < (r.cards || []).length; i++) if (cs.indexOf(r.cards[i]) < 0) cs.push(r.cards[i]);
+  S.cards = cs;
+  for (i = 0; i < CLOUD_FLAGS.length; i++) {
+    var f = CLOUD_FLAGS[i], src = r[f] || {};
+    if (!S[f]) S[f] = {};
+    for (k in src) if (src.hasOwnProperty(k) && S[f][k] === undefined) S[f][k] = src[k];
+  }
+  if (!S.tplay) S.tplay = {};
+  for (k in (r.tplay || {})) if (r.tplay.hasOwnProperty(k) && (r.tplay[k] || 0) > (S.tplay[k] || 0)) S.tplay[k] = r.tplay[k];
+  var cp = S.coupons || [], ids = {};
+  for (i = 0; i < cp.length; i++) ids[cp[i].id] = cp[i];
+  for (i = 0; i < (r.coupons || []).length; i++) { var c = r.coupons[i]; if (!ids[c.id]) cp.push(c); else if (c.used) { ids[c.id].used = true; ids[c.id].usedTs = c.usedTs; } }
+  S.coupons = cp;
+  var L = S.letters || [], lid = {};
+  for (i = 0; i < L.length; i++) lid[L[i].id] = 1;
+  for (i = 0; i < (r.letters || []).length; i++) if (!lid[r.letters[i].id]) L.push(r.letters[i]);
+  L.sort(function (x, y) { return x.at < y.at ? -1 : 1; });
+  S.letters = L.slice(-40);
+  if (r.week && (!S.week || r.week.k > S.week.k || (r.week.k === S.week.k && r.week.n > S.week.n))) S.week = r.week;
+  if (r.fday && (!S.fday || r.fday.d > S.fday.d || (r.fday.d === S.fday.d && r.fday.n > S.fday.n))) S.fday = r.fday;
+  if (r.mkSince && (!S.mkSince || r.mkSince < S.mkSince)) S.mkSince = r.mkSince;
+  if (newer) for (i = 0; i < CLOUD_NEWER.length; i++) if (r[CLOUD_NEWER[i]] !== undefined) S[CLOUD_NEWER[i]] = r[CLOUD_NEWER[i]];
+  return JSON.stringify(cloudPack()) !== before;
+}
+function devName() { var u = navigator.userAgent; return /iPad/.test(u) ? 'iPad' : (/iPhone/.test(u) ? 'iPhone' : (/Android/.test(u) ? 'Android' : '電腦')); }
+var cloudBusy = false;
+/* force：'up'＝立刻備份、'down'＝立刻從雲端合併；沒給就是同步時自動（10 分鐘一次） */
+function cloudSync(force, cb) {
+  cb = cb || function () {};
+  if (DEMO || cloudBusy) { cb('模擬模式不會備份'); return; }
+  if (!force && S.cloudTry && now() - S.cloudTry < 10 * 60000) { cb(); return; }
+  cloudBusy = true;
+  S.cloudTry = now();
+  call({ action: 'loadState' }, function (err, d) {
+    if (err) { cloudBusy = false; S.cloudErr = err; cb(err); return; }
+    var changed = false;
+    if (d.state) { try { changed = cloudMerge(JSON.parse(d.state)); } catch (e) {} }
+    S.cloudDown = nowStamp(); S.cloudRemote = d.time || '';
+    if (changed) { saveS(); renderAll(); if (ovRender) refreshOv(); }
+    var dirty = force === 'up' || changed || !d.state || (S.chg || 0) > (S.cloudUpChg || 0);
+    if (!dirty) { cloudBusy = false; lsSet(K('pp_state'), S); cb(); return; }
+    var pack = cloudPack(), json = JSON.stringify(pack);
+    viaPost({ action: 'saveState', state: json, dev: devName() }, function (err2) {
+      cloudBusy = false;
+      if (err2) { S.cloudErr = err2; lsSet(K('pp_state'), S); cb(err2); return; }
+      S.cloudErr = ''; S.cloudUp = nowStamp(); S.cloudUpChg = S.chg || 0;
+      lsSet(K('pp_state'), S);                          // 不更新 chg，避免一直重複備份
+      cb();
+    });
+  });
+}
+function openCloud() {
+  openOv(function () {
+    return '<div class="ovh"><span class="x" data-act="hub">← 家長特區</span><h2>☁️ 收藏雲端備份</h2><span class="x" data-act="close">關閉</span></div>' +
+      '<div class="phint" style="margin:0 0 8px">寶物、預告函、展示櫃、系列、謎題、補登紀錄等，會自動備份到試算表的 Backup 分頁（同步時約 10 分鐘一次）。換電腦或新平板打開時，會自動讀回來合併，不會互相蓋掉。</div>' +
+      '<div class="cloudinfo"><div><b>這台裝置</b>' + devName() + '</div><div><b>寶物</b>' + gotCount() + ' 件・預告函 ' + cardCount() + ' 張</div>' +
+      '<div><b>上次備份</b>' + (S.cloudUp || '還沒有') + '</div><div><b>上次讀回</b>' + (S.cloudDown || '還沒有') + (S.cloudRemote ? '（雲端版本 ' + esc(S.cloudRemote) + '）' : '') + '</div>' +
+      (S.cloudErr ? '<div class="cerr"><b>上次錯誤</b>' + esc(S.cloudErr) + '</div>' : '') + '</div>' +
+      '<div class="okbtn" data-act="cloudUp">⬆️ 立即備份到雲端</div><div class="okbtn graybtn" data-act="cloudDown">⬇️ 從雲端讀回並合併</div>' +
+      '<div class="pend">合併規則：寶物數量取比較多的、收集紀錄取聯集；展示櫃這類只能有一份的，以最後修改的裝置為準。</div>';
+  });
+}
 var useFrame = false;
 function call(params, cb) {
   function check(err, d) {
@@ -4306,6 +4431,7 @@ function sync() {
       saveS();
       syncMsg = warn;
       if (ovRender) refreshOv();
+      setTimeout(function () { cloudSync(); }, 500);      // 收藏雲端備份（約 10 分鐘一次）
       renderAll();
     });
   });
@@ -4609,6 +4735,7 @@ function openHub() {
       tile('mailAdmin', '📮', '信箱', '寫信給小布丁、看回信', kl) +
       tile('income', '💰', '記收入', '零用錢、紅包') +
       tile('shopAdmin', '🛍', '商店管理', '價格、上下架') +
+      tile('cloud', '☁️', '收藏備份', S.cloudUp ? '上次 ' + S.cloudUp.slice(5) : '寶物、預告函換裝置也看得到', S.cloudErr ? '!' : 0) +
       '</div>';
   });
 }
@@ -4765,6 +4892,9 @@ var ACTS = {
   hub: function () { if (PARENT_ON) { openHub(); return; } askPin('家長特區', function () { PARENT_ON = true; openHub(); }); },
   pTasks: function () { PF = blankPF(); openParent(); },
   pQuiz: function () { openQuizForm(); },
+  cloud: function () { openCloud(); },
+  cloudUp: function () { toast('備份中…'); cloudSync('up', function (err) { toast(err ? '備份失敗：' + err : '☁️ 備份完成！'); refreshOv(); }); },
+  cloudDown: function () { toast('讀取中…'); cloudSync('down', function (err) { toast(err ? '讀取失敗：' + err : '☁️ 已經讀回並合併！'); refreshOv(); }); },
   makeup: function () { askPin('補登任務', function () { PARENT_ON = true; openMakeup(); }); },
   makeupP: function () { openMakeup(); },
   mkOk: function (key) { var k = key.indexOf('|'); makeupOne(key.slice(0, k), key.slice(k + 1)); tsound('ting'); refreshOv(); renderTasks(); },
