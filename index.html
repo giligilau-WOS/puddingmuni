@@ -1005,6 +1005,18 @@
   .newit { width: 70px; text-align: center; font-size: 12px; line-height: 1.2; color: #495057; margin: 2px; -webkit-animation: bpop 0.8s ease-in-out infinite alternate; animation: bpop 0.8s ease-in-out infinite alternate; }
   .newit small { display: block; }
   .seenall { color: #1971c2; text-decoration: underline; }
+
+  /* 補登任務 */
+  .mkbanner { margin: 0 0 6px; padding: 8px 12px; border-radius: 12px; background: #fff4e6; border: 2px dashed #ff922b; color: #d9480f; flex-shrink: 0; }
+  .mkbanner b { display: block; font-size: 16px; } .mkbanner small { font-size: 13px; }
+  .mkday { border: 2px solid #e9ecef; border-radius: 14px; padding: 8px 10px; margin: 6px 0; }
+  .mkh { display: flex; align-items: center; margin-bottom: 4px; } .mkh b { font-size: 18px; } .mkh small { color: #c9a227; margin-left: 8px; }
+  .mkall { margin-left: auto; background: #2f9e44; color: #fff; border-radius: 16px; padding: 6px 12px; font-size: 14px; font-weight: bold; }
+  .mkrow { display: flex; align-items: center; padding: 6px 0; border-top: 1px dashed #e9ecef; }
+  .mkn { flex: 1; } .mkn b { display: block; font-size: 17px; } .mkn small { color: #868e96; }
+  .mkok, .mkno { margin-left: 6px; padding: 7px 12px; border-radius: 14px; font-size: 15px; font-weight: bold; }
+  .mkok { background: #d3f9d8; color: #2b8a3e; } .mkno { background: #f1f3f5; color: #868e96; }
+  .mkok.tapped { background: #2f9e44; color: #fff; }
 </style>
 </head>
 <body>
@@ -1049,7 +1061,7 @@ var API_URL = 'https://script.google.com/macros/s/AKfycbxY-7ZoZfDN-pRjV-p0rnsqRY
 var API_KEY = 'change-me-1234';
 /* ======================================== */
 
-var APP_VERSION = '1107-v29';   // 每次更新都改這個，用來確認 iPad 載入的是新版
+var APP_VERSION = '1107-v30';   // 每次更新都改這個，用來確認 iPad 載入的是新版
 var WD = '日一二三四五六';
 var SPEND_CATS = ['零食', '文具', '玩具', '捐款', '其他'];
 var INCOME_CATS = ['零用錢', '紅包', '獎勵', '其他'];
@@ -1230,9 +1242,14 @@ function applyLocal(e) {
   if (e.kind === 'star') {
     C.starTotal = (Number(C.starTotal) || 0) + e.n;
     if (e.type === 'task' || e.type === 'untask') {
-      var today = ymd(new Date()), nm = e.ref.slice(today.length + 1);
-      if (C.date !== today) { C.date = today; C.taskNet = {}; }
-      C.taskNet[nm] = (C.taskNet[nm] || 0) + (e.type === 'task' ? 1 : -1);
+      var today = ymd(new Date()), rd = String(e.ref).slice(0, 10), nm = String(e.ref).slice(11);
+      if (rd === today) {
+        if (C.date !== today) { C.date = today; C.taskNet = {}; }
+        C.taskNet[nm] = (C.taskNet[nm] || 0) + (e.type === 'task' ? 1 : -1);
+      } else if (e.type === 'task') {                  // 補登過去的日子
+        if (!C.taskDays) C.taskDays = {};
+        (C.taskDays[nm] = C.taskDays[nm] || []).push(rd);
+      }
     }
   } else if (e.kind === 'ledger') {
     C.ledgerBalance = (Number(C.ledgerBalance) || 0) + (e.type === '支出' ? -e.amt : e.amt);
@@ -1767,6 +1784,7 @@ function renderTasks() {
   var h = '<div class="ttabs"><span class="ttab' + (tab === 'daily' ? ' sel' : '') + '" data-act="ttab" data-arg="daily">' + ic(0) + '今日任務' +
     (all.length ? '<em class="' + (doneN === all.length ? 'alldone' : '') + '">' + doneN + '/' + all.length + '</em>' : '') + '</span>' +
     '<span class="ttab' + (tab === 'special' ? ' sel' : '') + '" data-act="ttab" data-arg="special">⭐ 特殊任務' + (spOpen ? '<em>' + spOpen + '</em>' : '') + '</span></div>';
+  if (tab === 'daily') h += missedBanner();
   if (tab === 'daily' && all.length) h += '<div class="tprog"><i style="width:' + pct(doneN, all.length) + '%"></i><span>今天完成 ' + doneN + ' / ' + all.length + '（' + pct(doneN, all.length) + '%）</span></div>';
   h += '<div class="sbtns"><div class="sbtn shop" data-act="shop">🛍 商店<b>' + SYM() + ' ' + total + '</b></div>' +
     '<div class="sbtn coll" data-act="collect">🏆 收藏區<b>' + gotCount() + ' 件</b>' + (newCount() ? '<i class="newtag">NEW ' + newCount() + '</i>' : '') + '</div></div><div class="list">';
@@ -3205,6 +3223,7 @@ function openOv(fn) { ovRender = fn; $('ov').style.display = 'block'; refreshOv(
 function refreshOv() { if (ovRender) $('ovBox').innerHTML = ovRender(); }
 function closeOv() {
   PARENT_ON = false;                                  // 離開家長特區：自動上鎖
+  if (MKRW) setTimeout(sayMakeup, 300);
   ovRender = null; $('ov').style.display = 'none'; $('ovBox').innerHTML = ''; $('ovBox').className = '';
   if (HIDQ.length) setTimeout(showHidden, 600);
 }
@@ -4024,6 +4043,7 @@ function rpgChoice(a) {
   else if (parts[0] === 'quiz') openQuiz();
   else if (parts[0] === 'sets') openCollect('set');
   else if (parts[0] === 'wish') openWish();
+  else if (parts[0] === 'cards') openCollect('card');
   else if (parts[0] === 'mail') openMail('in');
   else if (parts[0] === 'hid') showHidden();
   else if (parts[0] === 'again') ACTS.pomo('f' + (parts[1] || 25));
@@ -4481,6 +4501,94 @@ function openMailAdmin() {
   });
 }
 
+
+/* ===== 補登任務：前幾天漏打勾的，交給爸媽確認後補登 ===== */
+var MK_DAYS = 7;
+function doneOn(name, ds) {
+  if (((C.taskDays || {})[name] || []).indexOf(ds) >= 0) return true;
+  if (S.mkDone && S.mkDone[ds + '|' + name]) return true;
+  var ref = ds + '|' + name, n = 0;
+  for (var i = 0; i < OUT.length; i++) if (OUT[i].kind === 'star' && OUT[i].ref === ref) n += OUT[i].type === 'task' ? 1 : -1;
+  return n > 0;
+}
+function tasksOn(d) {                         // 那一天應該做的任務（目前啟用中的）
+  var r = [], T = C.tasks || [];
+  for (var i = 0; i < T.length; i++) if (dayOk(T[i].days, d.getDay())) r.push(T[i]);
+  return r;
+}
+function missedList() {
+  var today = midnight(new Date()), out = [];
+  if (!S.mkSince) { S.mkSince = ymd(addDays(today, -3)); saveS(); }     // 第一次使用：只往前看 3 天，避免舊任務全部跑出來
+  for (var k = 1; k <= MK_DAYS; k++) {
+    var d = addDays(today, -k), ds = ymd(d);
+    if (ds < S.mkSince) break;
+    var tl = tasksOn(d);
+    for (var i = 0; i < tl.length; i++) {
+      var key = ds + '|' + tl[i].name;
+      if (!doneOn(tl[i].name, ds) && !(S.mkSkip && S.mkSkip[key])) out.push({ ds: ds, d: d, t: tl[i] });
+    }
+  }
+  return out;
+}
+function dayLabel(d) { return (d.getMonth() + 1) + '/' + d.getDate() + '（' + WD.charAt(d.getDay()) + '）'; }
+function missedBanner() {
+  var m = missedList();
+  if (!m.length) return '';
+  var days = [], seen = {};
+  for (var i = 0; i < m.length; i++) if (!seen[m[i].ds]) { seen[m[i].ds] = 1; days.push((m[i].d.getMonth() + 1) + '/' + m[i].d.getDate()); }
+  return '<div class="mkbanner" data-act="makeup"><b>📅 有 ' + m.length + ' 個任務忘了打勾</b><small>' + days.join('、') + '・請爸爸媽媽幫忙確認補登 →</small></div>';
+}
+var MKRW = null;                              // 補登的獎勵，離開家長畫面後由基德一起頒發
+function openMakeup() {
+  $('ovBox').className = '';
+  openOv(function () {
+    var m = missedList(), h = '<div class="ovh"><span class="x" data-act="hub">← 家長特區</span><h2>📅 補登任務</h2><span class="x" data-act="close">關閉</span></div>' +
+      '<div class="phint" style="margin:0 0 6px">最近 ' + MK_DAYS + ' 天裡忘了打勾的任務。確認小布丁<b>真的有做</b>再補登：會給基本星數和寶物（不含準時、限時等加碼）。<br>' +
+      '某一天的任務全部補齊，就能補收到那天的預告函。沒有做的請按「沒做」，就不會再出現。</div>', i, cur = '';
+    if (!m.length) h += '<div class="empty">沒有漏掉的任務 👍</div>';
+    for (i = 0; i < m.length; i++) {
+      var it = m[i], key = it.ds + '|' + it.t.name;
+      if (it.ds !== cur) {
+        if (cur) h += '</div>';
+        cur = it.ds;
+        var hasCard = (S.cards || []).indexOf(it.ds) >= 0;
+        h += '<div class="mkday"><div class="mkh"><b>' + dayLabel(it.d) + '</b>' + (hasCard ? '' : '<small>📜 補齊可得預告函</small>') + '<span class="mkall" data-act="mkAll" data-arg="' + it.ds + '">✅ 這天全部補登</span></div>';
+      }
+      h += '<div class="mkrow"><span class="mkn"><b>' + esc(it.t.name) + '</b><small>' + esc(taskSummary(it.t)) + '・' + SYM() + ' ' + it.t.stars + '</small></span>' +
+        '<span class="mkok" data-act="mkOk" data-arg="' + esc(key) + '">✅ 有做</span><span class="mkno" data-act="mkNo" data-arg="' + esc(key) + '">✖ 沒做</span></div>';
+    }
+    if (cur) h += '</div>';
+    if (MKRW && (MKRW.n || MKRW.cards.length)) h += '<div class="sptotal">這次補登：' + SYM() + ' ' + MKRW.n + '・寶物 ' + MKRW.drops.length + ' 件' + (MKRW.cards.length ? '・預告函 ' + MKRW.cards.length + ' 張' : '') + '<small>（關閉後基德會頒發給小布丁）</small></div>';
+    return h;
+  });
+}
+function makeupOne(ds, name) {
+  var t = findTask(name), d = parseYmd(ds);
+  if (!t || !d || doneOn(name, ds)) return;
+  if (!S.mkDone) S.mkDone = {};
+  S.mkDone[ds + '|' + name] = 1;
+  var gem = taskGem(t), n = Number(t.stars) || 0;
+  addTreasure(gem.id, 1);
+  starEvent(n, '補登：' + name + '（' + ds + '）', 'task', ds + '|' + name);
+  if (!MKRW) MKRW = { n: 0, drops: [], cards: [], names: [] };
+  var g = gotOf(gem.id);
+  MKRW.n += n; MKRW.names.push(name);
+  MKRW.drops.push({ gem: gem, first: g.n === 1, cnt: g.n });
+  var tl = tasksOn(d), all = true;                    // 那天全部補齊：補發預告函
+  for (var i = 0; i < tl.length; i++) if (!doneOn(tl[i].name, ds)) all = false;
+  if (all && (S.cards || []).indexOf(ds) < 0) { if (!S.cards) S.cards = []; S.cards.push(ds); MKRW.cards.push(ds); }
+  saveS();
+}
+function sayMakeup() {
+  var r = MKRW;
+  MKRW = null;
+  if (!r || !r.names.length) return;
+  var cs = [];
+  for (var i = 0; i < r.cards.length; i++) { var d = parseYmd(r.cards[i]); cs.push((d.getMonth() + 1) + '/' + d.getDate()); }
+  var txt = '爸爸媽媽確認過了！幫你補登了 ' + r.names.length + ' 個任務。' + (cs.length ? '還補收到 ' + cs.join('、') + ' 的預告函，去收藏區看看吧！' : '下次做完記得馬上打勾喔。');
+  if (!kidSayText(txt, { r: { n: r.n, drops: r.drops.slice(0, 6), line: '📅 補登：' + r.names.slice(0, 4).join('、') + (r.names.length > 4 ? '…' : '') }, c: cs.length ? [['cards', '看預告函'], ['thanks', '謝謝爸爸媽媽']] : [['thanks', '謝謝爸爸媽媽']] }))
+    toast('補登完成：' + r.names.length + ' 個任務 +' + r.n + SYM());
+}
 /* ===== 家長特區：家長專屬功能都在這裡 ===== */
 function openHub() {
   $('ovBox').className = '';
@@ -4495,6 +4603,7 @@ function openHub() {
       '<div class="phint" style="margin:0 0 8px">只有爸爸媽媽能用。在這裡的操作不會算成小布丁的紀錄，也不會跳出基德的對話；按「上鎖離開」或關閉視窗就會自動上鎖。</div><div class="htiles">' +
       tile('pTasks', '📋', '任務設定', '新增、修改、開關每日任務') +
       tile('specialAdmin', '⭐', '特殊任務', '段考、檢定考、登記成績') +
+      tile('makeupP', '📅', '補登任務', '前幾天忘了打勾的', missedList().length) +
       tile('pQuiz', '📝', '登記平常考', '小布丁拿考卷來找你時') +
       tile('wishAdmin', '🌠', '許願池', '回覆願望、設定贊助金額', wp) +
       tile('mailAdmin', '📮', '信箱', '寫信給小布丁、看回信', kl) +
@@ -4656,6 +4765,15 @@ var ACTS = {
   hub: function () { if (PARENT_ON) { openHub(); return; } askPin('家長特區', function () { PARENT_ON = true; openHub(); }); },
   pTasks: function () { PF = blankPF(); openParent(); },
   pQuiz: function () { openQuizForm(); },
+  makeup: function () { askPin('補登任務', function () { PARENT_ON = true; openMakeup(); }); },
+  makeupP: function () { openMakeup(); },
+  mkOk: function (key) { var k = key.indexOf('|'); makeupOne(key.slice(0, k), key.slice(k + 1)); tsound('ting'); refreshOv(); renderTasks(); },
+  mkNo: function (key) { if (!S.mkSkip) S.mkSkip = {}; S.mkSkip[key] = 1; saveS(); refreshOv(); renderTasks(); },
+  mkAll: function (ds) {
+    var tl = tasksOn(parseYmd(ds));
+    for (var i = 0; i < tl.length; i++) if (!doneOn(tl[i].name, ds) && !(S.mkSkip && S.mkSkip[ds + '|' + tl[i].name])) makeupOne(ds, tl[i].name);
+    tsound('fanfare'); refreshOv(); renderTasks();
+  },
   wish: function () { openWish(); },
   wishAdmin: function () { openWishAdmin(); },
   wfIcon: function (ic) { WF.name = wfVal('name'); WF.price = wfVal('price'); WF.note = wfVal('note'); WF.icon = ic; refreshOv(); },
