@@ -118,7 +118,7 @@
   body.L-narrow #cPomo { height: 330px; }
   body.L-narrow #cMoney { height: 300px; }
   body.L-narrow .list, body.L-narrow .sbody { overflow: visible; }
-  body.L-narrow #ovBox { width: 94%; margin-left: -47%; }
+  body.L-narrow #ovBox { width: 94%; }
   body.L-narrow #toast { width: 90%; margin-left: -45%; }
   #pwrap svg { flex-shrink: 0; display: block; }
   #pomoTime.ptime-side { margin-left: 16px; }
@@ -370,10 +370,11 @@
 
   /* 彈出視窗 */
   #ov { display: none; position: fixed; left: 0; top: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.45); z-index: 10; }
+  #ov { display: none; -webkit-box-align: center; -webkit-align-items: center; align-items: center; -webkit-box-pack: center; -webkit-justify-content: center; justify-content: center; padding: 2% 0; -webkit-box-sizing: border-box; box-sizing: border-box; }
+  #ov.on { display: -webkit-box; display: -webkit-flex; display: flex; }
   #ovBox {
-    position: absolute; left: 50%; top: 50%; width: 500px; margin-left: -250px;
-    -webkit-transform: translateY(-50%); transform: translateY(-50%);
-    background: #fff; border-radius: 14px; padding: 16px; max-height: 96%; overflow-y: auto; -webkit-overflow-scrolling: touch;
+    position: relative; width: 500px; max-height: 100%; -webkit-box-sizing: border-box; box-sizing: border-box; -webkit-flex-shrink: 0; flex-shrink: 0;
+    background: #fff; border-radius: 14px; padding: 16px; overflow-y: auto; -webkit-overflow-scrolling: touch;
   }
   .ovh { display: flex; align-items: center; margin-bottom: 10px; }
   .ovh h2 { flex: 1; margin: 0; font-size: 21px; }
@@ -728,9 +729,9 @@
   .cald.on.sp { background: #c9a227; }
   .yk-no { position: absolute; right: 64px; top: 16px; font-size: 13px; color: #8a7a55; font-weight: normal; }
   .minicard { width: 46px; margin: 3px; padding: 4px 0; text-align: center; font-size: 12px; line-height: 1.4; background: #fff9db; border: 1px solid #e9d8a6; border-radius: 4px; }
-  #ovBox.wide { width: 640px; margin-left: -320px; padding: 10px; background: #f3e9cf; }
+  #ovBox.wide { width: 640px; padding: 10px; background: #f3e9cf; }
   body.th-kid #ovBox.wide { border: 0; }
-  body.L-tall #ovBox.wide, body.L-narrow #ovBox.wide { width: 94%; margin-left: -47%; }
+  body.L-tall #ovBox.wide, body.L-narrow #ovBox.wide { width: 94%; }
   .yokoku {
     position: relative; text-align: center; color: #111; padding: 30px 40px 22px;
     background: #fffdf6; background-image: radial-gradient(ellipse at center, #fffdf8 55%, #f6ecd2 100%);
@@ -864,11 +865,11 @@
 
   /* 隱藏任務 */
   .hidteaser { margin: 8px 4px 4px; padding: 10px 12px; border: 2px dashed #9775fa; border-radius: 12px; background: #f3f0ff; color: #6741d9; font-size: 16px; font-weight: bold; text-align: center; }
-  body #ovBox.hidbox { width: 720px; margin-left: -360px; padding: 22px 26px; color: #fff; text-align: center; border: 6px double #ffd43b; border-radius: 22px;
+  body #ovBox.hidbox { width: 720px; padding: 22px 26px; color: #fff; text-align: center; border: 6px double #ffd43b; border-radius: 22px;
     background: #0b1d51; background-image: radial-gradient(ellipse at center, #1c3d8f 0%, #0b1d51 80%); -webkit-animation: hidpop 0.5s ease-out; animation: hidpop 0.5s ease-out; }
-  @-webkit-keyframes hidpop { from { opacity: 0; -webkit-transform: translateY(-50%) scale(0.6); } to { opacity: 1; -webkit-transform: translateY(-50%) scale(1); } }
-  @keyframes hidpop { from { opacity: 0; transform: translateY(-50%) scale(0.6); } to { opacity: 1; transform: translateY(-50%) scale(1); } }
-  body.L-tall #ovBox.hidbox, body.L-narrow #ovBox.hidbox { width: 94%; margin-left: -47%; }
+  @-webkit-keyframes hidpop { from { opacity: 0; -webkit-transform: scale(0.6); } to { opacity: 1; -webkit-transform: scale(1); } }
+  @keyframes hidpop { from { opacity: 0; transform: scale(0.6); } to { opacity: 1; transform: scale(1); } }
+  body.L-tall #ovBox.hidbox, body.L-narrow #ovBox.hidbox { width: 94%; }
   .hid-top { font-size: 36px; font-weight: bold; color: #ffd43b; letter-spacing: 2px; margin-bottom: 10px; }
   .hid-row { display: flex; align-items: center; text-align: left; margin-bottom: 12px; }
   .hid-ava { width: 110px; height: 110px; border-radius: 55px; border: 4px solid #fff; background: #fff; flex-shrink: 0; margin-right: 16px; }
@@ -1102,7 +1103,7 @@ var API_URL = 'https://script.google.com/macros/s/AKfycbxY-7ZoZfDN-pRjV-p0rnsqRY
 var API_KEY = 'change-me-1234';
 /* ======================================== */
 
-var APP_VERSION = '1109-v37';   // 每次更新都改這個，用來確認 iPad 載入的是新版
+var APP_VERSION = '1111-v38';   // 每次更新都改這個，用來確認 iPad 載入的是新版
 var WD = '日一二三四五六';
 var SPEND_CATS = ['零食', '文具', '玩具', '捐款', '其他'];
 var INCOME_CATS = ['零用錢', '紅包', '獎勵', '其他'];
@@ -2696,35 +2697,35 @@ var TPLAY = {
   trophy: ['bounce', '🎉,🏆', '高高舉起獎盃！全場歡呼！', '頒給最努力的人——就是你！'],
   magicbook: ['flip', '📖,✨', '魔法書翻開了，上面寫著：「{tip}」', '魔術的祕密，要自己慢慢發現。'],
   timegem: ['spin', '💙,🎂', '藍色生日轉一圈，閃出深藍色的光。', '名字裡有「生日」的寶石——祝每天都是好日子！'],
-  b_conan: ['zoom', '🔍,✨', '柯南推了推眼鏡：「真相只有一個！」', '眼鏡閃了一下光——他想到答案了！'],
-  b_kid: ['fly', '🃏,🌙', '「Ladies and gentlemen！」基德從徽章裡飛了出來！', '撲克牌一閃，基德不見了……又出現了！'],
-  b_shinichi: ['bounce', '⚽', '新一踢出一記漂亮的射門！', '「我是高中生偵探，工藤新一。」'],
-  b_amuro: ['pop', '☕,✨', '安室透端出一份剛做好的三明治！', '「交給我吧。」安室透笑了一下。'],
-  b_ran: ['shake', '💥,✨', '小蘭使出空手道：喝！', '「新一，你一定要回來喔。」'],
-  b_kyogoku: ['kick', '💥', '蹴擊貴公子的一腳——好強！', '「我會保護重要的人。」'],
-  b_scotch: ['sway', '🎵,🎶', '諸伏景光彈起貝斯，咚咚咚～', '好聽的旋律，安室透也在旁邊聽。'],
-  b_matsuda: ['spin', '⚡,💥', '松田推了推墨鏡：「拆彈？交給我。」', '剪斷紅線——成功了！'],
-  b_hagiwara: ['beat', '✨', '萩原研二對你笑著揮揮手。', '「放輕鬆，慢慢來就好。」'],
-  b_heiji: ['bounce', '⚾,🔥', '平次轉了轉帽子：「工藤，這次我不會輸你！」', '大阪來的名偵探登場！'],
-  b_haibara: ['glow', '✨', '灰原輕輕笑了一下：「你還真努力呢。」', '冷靜分析：你今天的表現，滿分。'],
-  b_gin: ['shake', '🌙', '琴酒的黑帽子在月光下一閃……快躲起來！', '別擔心，柯南和基德會保護你的。'],
-  b_vermouth: ['vanish', '🌹,✨', '貝爾摩德一眨眼就變裝成另一個人了！', '「女人因為有祕密，才會變得美麗。」'],
-  b_sonoko: ['beat', '💗,✨', '園子：「基德大人好帥喔～！」', '園子開心地轉了一圈！'],
-  b_date: ['bounce', '✨', '伊達班長：「大家集合！今天也要加油！」', '班長拍拍你的肩膀：做得好！'],
-  b_agasa: ['shake', '💡,💨', '阿笠博士的新發明……砰！冒出一陣煙。', '博士：「這次的發明一定會成功的！」'],
-  b_vodka: ['blink', '💨', '伏特加推了推墨鏡：「大哥，等等我！」', '伏特加又找不到琴酒了……'],
-  b_akai: ['zoom', '🎯,🌙', '赤井秀一冷靜地瞄準：「目標確認。」', '銀色子彈，登場。'],
-  b_hannin: ['vanish', '💨,❓', '黑色的犯人一閃……又躲起來了！', '抓到了！真相只有一個——犯人就是你！'],
-  b_kogoro: ['shake', '💤,💨', '小五郎：「交給我名偵探毛利小五郎吧！」', '咦？小五郎又睡著了……「沉睡的小五郎」上場！'],
-  b_eri: ['glow', '✨', '妃英理推了推眼鏡：「證據都在這裡了。」', '法庭的女王登場——全場安靜！'],
-  b_kazuha: ['beat', '🎀,💗', '和葉：「平次！等等我啦！」', '合氣道一招——漂亮！'],
-  b_sera: ['kick', '💥,✨', '世良：「我也是偵探喔！」', '截拳道一記飛踢——咻！'],
-  b_okiya: ['beat', '✨', '沖矢昴瞇著眼睛笑了笑：「要不要吃點我做的料理？」', '沖矢昴推了推眼鏡，好像知道些什麼……'],
-  b_sato: ['wave', '✨', '佐藤刑警：「走吧，出發辦案！」', '佐藤警官帥氣地揮揮手！'],
-  b_genta: ['bounce', '🍚,✨', '元太：「肚子餓了……好想吃鰻魚飯！」', '少年偵探團，出動！'],
-  b_mitsuhiko: ['zoom', '📖,✨', '光彥：「根據我查到的資料……」', '知識就是力量！光彥又學到新東西了。'],
-  b_ayumi: ['beat', '💗,🌸', '步美：「柯南，我們一起去冒險吧！」', '步美開心地笑了！'],
-  b_takagi: ['shake', '💦', '高木刑警：「哇，又被柯南搶先一步了！」', '高木警官對你敬了個禮！'],
+  b_conan: ['zoom', '🔍,✨', '柯南推了推眼鏡：「真相只有一個！」', '眼鏡閃了一下光——他想到答案了！', '「對了，這個案子有個奇怪的地方……」柯南皺起眉頭。', '柯南按下腰帶上的按鈕——足球彈出來了！', '「阿笠博士的發明，今天又派上用場了。」', '柯南對你眨眨眼：「今天的作業，也要漂亮破解喔！」'],
+  b_kid: ['fly', '🃏,🌙', '「Ladies and gentlemen！」基德從徽章裡飛了出來！', '撲克牌一閃，基德不見了……又出現了！', '「Ladies and gentlemen，今晚的表演，正式開始！」', '基德變出一朵玫瑰，遞給了你。', '「保持撲克臉，這是怪盜的第一課。」', '月光下，白色披風一揚，基德消失在夜空中。'],
+  b_shinichi: ['bounce', '⚽', '新一踢出一記漂亮的射門！', '「我是高中生偵探，工藤新一。」', '「推理這種東西，是不分輸贏的。」', '新一盯著球場：「下一次射門，一定會進！」', '「福爾摩斯說過：排除所有不可能，剩下的就是真相。」', '新一拿起電話：「小蘭，我很快就回去。」'],
+  b_amuro: ['pop', '☕,✨', '安室透端出一份剛做好的三明治！', '「交給我吧。」安室透笑了一下。', '「來，這杯咖啡請你喝——當然，是果汁版的。」', '安室透笑著說：「今天也辛苦了，做得很好。」', '「我的戀人，是這個國家。」安室透認真地說。', '安室透擦了擦桌子：「波洛咖啡廳，歡迎光臨！」'],
+  b_ran: ['shake', '💥,✨', '小蘭使出空手道：喝！', '「新一，你一定要回來喔。」', '小蘭說：「新一那個傢伙，又跑去哪裡了？」', '「大家一起吃飯最開心了！」小蘭端出了晚餐。', '小蘭握緊拳頭：「我會變得更強，保護大家！」', '小蘭溫柔地摸摸你的頭：「今天也很努力呢。」'],
+  b_kyogoku: ['kick', '💥', '蹴擊貴公子的一腳——好強！', '「我會保護重要的人。」', '京極真鞠躬：「園子小姐，我回來了。」', '「空手道是用來守護，不是用來逞強。」', '京極真一個轉身——又是一記漂亮的踢擊！', '「不管多遠，我都會趕到。」'],
+  b_scotch: ['sway', '🎵,🎶', '諸伏景光彈起貝斯，咚咚咚～', '好聽的旋律，安室透也在旁邊聽。', '諸伏調了調貝斯的弦：「來，一起唱一首吧。」', '「零，這次也拜託你了。」', '諸伏景光露出溫柔的笑容。', '「我們是夥伴，永遠都是。」'],
+  b_matsuda: ['spin', '⚡,💥', '松田推了推墨鏡：「拆彈？交給我。」', '剪斷紅線——成功了！', '松田推了推墨鏡：「炸彈？小菜一碟。」', '「萩，等我一下，這條線剪了就好。」', '松田陣平咧嘴一笑：「搞定！」', '「做事就要乾脆一點，別拖拖拉拉。」'],
+  b_hagiwara: ['beat', '✨', '萩原研二對你笑著揮揮手。', '「放輕鬆，慢慢來就好。」', '萩原研二：「松田，別那麼急嘛。」', '「今天的天氣真好，適合騎車兜風。」', '萩原笑著對你比了個讚。', '「緊張的時候，就深呼吸三次。」'],
+  b_heiji: ['bounce', '⚾,🔥', '平次轉了轉帽子：「工藤，這次我不會輸你！」', '大阪來的名偵探登場！', '「工藤！這次的案子讓給我啦！」', '平次扶正帽子：「大阪的名偵探，登場！」', '「和葉，你怎麼又跟來了？」平次一臉無奈。', '「關西的推理，可不輸東京喔！」'],
+  b_haibara: ['glow', '✨', '灰原輕輕笑了一下：「你還真努力呢。」', '冷靜分析：你今天的表現，滿分。', '灰原嘆了口氣：「你真是的……」', '「別勉強自己，這是我身為科學家的忠告。」', '灰原難得笑了一下：「做得不錯嘛。」', '「有些事，交給大人處理就好。」'],
+  b_gin: ['shake', '🌙', '琴酒的黑帽子在月光下一閃……快躲起來！', '別擔心，柯南和基德會保護你的。', '琴酒點了根菸——咳咳，小朋友快離遠一點！', '「這次，沒有失誤的空間。」', '琴酒的黑色保時捷，消失在夜色中。', '「伏特加，走了。」琴酒轉身離開。'],
+  b_vermouth: ['vanish', '🌹,✨', '貝爾摩德一眨眼就變裝成另一個人了！', '「女人因為有祕密，才會變得美麗。」', '「A secret makes a woman woman.」', '貝爾摩德一個轉身，又換了一張臉！', '「天使……你果然很有趣。」', '貝爾摩德輕輕一笑，什麼也沒說。'],
+  b_sonoko: ['beat', '💗,✨', '園子：「基德大人好帥喔～！」', '園子開心地轉了一圈！', '園子：「我可是鈴木財閥的大小姐喔！」', '「真大人～你什麼時候回來？」園子看著手機。', '園子拉著小蘭：「走，去逛街！」', '「基德大人今晚也會出現嗎？」園子興奮地說。'],
+  b_date: ['bounce', '✨', '伊達班長：「大家集合！今天也要加油！」', '班長拍拍你的肩膀：做得好！', '伊達班長：「大家，站好！」', '「身為班長，我要照顧每一個人。」', '伊達航拍拍松田的肩膀：「別亂來喔。」', '「訓練辛苦了，今天就到這裡。」'],
+  b_agasa: ['shake', '💡,💨', '阿笠博士的新發明……砰！冒出一陣煙。', '博士：「這次的發明一定會成功的！」', '阿笠博士：「我又有新發明了！要不要看看？」', '「猜謎時間！今天的問題是——」', '博士的實驗室又傳來「砰」的一聲。', '「吃飽了才有力氣思考，對吧？」'],
+  b_vodka: ['blink', '💨', '伏特加推了推墨鏡：「大哥，等等我！」', '伏特加又找不到琴酒了……', '伏特加：「大哥，接下來怎麼辦？」', '伏特加推了推墨鏡，東張西望。', '「大哥說的話，一定是對的！」', '伏特加緊緊跟在琴酒身後。'],
+  b_akai: ['zoom', '🎯,🌙', '赤井秀一冷靜地瞄準：「目標確認。」', '銀色子彈，登場。', '「別緊張，我會在後面支援你。」', '赤井輕輕一笑：「有趣的推理。」', '「秀吉、真純……他們過得還好嗎？」', '赤井秀一看著遠方：「下一步，該怎麼走？」'],
+  b_hannin: ['vanish', '💨,❓', '黑色的犯人一閃……又躲起來了！', '抓到了！真相只有一個——犯人就是你！', '黑色的犯人躲在角落，偷偷看著你……', '犯人：「嘿嘿嘿……」（他又出現了！）', '「這次一定不會被抓到！」犯人說。', '犯人被柯南逼到牆角，無處可逃！'],
+  b_kogoro: ['shake', '💤,💨', '小五郎：「交給我名偵探毛利小五郎吧！」', '咦？小五郎又睡著了……「沉睡的小五郎」上場！', '「哈哈哈！這個案子就交給我吧！」', '小五郎看著電視：「沖野洋子今天也好可愛……」', '「小蘭，啤酒——咳咳，是麥茶拿來！」', '小五郎打了個大哈欠。'],
+  b_eri: ['glow', '✨', '妃英理推了推眼鏡：「證據都在這裡了。」', '法庭的女王登場——全場安靜！', '妃英理：「小五郎，你又在偷懶了？」', '「身為律師，我只相信證據。」', '妃英理摸摸貓咪：「小五郎，乖。」（她的貓也叫小五郎喔！）', '「小蘭，媽媽很以你為榮。」'],
+  b_kazuha: ['beat', '🎀,💗', '和葉：「平次！等等我啦！」', '合氣道一招——漂亮！', '和葉：「平次！你不要又亂跑啦！」', '「我的御守，一定會保護你的。」', '和葉笑著說：「來吃大阪燒吧！」', '「平次那個笨蛋……」和葉嘟著嘴。'],
+  b_sera: ['kick', '💥,✨', '世良：「我也是偵探喔！」', '截拳道一記飛踢——咻！', '世良：「叫我真純就好啦！」', '「我哥哥他……是個很厲害的人。」', '世良帥氣地比了個手勢。', '「工藤，今天也要一起推理嗎？」'],
+  b_okiya: ['beat', '✨', '沖矢昴瞇著眼睛笑了笑：「要不要吃點我做的料理？」', '沖矢昴推了推眼鏡，好像知道些什麼……', '沖矢昴：「要喝杯茶嗎？我剛泡好。」', '「工藤家的書，我都看完了喔。」', '沖矢昴推了推眼鏡，笑得意味深長。', '「有什麼需要，隨時叫我。」'],
+  b_sato: ['wave', '✨', '佐藤刑警：「走吧，出發辦案！」', '佐藤警官帥氣地揮揮手！', '佐藤：「高木，你又遲到了！」', '「刑警的工作，就是守護大家的笑容。」', '佐藤美和子發動警車：「出發！」', '「別小看我喔，我可是很強的。」'],
+  b_genta: ['bounce', '🍚,✨', '元太：「肚子餓了……好想吃鰻魚飯！」', '少年偵探團，出動！', '元太：「我肚子餓了，去吃鰻魚飯吧！」', '「少年偵探團，衝啊！」元太大喊。', '元太拍拍胸脯：「我是團長，交給我！」', '「柯南，你怎麼知道的？」元太一臉驚訝。'],
+  b_mitsuhiko: ['zoom', '📖,✨', '光彥：「根據我查到的資料……」', '知識就是力量！光彥又學到新東西了。', '光彥：「根據我的計算，答案應該是……」', '「步美，小心一點喔。」光彥細心地提醒。', '光彥推了推眼鏡（他沒戴眼鏡，是推了推瀏海）。', '「這個知識我在書上看過！」'],
+  b_ayumi: ['beat', '💗,🌸', '步美：「柯南，我們一起去冒險吧！」', '步美開心地笑了！', '步美：「柯南，我們一起去玩吧！」', '「哀，你今天也好漂亮！」步美笑著說。', '步美對你揮揮手，笑得好開心。', '「少年偵探團，最喜歡大家了！」'],
+  b_takagi: ['shake', '💦', '高木刑警：「哇，又被柯南搶先一步了！」', '高木警官對你敬了個禮！', '高木：「佐藤小姐……我、我……」（臉紅了）', '高木刑警認真地抄筆記。', '「柯南，你怎麼又在這裡？」高木一臉無奈。', '「我會努力的！」高木握緊拳頭。'],
   i_tie: ['swing', '✨', '基德整理了一下紅領帶：「Show Time 開始前，服裝要完美。」', '紅色領帶在月光下閃了一下。'],
   i_kendo: ['wave', '💥', '平次大喊：「面——！」竹刀漂亮地揮了下去！', '劍道高手的氣勢，好帥！'],
   i_cap: ['bounce', '⚾', '平次把帽子轉到後面：「好，出發辦案！」', '大阪名偵探的招牌帽子！'],
@@ -2745,22 +2746,22 @@ var TPLAY = {
   i_mustang: ['fly', '💨,🔥', '紅色跑車轟——地衝出去了！', '車牌 12-02，是赤井的生日喔。'],
   i_fbi: ['glow', '⭐,✨', 'FBI！赤井秀一亮出徽章。', '王牌探員，正在守護大家。'],
   i_cig: ['shake', '🚭', '吸菸有害健康！赤井，快把菸熄掉！', '小朋友要遠離香菸和二手菸喔。'],
-  b_yusaku: ['zoom', '📖,✨', '優作推了推眼鏡：「這個謎題，我已經解開了。」', '推理小說家的頭腦，轉得飛快！'],
-  b_yukiko: ['vanish', '🎭,✨', '有希子變裝成另一個人了！你認得出來嗎？', '「新ちゃん～」有希子開心地揮手。'],
-  b_jodie: ['bounce', '✨', '茱蒂老師：「OK！今天也要加油喔！」', 'Good job！茱蒂老師給你按讚。'],
-  b_james: ['glow', '✨', '詹姆斯點點頭：「做得很好。」', 'FBI 的長官，總是很冷靜。'],
-  b_iori: ['zoom', '✨', '伊織無我：「一切都照紅葉大小姐的吩咐。」', '「和田進一」……唸快一點，是不是很像「我是新一」？'],
-  b_megure: ['shake', '❗', '目暮警部：「毛利老弟，又是你啊！」', '目暮警部壓了壓帽子，開始辦案。'],
-  b_chiba: ['bounce', '🍙', '千葉刑警：「肚子好餓，先吃個飯糰！」', '千葉刑警跑來支援了！'],
-  b_kuroda: ['zoom', '👁', '黑田管理官：「真相，交給我們來查。」', '看起來嚴肅，其實很可靠。'],
-  b_yumi: ['wave', '🚓', '由美：「違規停車，開罰單囉！」', '交通部的女警，今天也很有精神！'],
-  b_naeko: ['beat', '💗', '苗子：「千葉，你還記得我嗎？」', '交通部的女警，正在巡邏中。'],
-  b_kazami: ['zoom', '🕶,✨', '風見：「是，降谷先生！」', '公安的工作，要保密喔。'],
-  b_shukichi: ['spin', '♟', '秀吉下了一步將棋：「將軍！」', '將棋高手的頭腦，好厲害！'],
-  b_chianti: ['shake', '🦋', '基安蒂生氣地說：「哼！又失手了！」', '左眼旁邊的鳳尾蝶刺青，是她的招牌。'],
-  b_akemi: ['beat', '💗', '明美溫柔地笑了：「要好好照顧自己喔。」', '最疼愛妹妹的好姊姊。'],
-  b_kobayashi: ['bounce', '📚', '小林老師：「少年偵探團，出動！」', '小林老師推了推眼鏡，準備上課了。'],
-  b_rena: ['glow', '🎤,✨', '水無怜奈：「現在為您播報最新消息！」', '代號「基爾」……其實她是站在正義這一邊的。'],
+  b_yusaku: ['zoom', '📖,✨', '優作推了推眼鏡：「這個謎題，我已經解開了。」', '推理小說家的頭腦，轉得飛快！', '「新一，推理可不能只靠直覺。」', '優作笑了笑：「這個詭計，我在小說裡寫過。」', '「有希子，我們該回洛杉磯了。」', '優作翻開新的稿紙，開始寫下一本小說。'],
+  b_yukiko: ['vanish', '🎭,✨', '有希子變裝成另一個人了！你認得出來嗎？', '「新ちゃん～」有希子開心地揮手。', '有希子：「新ちゃん，媽媽來看你囉！」', '「變裝這種事，交給我就對了！」', '有希子開心地轉了一圈：「怎麼樣，像不像？」', '「我可是前女演員，演技一流！」'],
+  b_jodie: ['bounce', '✨', '茱蒂老師：「OK！今天也要加油喔！」', 'Good job！茱蒂老師給你按讚。', '茱蒂老師：「Hello！今天也要說英文喔！」', '「Cool guy……他到底在哪裡？」', '茱蒂老師發下考卷：「加油！」', '「Good luck！」茱蒂老師對你眨眨眼。'],
+  b_james: ['glow', '✨', '詹姆斯點點頭：「做得很好。」', 'FBI 的長官，總是很冷靜。', '詹姆斯：「赤井，情況如何？」', '「身為 FBI，我們絕不放棄。」', '詹姆斯平靜地看著報告。', '「茱蒂，這次也拜託你了。」'],
+  b_iori: ['zoom', '✨', '伊織無我：「一切都照紅葉大小姐的吩咐。」', '「和田進一」……唸快一點，是不是很像「我是新一」？', '伊織無我：「紅葉大小姐，車子準備好了。」', '「這題歌牌的答案是……」伊織沉著地說。', '伊織無我低頭行禮，動作一絲不苟。', '「以前的事，就不用提了。」'],
+  b_megure: ['shake', '❗', '目暮警部：「毛利老弟，又是你啊！」', '目暮警部壓了壓帽子，開始辦案。', '目暮警部：「又有案件了！出動！」', '「毛利老弟，這次你可別又睡著了。」', '目暮警部摸了摸帽子，若有所思。', '「高木！佐藤！跟我走！」'],
+  b_chiba: ['bounce', '🍙', '千葉刑警：「肚子好餓，先吃個飯糰！」', '千葉刑警跑來支援了！', '千葉：「這個便當看起來好好吃……」', '「苗子？你、你怎麼在這裡？」千葉慌了。', '千葉刑警開著車，哼著歌。', '「我會減肥的……從明天開始！」'],
+  b_kuroda: ['zoom', '👁', '黑田管理官：「真相，交給我們來查。」', '看起來嚴肅，其實很可靠。', '黑田管理官：「榊原，好久不見。」', '「降谷，別忘了你的任務。」', '黑田兵衛摸了摸臉上的傷疤。', '「警視廳，不容許任何失誤。」'],
+  b_yumi: ['wave', '🚓', '由美：「違規停車，開罰單囉！」', '交通部的女警，今天也很有精神！', '由美：「秀吉～今天要不要一起吃飯？」', '「美和子，走，我們去逛街！」', '由美開著巡邏車：「違規的，別想跑！」', '由美對你比了個勝利手勢。'],
+  b_naeko: ['beat', '💗', '苗子：「千葉，你還記得我嗎？」', '交通部的女警，正在巡邏中。', '苗子：「千葉，你還記得那個約定嗎？」', '「交通安全，人人有責！」苗子認真地說。', '苗子吹起哨子：「停！」', '「今天也要平平安安回家喔。」'],
+  b_kazami: ['zoom', '🕶,✨', '風見：「是，降谷先生！」', '公安的工作，要保密喔。', '風見：「降谷先生，報告完畢。」', '「公安的工作，就是在暗中守護。」', '風見裕也推了推眼鏡，繼續工作。', '「這件事，我會處理好的。」'],
+  b_shukichi: ['spin', '♟', '秀吉下了一步將棋：「將軍！」', '將棋高手的頭腦，好厲害！', '秀吉：「由美小姐，今天也很可愛呢。」', '「將棋的世界，每一步都要想三步。」', '羽田秀吉下了一步棋，露出微笑。', '「哥哥和真純，大家都要平安。」'],
+  b_chianti: ['shake', '🦋', '基安蒂生氣地說：「哼！又失手了！」', '左眼旁邊的鳳尾蝶刺青，是她的招牌。', '基安蒂：「科恩，目標在哪裡？」', '「這次絕對不會失手！」基安蒂瞄準。', '基安蒂不耐煩地踢了踢石頭。', '「哼，貝爾摩德那個女人……」'],
+  b_akemi: ['beat', '💗', '明美溫柔地笑了：「要好好照顧自己喔。」', '最疼愛妹妹的好姊姊。', '明美：「志保，姊姊永遠在你身邊。」', '「總有一天，我們會自由的。」', '明美溫柔地笑著，眼神裡有一點悲傷。', '「要好好吃飯，好好睡覺喔。」'],
+  b_kobayashi: ['bounce', '📚', '小林老師：「少年偵探團，出動！」', '小林老師推了推眼鏡，準備上課了。', '小林老師：「各位同學，早安！」', '「柯南同學，你的作業……很有創意呢。」', '小林老師在黑板上寫下今天的功課。', '「白鳥警官……咳咳，沒事。」小林老師臉紅了。'],
+  b_rena: ['glow', '🎤,✨', '水無怜奈：「現在為您播報最新消息！」', '代號「基爾」……其實她是站在正義這一邊的。', '「這裡是日賣電視台，為您播報新聞。」', '水無怜奈：「我的任務，還沒有結束。」', '「真正的我……只有少數人知道。」', '水無怜奈輕輕點頭，眼神堅定。'],
   grandjewel: ['grand', '🌕,✨,💎,⭐', '月之大寶石發出滿月般的光芒——所有寶物都在為你歡呼！', '你收集了全部寶物，對你而言沒有不可能！']
 };
 var TP_WORD = {
@@ -3350,12 +3351,12 @@ function toast(msg) {
 
 /* ---------- 彈出視窗 ---------- */
 var ovRender = null;
-function openOv(fn) { ovRender = fn; $('ov').style.display = 'block'; refreshOv(); $('ovBox').scrollTop = 0; }
+function openOv(fn) { ovRender = fn; $('ov').className = 'on'; $('ov').style.display = ''; refreshOv(); $('ovBox').scrollTop = 0; }
 function refreshOv() { if (ovRender) $('ovBox').innerHTML = ovRender(); }
 function closeOv() {
   PARENT_ON = false;                                  // 離開家長特區：自動上鎖
   if (MKRW) setTimeout(sayMakeup, 300);
-  ovRender = null; $('ov').style.display = 'none'; $('ovBox').innerHTML = ''; $('ovBox').className = '';
+  ovRender = null; $('ov').className = ''; $('ov').style.display = ''; $('ovBox').innerHTML = ''; $('ovBox').className = '';
   if (HIDQ.length) setTimeout(showHidden, 600);
 }
 function ovHead(title) { return '<div class="ovh"><h2>' + title + '</h2><span class="x" data-act="close">關閉</span></div>'; }
