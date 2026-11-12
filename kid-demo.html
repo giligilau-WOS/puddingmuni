@@ -1136,7 +1136,7 @@ var API_URL = 'https://script.google.com/macros/s/AKfycbxY-7ZoZfDN-pRjV-p0rnsqRY
 var API_KEY = 'change-me-1234';
 /* ======================================== */
 
-var APP_VERSION = '1112-v41';   // 每次更新都改這個，用來確認 iPad 載入的是新版
+var APP_VERSION = '1112-v42';   // 每次更新都改這個，用來確認 iPad 載入的是新版
 var WD = '日一二三四五六';
 var SPEND_CATS = ['零食', '文具', '玩具', '捐款', '其他'];
 var INCOME_CATS = ['零用錢', '紅包', '獎勵', '其他'];
@@ -2340,7 +2340,7 @@ var TR_HOW = { moonstone: '完成一次專注', cards: '書包全部收好', cro
 var RARITY = { 1: ['普通', '#868e96'], 2: ['少見', '#2f9e44'], 3: ['稀有', '#1c7ed6'], 4: ['史詩', '#7048e8'], 5: ['傳說', '#e67700'] };
 var FIXED_SRC = { moonstone: 1, cards: 1, crown: 1, grandjewel: 1 };   // 固定來源，不參加隨機分配
 var POOL = { 1: [], 2: [], 3: [], 4: [], 5: [] }, BASE_POOL = { 1: [], 2: [], 3: [], 4: [], 5: [] };   // BASE_POOL：任務自動分配只用前 100 件，新增寶物不會改到原本的任務
-(function () { for (var i = 0; i < TR.length; i++) if (!FIXED_SRC[TR[i].id] && TR[i].shape !== 'poster') { POOL[TR[i].r].push(TR[i]); if (i < 100) BASE_POOL[TR[i].r].push(TR[i]); } })();
+(function () { for (var i = 0; i < TR.length; i++) if (!FIXED_SRC[TR[i].id]) { POOL[TR[i].r].push(TR[i]); if (i < 100) BASE_POOL[TR[i].r].push(TR[i]); } })();
 var HARD_TYPES = { '準時': 1, '限時挑戰': 1, '計時': 1, '連續': 1 };
 function rarityTag(r) { return '<span class="rtag" style="background:' + RARITY[r][1] + '">' + new Array(r + 1).join('★') + ' ' + RARITY[r][0] + '</span>'; }
 /* 隨機掉落：優先給還沒收集到的 */
@@ -2501,7 +2501,6 @@ function gemHint(g) {
   var names = [];
   for (var i = 0; i < C.tasks.length; i++) if (taskGem(C.tasks[i]).id === g.id) names.push('「' + C.tasks[i].name + '」');
   if (names.length) return '完成' + names.join('、');
-  if (g.shape === 'poster') return '和爸爸媽媽一起看完這部電影，請爸媽在「家長特區 → 劇場版」解鎖';
   if (g.r === 5) return '段考平均 95 分以上，或達成「傳說」成就時獲得';
   if (g.r === 4) return '段考平均 90 分以上、集滿系列、達成高難度成就時獲得';
   if (g.r === 3) return '平常考 100 分、集滿系列、達成成就，或加碼／全部完成時有小機會掉落';
@@ -2652,12 +2651,12 @@ function closePoster() { PV = null; $('pv').className = ''; $('pvImg').src = '';
 function openMovieAdmin() {
   openOv(function () {
     var h = '<div class="ovh"><span class="x" data-act="hub">← 家長特區</span><h2>🎬 劇場版（一起看過）</h2><span class="x" data-act="close">關閉</span></div>' +
-      '<div class="phint" style="margin:0 0 6px">和小布丁一起看完一部電影，就在這裡點「看過了」，她會拿到那部的海報寶物（名場面也會一起解鎖）。</div><div class="mvlist">';
+      '<div class="phint" style="margin:0 0 6px">海報寶物會從 ★★★ 以上的禮盒裡隨機掉出來。如果想直接送某一部給小布丁（例如剛一起看完），在這裡點「送出」就好。</div><div class="mvlist">';
     for (var i = 0; i < TR.length; i++) {
       var t = TR[i]; if (t.shape !== 'poster') continue;
       var o = owned(t.id);
       h += '<div class="mvrow' + (o ? ' on' : '') + '"><img src="' + posterUrl(t.id, 't') + '" alt=""><span class="mvn"><b>' + esc(t.name.replace(/^劇場版 /, '')) + '</b><small>' + esc(t.intro.slice(0, 8)) + '</small></span>' +
-        (o ? '<span class="mvb done">✅ 看過了</span>' : '<span class="mvb" data-act="mvSeen" data-arg="' + t.id + '">🎬 看過了</span>') + '</div>';
+        (o ? '<span class="mvb done">✅ 已收藏</span>' : '<span class="mvb" data-act="mvSeen" data-arg="' + t.id + '">🎁 送出</span>') + '</div>';
     }
     return h + '</div>';
   });
@@ -5096,9 +5095,9 @@ function sayMakeup() {
   if (!r || !r.names.length) return;
   var cs = [];
   for (var i = 0; i < r.cards.length; i++) { var d = parseYmd(r.cards[i]); cs.push((d.getMonth() + 1) + '/' + d.getDate()); }
-  var txt = r.movie ? '爸爸媽媽說你們一起看完了' + r.names.join('、') + '！這部電影的海報，現在是你的收藏了。去收藏區的「劇場版」放大看看吧！' :
+  var txt = r.movie ? '爸爸媽媽送你一份特別的禮物——' + r.names.join('、') + '的海報！去收藏區的「劇場版」放大看看吧！' :
     '爸爸媽媽確認過了！幫你補登了 ' + r.names.length + ' 個任務。' + (cs.length ? '還補收到 ' + cs.join('、') + ' 的預告函，去收藏區看看吧！' : '下次做完記得馬上打勾喔。');
-  if (!kidSayText(txt, { r: { n: r.n, drops: r.drops.slice(0, 6), line: (r.movie ? '🎬 一起看過：' : '📅 補登：') + r.names.slice(0, 4).join('、') + (r.names.length > 4 ? '…' : '') }, c: r.movie ? [['collect', '看收藏區'], ['thanks', '謝謝爸爸媽媽']] : (cs.length ? [['cards', '看預告函'], ['thanks', '謝謝爸爸媽媽']] : [['thanks', '謝謝爸爸媽媽']]) }))
+  if (!kidSayText(txt, { r: { n: r.n, drops: r.drops.slice(0, 6), line: (r.movie ? '🎬 爸媽送的：' : '📅 補登：') + r.names.slice(0, 4).join('、') + (r.names.length > 4 ? '…' : '') }, c: r.movie ? [['collect', '看收藏區'], ['thanks', '謝謝爸爸媽媽']] : (cs.length ? [['cards', '看預告函'], ['thanks', '謝謝爸爸媽媽']] : [['thanks', '謝謝爸爸媽媽']]) }))
     toast('補登完成：' + r.names.length + ' 個任務 +' + r.n + SYM());
 }
 /* ===== 家長特區：家長專屬功能都在這裡 ===== */
@@ -5121,7 +5120,7 @@ function openHub() {
       tile('mailAdmin', '📮', '信箱', '寫信給小布丁、看回信', kl) +
       tile('income', '💰', '記收入', '零用錢、紅包') +
       tile('shopAdmin', '🛍', '商店管理', '價格、上下架') +
-      tile('movieAdmin', '🎬', '劇場版', '一起看過的電影，解鎖海報') +
+      tile('movieAdmin', '🎬', '劇場版', '直接送一張海報給她') +
       tile('cloud', '☁️', '收藏備份', S.cloudUp ? '上次 ' + S.cloudUp.slice(5) : '寶物、預告函換裝置也看得到', S.cloudErr ? '!' : 0) +
       '</div>';
   });
@@ -5617,7 +5616,7 @@ var ACTS = {
   movieAdmin: function () { openMovieAdmin(); },
   mvSeen: function (id) {
     var t = TR_BY[id]; if (!t || owned(id)) return;
-    if (!confirm('確認和小布丁一起看完「' + t.name.replace(/^劇場版 /, '') + '」了嗎？')) return;
+    if (!confirm('要直接把「' + t.name.replace(/^劇場版 /, '') + '」的海報送給小布丁嗎？')) return;
     var dr = dropInfo(t);
     MKRW = MKRW || { n: 0, drops: [], cards: [], names: [] };
     MKRW.drops.push(dr); MKRW.names.push(t.name.replace(/^劇場版 /, '')); MKRW.movie = true;
