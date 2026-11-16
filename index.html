@@ -1136,7 +1136,7 @@ var API_URL = 'https://script.google.com/macros/s/AKfycbxY-7ZoZfDN-pRjV-p0rnsqRY
 var API_KEY = 'change-me-1234';
 /* ======================================== */
 
-var APP_VERSION = '1116-v44';   // 每次更新都改這個，用來確認 iPad 載入的是新版
+var APP_VERSION = '1116-v45';   // 每次更新都改這個，用來確認 iPad 載入的是新版
 var WD = '日一二三四五六';
 var SPEND_CATS = ['零食', '文具', '玩具', '捐款', '其他'];
 var INCOME_CATS = ['零用錢', '紅包', '獎勵', '其他'];
@@ -2688,40 +2688,57 @@ function openShowcase() {
 }
 /* 系列收集：集滿一組可以領鑽石＋禮盒 */
 var SETS = [
+  /* ---- 人物 ---- */
   ['shonen', '少年偵探團', '🔍', ['b_conan', 'b_haibara', 'b_genta', 'b_mitsuhiko', 'b_ayumi'], 5, 3],
-  ['police', '警察學校五人組', '🚓', ['b_amuro', 'b_scotch', 'b_matsuda', 'b_hagiwara', 'b_date'], 5, 3],
-  ['rivals', '名偵探與怪盜', '🎩', ['b_conan', 'b_shinichi', 'b_kid'], 3, 3],
+  ['teitan', '帝丹小學', '🏫', ['b_conan', 'b_haibara', 'b_ayumi', 'b_genta', 'b_mitsuhiko', 'b_kobayashi'], 5, 3],
+  ['teitanhs', '帝丹高中', '🎒', ['b_shinichi', 'b_ran', 'b_sonoko', 'b_sera', 'b_jodie'], 5, 3],
+  ['queens', '帝丹女王與公主', '👑', ['b_eri', 'b_yukiko'], 3, 2],
   ['mouri', '毛利一家', '🏠', ['b_ran', 'b_kogoro', 'b_eri'], 3, 2],
-  ['west', '西之名偵探', '⚾', ['b_heiji', 'b_kazuha'], 2, 2],
-  ['couple', '園子與京極真', '💕', ['b_sonoko', 'b_kyogoku'], 2, 2],
-  ['mpd', '警視廳搜查一課', '👮', ['b_megure', 'b_takagi', 'b_sato', 'b_chiba', 'b_kuroda'], 5, 3],
-  ['traffic', '交通部的女警', '🚓', ['b_yumi', 'b_naeko', 'b_sato'], 3, 2],
   ['kudo', '工藤一家', '📖', ['b_shinichi', 'b_yusaku', 'b_yukiko'], 4, 3],
+  ['akaifam', '赤井一家', '♟', ['b_akai', 'b_okiya', 'b_shukichi', 'b_sera'], 5, 3],
   ['miyano', '宮野姊妹', '🌸', ['b_haibara', 'b_akemi'], 3, 2],
-  ['akaifam', '赤井家的兄妹', '♟', ['b_akai', 'b_shukichi', 'b_sera'], 4, 3],
+  ['osaka', '大阪組', '⚾', ['b_heiji', 'b_kazuha', 'b_iori'], 3, 2],
+  ['police', '警察學校五人組', '🚓', ['b_amuro', 'b_scotch', 'b_matsuda', 'b_hagiwara', 'b_date'], 5, 3],
+  ['mpd', '警視廳搜查一課', '👮', ['b_megure', 'b_takagi', 'b_sato', 'b_chiba', 'b_kuroda'], 5, 3],
+  ['traffic', '交通部的女警', '🚔', ['b_yumi', 'b_naeko', 'b_sato'], 3, 2],
   ['koan', '公安警察', '🕶', ['b_amuro', 'b_kazami', 'b_iori', 'b_kuroda', 'i_zero'], 5, 3],
-  ['teitan', '帝丹小學', '🏫', ['b_conan', 'b_haibara', 'b_ayumi', 'b_kobayashi'], 3, 2],
-  ['mystery', '神祕的偵探們', '🌙', ['b_akai', 'b_okiya', 'b_sera'], 3, 3],
+  ['fbi', 'FBI', '🇺🇸', ['b_akai', 'b_jodie', 'b_james', 'i_fbi'], 5, 3],
   ['black', '黑衣組織', '🌑', ['b_gin', 'b_vodka', 'b_vermouth', 'b_chianti', 'b_hannin'], 5, 3],
-  ['caught', '抓到犯人了！', '🚨', ['b_hannin', 'b_conan', 'b_agasa'], 3, 2],
-  ['kidtools', '怪盜道具組', '🃏', ['tophat', 'monocle', 'wand', 'wingbadge', 'whitefeather', 'mask'], 5, 3],
-  ['dettools', '偵探道具組', '🎒', ['silverwatch', 'hourglass', 'goldfeather', 'rubyring', 'morganite', 'snowcrystal', 'silverkey', 'silvercoin'], 6, 3],
+  ['undercover', '黑衣組織的臥底', '🎭', ['b_amuro', 'i_bourbon', 'b_akai', 'i_rye', 'b_scotch', 'b_rena'], 6, 3],
+  ['rivals', '名偵探與怪盜', '🎩', ['b_conan', 'b_shinichi', 'b_kid'], 3, 3],
+  ['martial', '武術高手', '🥋', ['b_ran', 'b_kyogoku', 'b_kazuha', 'b_sera', 'b_heiji', 'b_amuro'], 5, 3],
+  ['couples', '情侶檔', '💑', ['b_shinichi', 'b_ran', 'b_heiji', 'b_kazuha', 'b_sonoko', 'b_kyogoku', 'b_takagi', 'b_sato', 'b_shukichi', 'b_yumi'], 5, 3],
+  ['glasses', '眼鏡俱樂部', '👓', ['b_conan', 'b_agasa', 'b_jodie', 'b_okiya', 'b_yusaku', 'b_kazami', 'b_james', 'b_kobayashi', 'b_eri'], 5, 3],
+  /* ---- 道具 ---- */
+  ['kiditems', '怪盜基德的道具', '🃏', ['tophat', 'monocle', 'wand', 'wingbadge', 'whitefeather', 'mask', 'i_tie', 'cards'], 6, 3],
+  ['conanitems', '江戶川柯南的道具', '🎒', ['silvercoin', 'silverwatch', 'goldfeather', 'rubyring', 'hourglass', 'morganite', 'snowcrystal', 'silverkey', 'i_susp'], 6, 3],
+  ['amuroitems', '安室透的道具', '☕', ['i_bourbon', 'i_sandwich', 'i_boxing', 'i_gun', 'i_rx7', 'i_zero'], 5, 3],
+  ['heijiitems', '服部平次與遠山和葉的道具', '🎋', ['i_kendo', 'i_cap', 'i_amulet', 'i_aikido', 'i_bike', 'i_cuffs'], 5, 3],
+  ['akaiitems', '赤井秀一的道具', '🎯', ['i_cig', 'i_knit', 'i_sniper', 'i_rye', 'i_mustang', 'i_fbi'], 5, 3],
+  ['martialitems', '武術道具', '🥊', ['i_kendo', 'i_aikido', 'i_boxing'], 3, 2],
+  ['cars', '名車', '🚗', ['i_mustang', 'i_rx7', 'i_bike'], 4, 3],
   ['magic', '魔術表演', '🌹', ['cards', 'dove', 'redrose', 'aceofspades', 'joker', 'bell'], 4, 2],
+  ['targets', '怪盜的目標寶石', '💎', ['blackpearl', 'timegem', 'moontear'], 6, 3],
+  /* ---- 寶石 ---- */
   ['pearls', '珍珠收藏家', '⚪', ['pearl', 'blackpearl', 'goldpearl', 'mermaidtear'], 4, 3],
   ['hearts', '三顆心', '💖', ['deepheart', 'redheart', 'rainbowheart'], 4, 3],
   ['stars', '星空寶石', '⭐', ['starsapphire', 'starruby', 'starearring', 'lapis', 'glowstone'], 4, 3],
-  ['targets', '怪盜的目標寶石', '💎', ['blackpearl', 'timegem', 'moontear'], 6, 3],
-  ['conanitems', '江戶川柯南的道具', '🔍', ['silvercoin', 'silverwatch', 'goldfeather', 'rubyring', 'hourglass', 'morganite', 'i_susp'], 6, 3],
-  ['kiditems', '怪盜基德的道具', '🎩', ['monocle', 'tophat', 'wingbadge', 'i_tie', 'cards', 'wand'], 5, 3],
-  ['amuroitems', '安室透的道具', '☕', ['i_bourbon', 'i_sandwich', 'i_boxing', 'i_gun', 'i_rx7', 'i_zero'], 5, 3],
-  ['heijiitems', '服部平次與遠山和葉的道具', '⚾', ['i_kendo', 'i_cap', 'i_amulet', 'i_aikido', 'i_bike', 'i_cuffs'], 5, 3],
-  ['akaiitems', '赤井秀一的道具', '🎯', ['i_cig', 'i_knit', 'i_sniper', 'i_rye', 'i_mustang', 'i_fbi'], 5, 3],
-  ['fbi', 'FBI', '🇺🇸', ['b_akai', 'b_jodie', 'b_james', 'i_fbi'], 5, 3],
+  /* ---- 劇場版 ---- */
   ['mvkid', '怪盜基德登場的劇場版', '🎩', ['mv03', 'mv08', 'mv10', 'mv11', 'mv14', 'mv19'], 8, 4],
   ['mvheiji', '服部平次登場的劇場版', '⚾', ['mv07', 'mv10', 'mv17'], 6, 3],
-  ['mvall', '劇場版全收集 1–19', '🎬', ['mv01', 'mv02', 'mv03', 'mv04', 'mv05', 'mv06', 'mv07', 'mv08', 'mv09', 'mv10', 'mv11', 'mv12', 'mv13', 'mv14', 'mv15', 'mv16', 'mv17', 'mv18', 'mv19'], 30, 5],
-  ['undercover', '黑衣組織的臥底', '🕶', ['b_amuro', 'i_bourbon', 'b_akai', 'i_rye', 'b_scotch', 'b_rena'], 6, 3]
+  ['mvblack', '黑衣組織登場的劇場版', '🌑', ['mv05', 'mv13', 'mv18'], 6, 3],
+  ['mvshonen', '少年偵探團大活躍的劇場版', '🔍', ['mv06', 'mv12', 'mv16'], 6, 3],
+  ['mvvehicle', '交通工具大冒險', '✈️', ['mv08', 'mv09', 'mv14', 'mv17'], 6, 3],
+  ['mvlove', '新一與小蘭的回憶', '💞', ['mv01', 'mv04', 'mv07', 'mv15'], 6, 3],
+  ['mvfirst5', '世紀初的 5 部（1997–2001）', '🎞', ['mv01', 'mv02', 'mv03', 'mv04', 'mv05'], 8, 4],
+  ['mvall', '劇場版全收集 1–19', '🎬', ['mv01', 'mv02', 'mv03', 'mv04', 'mv05', 'mv06', 'mv07', 'mv08', 'mv09', 'mv10', 'mv11', 'mv12', 'mv13', 'mv14', 'mv15', 'mv16', 'mv17', 'mv18', 'mv19'], 30, 5]
 ];
+/* 舊系列改名或合併：已領過的紀錄搬到新系列，不會重複領 */
+var SET_ALIAS = { west: 'osaka', kidtools: 'kiditems', dettools: 'conanitems', mystery: 'akaifam' };
+(function () {
+  if (!S.setDone) return;
+  for (var k in SET_ALIAS) if (S.setDone[k] && !S.setDone[SET_ALIAS[k]]) { S.setDone[SET_ALIAS[k]] = S.setDone[k]; saveS(); }
+})();
 function setProg(st) { var n = 0; for (var i = 0; i < st[3].length; i++) if (owned(st[3][i])) n++; return n; }
 function setsDone() { var n = 0; for (var i = 0; i < SETS.length; i++) if (S.setDone && S.setDone[SETS[i][0]]) n++; return n; }
 function setsHtml() {
