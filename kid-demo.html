@@ -845,6 +845,9 @@
   /* 模擬模式控制列 */
   #demoBar { display: none; position: fixed; left: 8px; bottom: 8px; z-index: 44; align-items: center; background: rgba(224,49,49,0.92); color: #fff; font-size: 13px; padding: 4px 6px 4px 10px; border-radius: 16px; }
   #demoBar b { margin-right: 6px; } #demoBar span { margin-right: 6px; }
+  /* 收合時只剩一顆小標籤，放在畫面正下方，不會擋住記支出／記收入、蕃茄鐘按鈕 */
+  #demoBar.fold { left: 50%; bottom: 0; transform: translateX(-50%); padding: 1px 10px; font-size: 11px; border-radius: 10px 10px 0 0; }
+  #demoBar.fold span { display: none; } #demoBar.fold b { margin-right: 0; }
   #demoBar .dbtn { background: #fff; color: #c92a2a; border-radius: 12px; padding: 4px 10px; margin-right: 4px; }
 
   /* 主題選擇視窗 */
@@ -1136,7 +1139,7 @@ var API_URL = 'https://script.google.com/macros/s/AKfycbxY-7ZoZfDN-pRjV-p0rnsqRY
 var API_KEY = 'change-me-1234';
 /* ======================================== */
 
-var APP_VERSION = '1116-v45';   // 每次更新都改這個，用來確認 iPad 載入的是新版
+var APP_VERSION = '1118-v51';   // 每次更新都改這個，用來確認 iPad 載入的是新版
 var WD = '日一二三四五六';
 var SPEND_CATS = ['零食', '文具', '玩具', '捐款', '其他'];
 var INCOME_CATS = ['零用錢', '紅包', '獎勵', '其他'];
@@ -5793,6 +5796,7 @@ var ACTS = {
     renderPomo();
     refreshOv();
   },
+  demoFold: function () { var db = $('demoBar'), f = db.className !== 'fold'; db.className = f ? 'fold' : ''; db.firstChild.textContent = f ? '模擬模式 ▸' : '模擬模式 ◂'; },
   demoSleep: function () { kidSay('sleep'); },
   demoBday: function () { kidSay('bday'); celebrate(false); showCard('preview', new Date(2028, 6, 9)); },
   demoCard: function () {
@@ -6080,7 +6084,8 @@ $('rpgAva').src = KID_IMG.avatars[0];
 if (DEMO) {
   var db = $('demoBar');
   db.style.display = 'flex';
-  db.innerHTML = '<b>模擬模式</b><span>時間快 60 倍・不連線</span>' +
+  db.className = 'fold';                              // 預設收合，點「模擬模式」展開測試按鈕
+  db.innerHTML = '<b data-act="demoFold">模擬模式 ▸</b><span>時間快 60 倍・不連線</span>' +
     '<span class="dbtn" data-act="demoTalk">測試對話</span><span class="dbtn" data-act="demoFinish">直接飛到終點</span>' +
     '<span class="dbtn" data-act="demoBday">生日</span><span class="dbtn" data-act="demoCard">預告函</span><span class="dbtn" data-act="demoSleep">晚安提醒</span><span class="dbtn" data-act="demoWeek">專注 +3 次</span>' +
     '<span class="dbtn" data-act="demoReset">重置</span>';

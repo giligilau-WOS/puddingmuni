@@ -10,6 +10,7 @@
 | `index.html` | 正式版。**整個 App 都在這一個檔案**（約 6,000 行，CSS + 單一 `<script>` IIFE，含大量 base64 圖片）。 |
 | `kid-demo.html` | 模擬版：與 `index.html` 幾乎相同，只差 `FORCE_DEMO = true`、`APP_VERSION` 與部分徽章資料。不連線、資料存 `demo_` 前綴、時間加快 60 倍。 |
 | `test.html` | 「一鍵連線測試」頁，用來在 iPad 上檢查 Apps Script 連線。 |
+| `tests/` | 自動化測試：`props.js`（屬性測試）、`e2e-demo.js`（模擬版 E2E）、`offline.js`（正式版斷網開啟）。 |
 | `profiles/*.mobileconfig`、根目錄 `*.mobileconfig` | iOS 主畫面圖示描述檔（從面板內點「安裝」會開 Safari 下載）。 |
 | `fonts/`、根目錄 `*.woff` | 手寫風字型（附 OFL 授權檔）。 |
 | `icons/`、`posters/`、`kid/` | 圖示、海報、主題素材。 |
@@ -43,21 +44,49 @@ Apps Script 後端程式**不在此 repo**；前端以 `action`（`load`、`load
    grep -nE '=>|\b(let|const|class|async|await)\s|`|fetch\(|Promise|\.includes\(' index.html kid-demo.html | grep -v base64
    ```
 
-3. **實際運行變更（E2E 冒煙測試）**：
-   - 用 `kid-demo.html`（或 `index.html?demo=1`）在本機開啟。模擬模式不會連到真實後端，也不會動到小朋友的真實資料。
-   - 用 Playwright 以 iPad 尺寸（直放與橫放）走過受影響的流程，例如完成／取消任務、星星增減、記一筆收支、兌換商店、蕃茄鐘。
+3. **自動化測試**（`tests/`，只需要 Node 和 Playwright，不用 npm install）：
+
+   屬性測試：從 `index.html` 抽出原始函式，用隨機輸入檢查金額、星星、任務的不變量。
+   ```bash
+   node tests/props.js
+   ```
+
+   E2E（模擬版，滑鼠點擊）：
+   ```bash
+   node tests/e2e-demo.js
+   ```
+
+   E2E（模擬版，iPad 觸控，走 `fastTap` 路徑）：
+   ```bash
+   TOUCH=1 node tests/e2e-demo.js
+   ```
+
+   正式版斷網開啟（擋掉所有對外連線，不會碰到真實後端）：
+   ```bash
+   node tests/offline.js
+   ```
+
+   全部都要顯示「N / N 通過」，失敗時結束碼為 1。`props.js` 的 `INFO` 行是已知行為的紀錄，不算失敗。
+4. **實際運行變更（E2E 冒煙測試）**：
+   - 一律用 `kid-demo.html`（或 `index.html?demo=1`）。模擬模式不會連到真實後端，也不會動到小朋友的真實資料。
+   - 改到的流程如果 `tests/e2e-demo.js` 還沒涵蓋（例如兌換商店、蕃茄鐘、家長設定），就把它補進去，直放與橫放都要測。
    - 檢查 console 沒有錯誤；畫面上的星星總數與零用錢餘額要符合預期。
    - 若改到同步或 Apps Script 相關邏輯，模擬模式測不到，要在報告中寫明「未在真實後端驗證」，並請使用者用 `test.html` 在 iPad 上確認。
-4. **涉及金額、星星、狀態轉換或資料遷移的邏輯**，要為該函式寫屬性測試（隨機輸入跑數百次），至少驗證：
-   - **不變量**：例如完成再取消任務後，星星回到原值。
-   - **冪等性**：同一個事件 `id` 套用兩次，結果與套用一次相同。
+   - **Playwright 的坑**：
+     - iPad 要用 `devices['iPad (gen 7)']` 加上 `hasTouch: true`。`devices['iPad Air']` 不存在，寫錯會靜靜變成桌面瀏覽器。
+     - `#rpg` 等浮動元件是 `position: fixed`，判斷是否顯示時不能用 `offsetParent`（永遠是 null）。
+     - 模擬模式時間快 60 倍，基德對話框會隨時跳出來，每次點擊前都要先關掉（參考 `clearOverlays()`）。
+5. **涉及金額、星星、狀態轉換或資料遷移的邏輯**，要在 `tests/props.js` 補屬性測試（隨機輸入跑數百次），至少驗證：
+   - **不變量**：例如完成再取消任務後，星星回到原值；餘額等於明細加總。
    - **往返一致性**：`money()` 的格式化、JSON 存讀。
+   - **冪等性**：前端 `applyLocal` 目前不依 id 去重，重送去重靠 Apps Script。改到事件或同步邏輯時，不能讓同一個 id 有機會被送兩次。
 
-   測試腳本放在 scratchpad 或 `tests/`；不要把測試程式碼塞進 `index.html`。
-5. **不穩定測試零容忍**：不得加 `.skip`、插入 `sleep`／`setTimeout` 硬等，也不得重跑到變綠為止。要找出根本原因。
-6. **三輪上限**：同一個問題連續修 3 輪仍未通過時，就停手回報錯誤證據與嘗試過的方向。
-7. **不可修改評判自身的規則**：功能變更不得順便放寬測試斷言，也不得修改本檔的驗證規範。
-8. **驗證報告**：完成後附上 `verified: [syntax, es5, e2e-demo, property-test]` 這類印記，沒做到的項目要誠實標示。
+   不要把測試程式碼塞進 `index.html`。
+6. **新增浮動或固定定位的 UI 時**，`tests/e2e-demo.js` 的「底部按鈕沒有被蓋住」檢查必須繼續通過。
+7. **不穩定測試零容忍**：不得加 `.skip`、插入 `sleep`／`setTimeout` 硬等，也不得重跑到變綠為止。要找出根本原因。
+8. **三輪上限**：同一個問題連續修 3 輪仍未通過時，就停手回報錯誤證據與嘗試過的方向。
+9. **不可修改評判自身的規則**：功能變更不得順便放寬測試斷言，也不得修改本檔的驗證規範。
+10. **驗證報告**：完成後附上 `verified: [syntax, es5, props, e2e-demo, e2e-touch, offline]` 這類印記，沒做到的項目要誠實標示。
 
 ## 審查重點（Diff 觸發檢查）
 
