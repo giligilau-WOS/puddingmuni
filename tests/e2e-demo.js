@@ -1,10 +1,10 @@
-// E2E 冒煙測試：用模擬版 kid-demo.html（不連線、資料存 demo_ 前綴）走過主要流程。
+// E2E 冒煙測試：用 index.html?demo=1 的模擬模式（不連線、資料存 demo_ 前綴）走過主要流程。
 // 執行：node tests/e2e-demo.js            （滑鼠點擊）
 //       TOUCH=1 node tests/e2e-demo.js    （iPad 觸控，走 fastTap 路徑）
 const path = require('path');
 const { chromium, devices } = require('playwright');
 
-const URL = 'file://' + (process.env.DEMO_FILE || path.resolve(__dirname, '..', 'kid-demo.html'));
+const URL = 'file://' + (process.env.DEMO_FILE || path.resolve(__dirname, '..', 'index.html')) + '?demo=1';
 const IPAD = devices['iPad (gen 7)'];   // 注意：Playwright 沒有 'iPad Air'，寫錯會變成一般桌面瀏覽器
 const results = [];
 function ok(name, cond, detail) { results.push((cond ? 'PASS ' : 'FAIL ') + name + (detail ? '  — ' + detail : '')); }
