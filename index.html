@@ -740,7 +740,56 @@
   @keyframes tpgrand { 0%{transform:rotate(0deg) scale(1);filter:drop-shadow(0 0 0 #ffd43b)} 50%{transform:rotate(180deg) scale(1.3);filter:drop-shadow(0 0 24px #ffd43b)} 100%{transform:rotate(360deg) scale(1);filter:drop-shadow(0 0 0 #ffd43b)} }
   .tp-grand { -webkit-animation: tpgrand 2s ease-in-out; animation: tpgrand 2s ease-in-out; }
   .tp-swing, .tp-wave, .tp-kick { -webkit-transform-origin: 50% 10%; transform-origin: 50% 10%; } .tp-wave, .tp-kick { -webkit-transform-origin: 50% 90%; transform-origin: 50% 90%; }
-  .tbig { display: inline-block; background: #fffdf6; border: 3px solid #c9a227; border-radius: 16px; padding: 8px; margin: 2px 0 6px; }
+  .tbig { display: inline-block; background: #fffdf6; border: 3px solid #c9a227; border-radius: 16px; padding: 10px 14px; margin: 2px 0 6px; min-width: 156px; -webkit-transition: background 0.45s, border-color 0.45s, box-shadow 0.45s; transition: background 0.45s, border-color 0.45s, box-shadow 0.45s; }
+  .tbig .tart { position: relative; z-index: 2; -webkit-transition: -webkit-filter 0.45s; transition: filter 0.45s; }
+  .ts-bg { position: absolute; left: 0; top: 0; right: 0; bottom: 0; border-radius: 13px; overflow: hidden; pointer-events: none; z-index: 1; }
+  .tbig.st-dark { background: #0d1638; border-color: #74c0fc; box-shadow: 0 0 22px rgba(116,192,252,0.55), inset 0 0 24px rgba(132,94,247,0.35); }
+  .tbig.st-moon { background: #0c122e; border-color: #ff6b6b; box-shadow: 0 0 26px rgba(224,49,49,0.6), inset 0 0 26px rgba(255,212,59,0.28); }
+  .tbig.st-frost { background: #e7f5ff; border-color: #4dabf7; box-shadow: 0 0 18px rgba(77,171,247,0.55), inset 0 0 20px rgba(165,216,255,0.7); }
+  .tbig.st-heat { background: #fff4e6; border-color: #ff6b00; box-shadow: 0 0 20px rgba(255,107,0,0.55), inset 0 0 18px rgba(255,146,43,0.45); }
+  .tbig.st-bolt { background: #1a1b4b; border-color: #ffd43b; box-shadow: 0 0 26px rgba(255,212,59,0.85), inset 0 0 22px rgba(116,192,252,0.5); }
+  .tbig.st-royal { background: #fff9db; border-color: #f59f00; box-shadow: 0 0 24px rgba(250,176,5,0.65), inset 0 0 18px rgba(255,236,153,0.7); }
+  .ts-ring { position: absolute; left: 50%; top: 50%; width: 30px; height: 30px; margin: -15px 0 0 -15px; border-radius: 50%; border: 3px solid #339af0; opacity: 0.9;
+    -webkit-animation: tsrip 0.95s ease-out forwards; animation: tsrip 0.95s ease-out forwards; }
+  @-webkit-keyframes tsrip { from { -webkit-transform: scale(0.6); opacity: 0.9; } to { -webkit-transform: scale(5.4); opacity: 0; } }
+  @keyframes tsrip { from { transform: scale(0.6); opacity: 0.9; } to { transform: scale(5.4); opacity: 0; } }
+  .ts-beam { position: absolute; left: -40%; top: -20%; width: 42%; height: 140%; opacity: 0;
+    background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,107,107,0.45), rgba(255,212,59,0.55), rgba(77,171,247,0.5), rgba(255,255,255,0));
+    -webkit-transform: skewX(-22deg); transform: skewX(-22deg); -webkit-animation: tsbeam 0.85s ease-out forwards; animation: tsbeam 0.85s ease-out forwards; }
+  @-webkit-keyframes tsbeam { 0% { left: -45%; opacity: 0; } 25% { opacity: 0.95; } 100% { left: 120%; opacity: 0; } }
+  @keyframes tsbeam { 0% { left: -45%; opacity: 0; } 25% { opacity: 0.95; } 100% { left: 120%; opacity: 0; } }
+  .ts-eye { position: absolute; left: 0; top: 50%; width: 100%; height: 10px; margin-top: -5px; background: linear-gradient(90deg, rgba(255,212,59,0), #ffe066, #fff, #ffe066, rgba(255,212,59,0));
+    -webkit-animation: tseye 0.8s ease-in-out forwards; animation: tseye 0.8s ease-in-out forwards; }
+  @-webkit-keyframes tseye { 0% { -webkit-transform: scaleY(0.2); opacity: 0; } 35% { -webkit-transform: scaleY(2.2); opacity: 1; } 100% { -webkit-transform: scaleY(0.1); opacity: 0; } }
+  @keyframes tseye { 0% { transform: scaleY(0.2); opacity: 0; } 35% { transform: scaleY(2.2); opacity: 1; } 100% { transform: scaleY(0.1); opacity: 0; } }
+  .ts-flash { position: absolute; left: 0; top: 0; right: 0; bottom: 0; background: #fff; opacity: 0;
+    -webkit-animation: tsfl 0.55s ease-out forwards; animation: tsfl 0.55s ease-out forwards; }
+  @-webkit-keyframes tsfl { 0% { opacity: 0.9; } 25% { opacity: 0.15; } 45% { opacity: 0.75; } 100% { opacity: 0; } }
+  @keyframes tsfl { 0% { opacity: 0.9; } 25% { opacity: 0.15; } 45% { opacity: 0.75; } 100% { opacity: 0; } }
+  .ts-aura { position: absolute; left: 50%; top: 50%; width: 140px; height: 140px; margin: -70px 0 0 -70px; border-radius: 50%; opacity: 0;
+    -webkit-animation: tsaura 1.1s ease-out forwards; animation: tsaura 1.1s ease-out forwards; }
+  @-webkit-keyframes tsaura { 0% { -webkit-transform: scale(0.3); opacity: 0.95; } 100% { -webkit-transform: scale(1.65); opacity: 0; } }
+  @keyframes tsaura { 0% { transform: scale(0.3); opacity: 0.95; } 100% { transform: scale(1.65); opacity: 0; } }
+  .tbadge-mode { display: inline-block; margin-left: 6px; padding: 1px 8px; border-radius: 10px; font-size: 12px; background: #1c3d8f; color: #ffd43b; vertical-align: middle; }
+
+  /* 人物互動對話箱 */
+  .cchat { text-align: left; background: #f8f9ff; border: 2px solid #91a7ff; border-radius: 14px; padding: 10px 12px; margin: 8px 4px 10px; }
+  .cchat-h { display: flex; align-items: center; margin-bottom: 6px; }
+  .cchat-h b { font-size: 16px; color: #1c3d8f; }
+  .cchat-prog { margin-left: auto; font-size: 12px; color: #5c7cfa; background: #edf2ff; border-radius: 10px; padding: 2px 8px; font-weight: bold; }
+  .cchat-log { margin-bottom: 8px; }
+  .cchat-msg { display: flex; align-items: flex-start; margin: 5px 0; -webkit-animation: ccpop 0.25s ease-out; animation: ccpop 0.25s ease-out; }
+  @-webkit-keyframes ccpop { from { opacity: 0; -webkit-transform: translateY(6px); } to { opacity: 1; -webkit-transform: none; } }
+  @keyframes ccpop { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+  .cchat-msg.me { justify-content: flex-end; }
+  .cchat-ava { width: 32px; height: 32px; border-radius: 16px; margin-right: 7px; flex-shrink: 0; border: 2px solid #bac8ff; background: #fff; }
+  .cchat-bub { background: #fff; border: 2px solid #dbe4ff; border-radius: 14px; padding: 7px 11px; font-size: 15px; line-height: 1.5; color: #212529; max-width: 85%; }
+  .cchat-msg.me .cchat-bub { background: #dbe4ff; border-color: #91a7ff; color: #1c3d8f; font-weight: bold; }
+  .cchat-opts { display: flex; flex-wrap: wrap; margin: 2px -3px 0; }
+  .cchat-btn { display: inline-block; background: #fff; border: 2px solid #5c7cfa; color: #1c3d8f; border-radius: 18px; padding: 6px 12px; margin: 3px; font-size: 14px; font-weight: bold; }
+  .cchat-btn.done { background: #f1f3f5; border-color: #adb5bd; color: #495057; }
+  .cchat-btn.follow { background: #fff9db; border-color: #f59f00; color: #c94a0a; }
+  .cchat-btn:active { -webkit-transform: scale(0.96); transform: scale(0.96); }
   .tno { font-size: 13px; color: #8a7a55; }
   .tname { font-size: 26px; font-weight: bold; margin: 2px 0; }
   .trare { color: #f59f00; font-size: 18px; letter-spacing: 2px; } .trare span { color: #dee2e6; }
@@ -1075,33 +1124,97 @@
   .cloudinfo .cerr { color: #c92a2a; }
 
   /* 真相之門 */
-  #door { display: none; position: fixed; left: 0; top: 0; right: 0; bottom: 0; z-index: 80; background: #000; }
+  #door { display: none; position: fixed; left: 0; top: 0; right: 0; bottom: 0; z-index: 80; background: #000; overflow: hidden; }
   #door.on { display: block; }
-  #dstage { position: absolute; overflow: hidden; -webkit-perspective: 1100px; perspective: 1100px; }
-  #door .dwall { position: absolute; left: 0; top: 0; width: 100%; height: 100%; background-size: 100% 100%; }
-  #door .dglow { position: absolute; left: 16%; width: 67%; top: 3%; height: 97%; border-radius: 48% 48% 0 0 / 22% 22% 0 0; opacity: 0;
-    background: radial-gradient(ellipse at 50% 45%, #fffbe6 0%, #ffe066 35%, #f08c00 70%, rgba(0,0,0,0) 100%); -webkit-transition: opacity 1s; transition: opacity 1s; }
-  #door .dpanel { position: absolute; top: 0; height: 100%; background-size: 100% 100%; -webkit-backface-visibility: hidden; backface-visibility: hidden;
-    -webkit-transition: -webkit-transform 1.3s cubic-bezier(.5,0,.3,1); transition: transform 1.3s cubic-bezier(.5,0,.3,1); }
-  #door .dpl { left: 15.55%; width: 34.45%; -webkit-transform-origin: 0 50%; transform-origin: 0 50%; }
-  #door .dpr { left: 50%; width: 33.9%; -webkit-transform-origin: 100% 50%; transform-origin: 100% 50%; }
-  #door.open .dpl { -webkit-transform: rotateY(-100deg); transform: rotateY(-100deg); }
-  #door.open .dpr { -webkit-transform: rotateY(100deg); transform: rotateY(100deg); }
+  #dstage { position: absolute; overflow: hidden; -webkit-perspective: 1100px; perspective: 1100px;
+    -webkit-transform: scale(1); transform: scale(1); -webkit-transition: -webkit-transform 1.8s cubic-bezier(.22,.61,.36,1); transition: transform 1.8s cubic-bezier(.22,.61,.36,1); }
+  #door.open #dstage { -webkit-transform: scale(1.06); transform: scale(1.06); }
+  #door .dwall { position: absolute; left: 0; top: 0; width: 100%; height: 100%; background-size: 100% 100%; z-index: 1; }
+  #door .dglow { position: absolute; left: 16.2%; width: 67.2%; top: 4%; height: 96%; border-radius: 48% 48% 0 0 / 22% 22% 0 0; opacity: 0; z-index: 2;
+    background: radial-gradient(ellipse at 50% 44%, #ffffff 0%, #fff3bf 24%, #ffd43b 50%, #e8590c 78%, rgba(0,0,0,0) 100%);
+    -webkit-transition: opacity 0.9s ease-out; transition: opacity 0.9s ease-out; }
+  #door.r4 .dglow { background: radial-gradient(ellipse at 50% 44%, #ffffff 0%, #f3d9fa 26%, #9775fa 56%, #5f3dc4 82%, rgba(0,0,0,0) 100%); }
+  #door.r5 .dglow { background: radial-gradient(ellipse at 50% 44%, #ffffff 0%, #fff9db 26%, #fcc419 52%, #f06595 78%, rgba(0,0,0,0) 100%); }
+  #door .dbeams { position: absolute; left: 50%; top: 44%; width: 0; height: 0; opacity: 0; z-index: 3; pointer-events: none;
+    -webkit-transition: opacity 1s ease-out 0.15s; transition: opacity 1s ease-out 0.15s; }
+  #door.open .dbeams { opacity: 0.9; -webkit-animation: dspin 16s linear infinite; animation: dspin 16s linear infinite; }
+  @-webkit-keyframes dspin { from { -webkit-transform: rotate(0deg); } to { -webkit-transform: rotate(360deg); } }
+  @keyframes dspin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+  .dbeam { position: absolute; left: -24px; top: -320px; width: 48px; height: 320px; -webkit-transform-origin: 50% 100%; transform-origin: 50% 100%;
+    background: linear-gradient(to top, rgba(255,251,230,0.65), rgba(255,212,59,0.22) 55%, rgba(255,212,59,0)); }
+  #door.r4 .dbeam { background: linear-gradient(to top, rgba(255,255,255,0.65), rgba(177,151,252,0.28) 55%, rgba(177,151,252,0)); }
+  #door.r5 .dbeam { background: linear-gradient(to top, rgba(255,255,255,0.8), rgba(255,212,59,0.35) 55%, rgba(255,212,59,0)); }
+  #door .dpanel { position: absolute; top: 0; height: 100%; background-size: 100% 100%; z-index: 4;
+    box-shadow: inset 0 0 18px rgba(0,0,0,0.75); }
+  #door .dpl { left: 15.55%; width: 34.45%; border-top-left-radius: 100% 20%; -webkit-transform-origin: 0 50%; transform-origin: 0 50%; }
+  #door .dpr { left: 50%; width: 33.9%; border-top-right-radius: 100% 20%; -webkit-transform-origin: 100% 50%; transform-origin: 100% 50%; }
+  #door.open .dpl { -webkit-animation: dopenL 1.35s cubic-bezier(.22,.68,.28,1) forwards; animation: dopenL 1.35s cubic-bezier(.22,.68,.28,1) forwards; }
+  #door.open .dpr { -webkit-animation: dopenR 1.35s cubic-bezier(.22,.68,.28,1) forwards; animation: dopenR 1.35s cubic-bezier(.22,.68,.28,1) forwards; }
+  @-webkit-keyframes dopenL {
+    0% { -webkit-transform: rotateY(0deg); opacity: 1; box-shadow: inset 0 0 18px rgba(0,0,0,0.75); }
+    62% { -webkit-transform: rotateY(-82deg); opacity: 0.96; box-shadow: inset -14px 0 30px rgba(255,232,120,0.75); }
+    100% { -webkit-transform: rotateY(-116deg); opacity: 0; box-shadow: inset -14px 0 30px rgba(255,232,120,0.3); }
+  }
+  @keyframes dopenL {
+    0% { transform: rotateY(0deg); opacity: 1; box-shadow: inset 0 0 18px rgba(0,0,0,0.75); }
+    62% { transform: rotateY(-82deg); opacity: 0.96; box-shadow: inset -14px 0 30px rgba(255,232,120,0.75); }
+    100% { transform: rotateY(-116deg); opacity: 0; box-shadow: inset -14px 0 30px rgba(255,232,120,0.3); }
+  }
+  @-webkit-keyframes dopenR {
+    0% { -webkit-transform: rotateY(0deg); opacity: 1; box-shadow: inset 0 0 18px rgba(0,0,0,0.75); }
+    62% { -webkit-transform: rotateY(82deg); opacity: 0.96; box-shadow: inset 14px 0 30px rgba(255,232,120,0.75); }
+    100% { -webkit-transform: rotateY(116deg); opacity: 0; box-shadow: inset 14px 0 30px rgba(255,232,120,0.3); }
+  }
+  @keyframes dopenR {
+    0% { transform: rotateY(0deg); opacity: 1; box-shadow: inset 0 0 18px rgba(0,0,0,0.75); }
+    62% { transform: rotateY(82deg); opacity: 0.96; box-shadow: inset 14px 0 30px rgba(255,232,120,0.75); }
+    100% { transform: rotateY(116deg); opacity: 0; box-shadow: inset 14px 0 30px rgba(255,232,120,0.3); }
+  }
   #door.open .dglow { opacity: 1; }
-  #door:not(.open) .dpanel { -webkit-animation: dshake 0.9s ease-in-out; animation: dshake 0.9s ease-in-out; }
-  @-webkit-keyframes dshake { 0%,60%,100% { -webkit-transform: none; } 70%,90% { -webkit-transform: translateX(-2px); } 80% { -webkit-transform: translateX(2px); } }
-  @keyframes dshake { 0%,60%,100% { transform: none; } 70%,90% { transform: translateX(-2px); } 80% { transform: translateX(2px); } }
-  #dgem { position: absolute; left: 50%; top: 42%; width: 200px; height: 200px; margin: -100px 0 0 -100px; opacity: 0; -webkit-transform: scale(0.2); transform: scale(0.2);
-    -webkit-transition: all 0.9s cubic-bezier(.3,1.6,.5,1) 0.7s; transition: all 0.9s cubic-bezier(.3,1.6,.5,1) 0.7s; }
+  #door:not(.open) .dpanel { -webkit-animation: dshake 0.78s ease-in-out; animation: dshake 0.78s ease-in-out; }
+  @-webkit-keyframes dshake {
+    0% { -webkit-transform: translateX(0); } 18% { -webkit-transform: translateX(-1px); } 34% { -webkit-transform: translateX(1.5px); }
+    50% { -webkit-transform: translateX(-2.5px); } 66% { -webkit-transform: translateX(2.5px); } 82% { -webkit-transform: translateX(-3px); } 100% { -webkit-transform: translateX(0); }
+  }
+  @keyframes dshake {
+    0% { transform: translateX(0); } 18% { transform: translateX(-1px); } 34% { transform: translateX(1.5px); }
+    50% { transform: translateX(-2.5px); } 66% { transform: translateX(2.5px); } 82% { transform: translateX(-3px); } 100% { transform: translateX(0); }
+  }
+  #door .dseam { position: absolute; left: 50%; top: 7%; bottom: 5%; width: 6px; margin-left: -3px; border-radius: 50%; z-index: 5; pointer-events: none; opacity: 0;
+    background: linear-gradient(to bottom, rgba(255,255,255,0), #fffbe6 16%, #ffffff 50%, #ffe066 84%, rgba(255,255,255,0));
+    box-shadow: 0 0 18px 4px #ffd43b, 0 0 36px 8px rgba(255,190,40,0.65); }
+  #door.r4 .dseam { box-shadow: 0 0 18px 4px #b197fc, 0 0 38px 10px rgba(151,117,250,0.75); }
+  #door.r5 .dseam { box-shadow: 0 0 22px 6px #ffd43b, 0 0 46px 14px rgba(240,101,149,0.75); }
+  #door.on:not(.open) .dseam { -webkit-animation: dseam 0.78s ease-in forwards; animation: dseam 0.78s ease-in forwards; }
+  @-webkit-keyframes dseam { 0% { opacity: 0; -webkit-transform: scaleX(0.2); } 40% { opacity: 0.7; -webkit-transform: scaleX(0.8); } 100% { opacity: 1; -webkit-transform: scaleX(2.6); } }
+  @keyframes dseam { 0% { opacity: 0; transform: scaleX(0.2); } 40% { opacity: 0.7; transform: scaleX(0.8); } 100% { opacity: 1; transform: scaleX(2.6); } }
+  #door.open .dseam { opacity: 0; -webkit-transition: opacity 0.25s; transition: opacity 0.25s; }
+  #door .dflash { position: absolute; left: 0; top: 0; right: 0; bottom: 0; z-index: 8; pointer-events: none; opacity: 0;
+    background: radial-gradient(circle at 50% 44%, #ffffff 0%, rgba(255,243,191,0.85) 36%, rgba(255,212,59,0) 75%); }
+  #door.open .dflash { -webkit-animation: dflash 0.85s ease-out forwards; animation: dflash 0.85s ease-out forwards; }
+  @-webkit-keyframes dflash { 0% { opacity: 0; -webkit-transform: scale(0.6); } 22% { opacity: 0.92; -webkit-transform: scale(1.15); } 100% { opacity: 0; -webkit-transform: scale(1.5); } }
+  @keyframes dflash { 0% { opacity: 0; transform: scale(0.6); } 22% { opacity: 0.92; transform: scale(1.15); } 100% { opacity: 0; transform: scale(1.5); } }
+  #dmotes { position: absolute; left: 0; top: 0; right: 0; bottom: 0; z-index: 6; pointer-events: none; overflow: hidden; }
+  .dmote { position: absolute; left: 50%; top: 44%; font-size: 18px; color: #fff3bf; opacity: 0; pointer-events: none;
+    text-shadow: 0 0 8px #ffd43b; -webkit-transition: -webkit-transform 1.5s ease-out, opacity 1.5s ease-out; transition: transform 1.5s ease-out, opacity 1.5s ease-out; }
+  #door .dvig { position: absolute; left: 0; top: 0; right: 0; bottom: 0; z-index: 9; pointer-events: none;
+    box-shadow: inset 0 0 45px 18px rgba(0,0,0,0.88); }
+  #dgem { position: absolute; left: 50%; top: 43%; width: 200px; height: 200px; margin: -100px 0 0 -100px; opacity: 0; z-index: 7;
+    -webkit-transform: scale(0.22); transform: scale(0.22);
+    -webkit-transition: opacity 0.85s ease-out 0.45s, -webkit-transform 0.95s cubic-bezier(.24,1.45,.48,1) 0.45s, top 0.5s ease-out;
+    transition: opacity 0.85s ease-out 0.45s, transform 0.95s cubic-bezier(.24,1.45,.48,1) 0.45s, top 0.5s ease-out; }
   #door.open #dgem { opacity: 1; -webkit-transform: scale(1); transform: scale(1); }
-  #dgem svg { position: relative; -webkit-filter: drop-shadow(0 0 14px #fff); filter: drop-shadow(0 0 14px #fff); -webkit-animation: dfloat 2.4s ease-in-out infinite alternate; animation: dfloat 2.4s ease-in-out infinite alternate; }
-  @-webkit-keyframes dfloat { from { -webkit-transform: translateY(-6px); } to { -webkit-transform: translateY(6px); } }
-  @keyframes dfloat { from { transform: translateY(-6px); } to { transform: translateY(6px); } }
-  .dray { position: absolute; left: -60px; top: -60px; width: 320px; height: 320px; border-radius: 160px; opacity: 0.85; -webkit-animation: dpulse 1.6s ease-in-out infinite alternate; animation: dpulse 1.6s ease-in-out infinite alternate; }
-  @-webkit-keyframes dpulse { from { -webkit-transform: scale(0.85); } to { -webkit-transform: scale(1.1); } }
-  @keyframes dpulse { from { transform: scale(0.85); } to { transform: scale(1.1); } }
-  #dcard { position: absolute; left: 50%; bottom: 3%; width: 600px; margin-left: -300px; padding: 14px 20px 16px; border-radius: 18px; text-align: center; color: #fff;
-    background: rgba(11,29,81,0.92); border: 5px double #ffd43b; opacity: 0; -webkit-transform: translateY(40px); transform: translateY(40px); -webkit-transition: all 0.5s; transition: all 0.5s; pointer-events: none; }
+  #door.show #dgem { top: 34%; }
+  #dgem svg, #dgem .pgem { position: relative; -webkit-filter: drop-shadow(0 0 18px #fff); filter: drop-shadow(0 0 18px #fff); -webkit-animation: dfloat 2.4s ease-in-out infinite alternate; animation: dfloat 2.4s ease-in-out infinite alternate; }
+  @-webkit-keyframes dfloat { from { -webkit-transform: translateY(-7px); } to { -webkit-transform: translateY(7px); } }
+  @keyframes dfloat { from { transform: translateY(-7px); } to { transform: translateY(7px); } }
+  .dray { position: absolute; left: -70px; top: -70px; width: 340px; height: 340px; border-radius: 170px; opacity: 0.9; -webkit-animation: dpulse 1.6s ease-in-out infinite alternate; animation: dpulse 1.6s ease-in-out infinite alternate; }
+  @-webkit-keyframes dpulse { from { -webkit-transform: scale(0.84); } to { -webkit-transform: scale(1.14); } }
+  @keyframes dpulse { from { transform: scale(0.84); } to { transform: scale(1.14); } }
+  #dcard { position: absolute; left: 50%; bottom: 3%; width: 600px; margin-left: -300px; padding: 14px 20px 16px; border-radius: 18px; text-align: center; color: #fff; z-index: 12;
+    background: rgba(11,29,81,0.94); border: 5px double #ffd43b; opacity: 0; -webkit-transform: translateY(40px); transform: translateY(40px); -webkit-transition: all 0.5s; transition: all 0.5s; pointer-events: none; }
+  #door.r4 #dcard { border-color: #d0bfff; box-shadow: 0 0 28px rgba(151,117,250,0.65); }
+  #door.r5 #dcard { border-color: #ffd43b; box-shadow: 0 0 36px rgba(255,212,59,0.85); }
   #door.show #dcard { opacity: 1; -webkit-transform: none; transform: none; pointer-events: auto; }
   body.L-tall #dcard, body.L-narrow #dcard { width: 92%; margin-left: -46%; }
   .dnew { display: inline-block; background: #e03131; color: #fff; font-weight: bold; border-radius: 12px; padding: 2px 12px; margin-bottom: 4px; }
@@ -1124,7 +1237,7 @@
   /* 劇場版海報 */
   .pgem { display: inline-block; overflow: hidden; border-radius: 6px; background: #1c3d8f; vertical-align: middle; }
   .pgem img { width: 100%; height: 100%; object-fit: cover; display: block; }
-  #dgem .pgem { background: transparent; border-radius: 8px; box-shadow: 0 0 0 4px #fff, 0 0 30px #fff; } #dgem .pgem img { object-fit: contain; }
+  #dgem .pgem { width: 146px !important; margin: 0 auto; display: block; background: transparent; border-radius: 8px; box-shadow: 0 0 0 4px #fff, 0 0 30px #fff; } #dgem .pgem img { object-fit: cover; }
   .pgem.lock img { -webkit-filter: grayscale(1) brightness(0.5); filter: grayscale(1) brightness(0.5); }
   .pbig { display: inline-block; max-width: 300px; border: 4px solid #c9a227; border-radius: 10px; overflow: hidden; margin: 2px 0 6px; background: #000; }
   .pbig img { display: block; width: 100%; } .pbig.lock img { -webkit-filter: grayscale(1) brightness(0.4); filter: grayscale(1) brightness(0.4); }
@@ -1172,7 +1285,7 @@
 <div id="rpg"><div id="rpgBadge" class="rpg-badge">✨ BONUS! ✨</div><div id="rpgBox" class="rpg-box"><img id="rpgAva" class="rpg-ava" alt="">
   <div class="rpg-main"><span class="rpg-name">怪盜基德</span><div id="rpgText" class="rpg-text"></div><div id="rpgExtra"></div></div>
   <div class="rpg-next">▼</div></div></div>
-<div id="door"><div id="dstage" data-act="doorTap"><div class="dwall"></div><div class="dglow"></div><div id="dgem"></div><div class="dpanel dpl"></div><div class="dpanel dpr"></div></div><div id="dcard"></div></div>
+<div id="door"><div id="dstage" data-act="doorTap"><div class="dwall"></div><div class="dglow"></div><div class="dbeams" id="dbeams"></div><div class="dpanel dpl"></div><div class="dpanel dpr"></div><div class="dseam"></div><div id="dmotes"></div><div id="dgem"></div><div class="dflash"></div><div class="dvig"></div></div><div id="dcard"></div></div>
 <div id="pv"><span class="pvx" data-act="pvClose">✕ 關閉</span><img id="pvImg" alt=""><span id="pvPrev" class="pvarr l" data-act="pvPrev">‹</span><span id="pvNext" class="pvarr r" data-act="pvNext">›</span><div class="pvbar"><span id="pvCap"></span><span id="pvDots"></span></div></div>
 <div id="cdFull"><div class="cdin" data-act="limitDone"><div class="cdtop">⏱ 快沒時間了！</div><div id="cdNum" class="cdnum">10</div><div class="cdbtn">✅ 我完成了！</div><div class="cdsub">點畫面任何地方都算完成</div></div></div>
 <div id="demoBar"></div>
@@ -1186,7 +1299,7 @@ var API_URL = 'https://script.google.com/macros/s/AKfycbxY-7ZoZfDN-pRjV-p0rnsqRY
 var API_KEY = 'change-me-1234';
 /* ======================================== */
 
-var APP_VERSION = '1122-v52';   // 每次更新都改這個，用來確認 iPad 載入的是新版
+var APP_VERSION = '1122-v53';   // 每次更新都改這個，用來確認 iPad 載入的是新版
 var WD = '日一二三四五六';
 var SPEND_CATS = ['零食', '文具', '玩具', '捐款', '其他'];
 var INCOME_CATS = ['零用錢', '紅包', '獎勵', '其他'];
@@ -2896,65 +3009,65 @@ function catalogHtml() {
 
 /* ===== 寶物互動：每件寶物點一下都有自己的動作、特效、聲音和台詞 ===== */
 var TPLAY = {
-  sapphire: ['spin', '✦', '藍寶石轉了一圈，映出一片小小的夜空。', '對著光看，藍色裡好像有星星在閃。'],
-  ruby: ['beat', '🔥,✦', '紅寶石熱熱的，好像在說「加油！」', '勇氣值 +1！紅光閃了一下。'],
-  emerald: ['glow', '🍃', '綠光一閃，好像聞到森林的味道。', '深呼吸……心情變得好平靜。'],
-  amethyst: ['float', '💤,🌙', '紫水晶輕輕飄起來，今晚一定會做好夢。', '它悄悄說：「晚安，作個好夢。」'],
-  topaz: ['pop', '☀️,✦', '黃玉亮起來，像一顆小太陽。', '友誼的光芒！想想今天誰幫助過你？'],
-  pearl: ['roll', '💧,✦', '珍珠骨碌碌滾了一圈又回來了。', '貝殼裡的祕密：慢慢來，也會變得很美。'],
-  moonstone: ['glow', '🌙,✦', '在月光下，月光石發出淡淡的藍光。', '專注的證明！它記得你專心的每一分鐘。'],
+  sapphire: ['spin', '✦,⭐', '藍寶石轉了一圈，映出夜空裡的「{constellation}」！', '對著光看，深藍色裡好像藏著一整片銀河。', '智慧之石提醒你：靜下心來，難題就會變簡單。'],
+  ruby: ['beat', '🔥,✦', '紅寶石發燙了！勇氣熱浪值 ＋{pct}%！', '紅光一閃，好像聽見它在喊「加油！你一定行！」', '火焰般的光芒在裡面跳動，今天誰都擋不住你。'],
+  emerald: ['glow', '🍃,🌿', '翠綠光芒散開，好像聞到清晨森林的草香。', '深呼吸三秒鐘……眼睛和心情都變得好舒服！', '森林精靈送來今天的祝福：{natureTip}。'],
+  amethyst: ['float', '💤,🌙,💜', '紫水晶輕輕飄起，灑下一陣好夢星粉。', '它悄悄說：「今晚一定會夢到{dream}喔！」', '紫色的柔光包圍著你，煩惱全都飛走了。'],
+  topaz: ['pop', '☀️,✦', '黃玉像小太陽一樣閃耀，射出暖暖的稜鏡光！', '友誼之石問你：今天想對誰說一聲「謝謝」呢？', '金色光束充電完成，元氣值直衝 100%！'],
+  pearl: ['roll', '💧,🫧,✦', '珍珠骨碌碌滾了一圈，激起一圈圈海洋波紋！', '貝殼裡的祕密：慢慢累積，小砂粒也能變成珍珠。', '圓潤的珠光閃了一下，今天也是溫柔的一天。'],
+  moonstone: ['glow', '🌙,✦', '{darkMsg} 月光石透出夢幻的月暈藍光！', '專注的證明！它記得你認真專心的每一分鐘。', '像滿月照在湖面上，安靜又溫柔地發光。'],
   cards: ['flip', '🃏,♠,♥', '撲克牌在空中散開，又整齊地回到你手上！', '抽一張……是{card}！'],
   crown: ['bounce', '👑,✨', '皇冠跳起來，穩穩戴在你的頭上！', '國王說：「這是努力的人才有的獎勵。」'],
-  diamond: ['spin', '💎,✦', '鑽石轉一圈，閃出七彩的光。', '敲一敲——好硬！就像不放棄的你。'],
-  pinkdiamond: ['beat', '💗,✦', '粉紅鑽閃了一下溫柔的光。', '溫柔又堅強，就像你一樣。'],
-  blackdiamond: ['glow', '🌙,✦', '黑鑽石在黑暗中閃耀，這是怪盜最愛的夜色。', '關掉燈，它反而更亮了。'],
-  deepheart: ['float', '🌊,💙', '深海之心浮起來，發出海底的藍光。', '聽——好像有海浪的聲音。'],
-  redheart: ['beat', '❤️,💗', '撲通撲通——是對家人的愛。', '去給家人一個抱抱吧！'],
-  aquamarine: ['roll', '🌊,💧', '海藍寶裡好像有小小的浪花。', '水手的幸運石，祝你一帆風順！'],
-  peridot: ['bounce', '🍃,☀️', '橄欖石跳了起來，活力滿滿！', '夏天的能量，充電完成！'],
-  garnet: ['shake', '✦', '石榴石抖一抖，好像要掉出石榴籽。', '堅持到底的力量 +1！'],
-  opal: ['hue', '🌈,✦', '咦？換個角度，蛋白石換了顏色！', '再點一下，看它會變成什麼顏色。'],
-  tourmaline: ['flip', '🍉', '一面粉紅、一面綠色，好像西瓜！', '碧璽說：天氣熱要多喝水喔。'],
-  orangetopaz: ['float', '☀️', '水滴形的橙光，像夕陽慢慢落下。', '傍晚的天空，就是這個顏色。'],
-  spinel: ['flip', '✦', '尖晶石翻過來：「我不是紅寶石喔！」', '被認錯也沒關係，做自己最美。'],
-  tanzanite: ['spin', '💜,✦', '藍紫色的光一閃一閃，非常稀有！', '全世界只在一個地方找得到它。'],
-  amber: ['glow', '🍂,✦', '琥珀裡好像有遠古的時光在流動。', '你看到了嗎？裡面好像有一片小葉子。'],
-  jade: ['glow', '🍃', '翡翠溫溫的，摸起來好舒服。', '平安與健康，送給你。'],
-  obsidian: ['shake', '🔥', '黑曜石冒出一點火山的熱氣！', '守護之力，啟動！'],
-  starsapphire: ['spin', '⭐,✦', '寶石裡的六角星轉了一圈！', '你看見夜空的縮影了。'],
-  starruby: ['twinkle', '🌟,✦', '紅色的星芒一閃一閃！', '許個願吧，星光紅寶在聽。'],
-  cateye: ['blink', '👀', '貓眼石眨了一下眼睛！', '喵～它在夜裡也看得很清楚。'],
-  malachite: ['spin', '🍃,✦', '孔雀石轉一轉，花紋像羽毛一樣展開。', '每一顆的花紋都不一樣，就像每個人都獨一無二。'],
-  lapis: ['twinkle', '⭐', '深藍色裡的金色星點亮了起來。', '一片可以放進口袋的星空。'],
-  rosequartz: ['beat', '🌸,💗', '粉晶發出溫暖的粉紅光。', '它說：「今天也要對自己溫柔一點。」'],
-  clearquartz: ['zoom', '✦', '透過白水晶看，一切都變得好清楚。', '頭腦清楚，解謎更快！'],
-  geode: ['crack', '💜,✦', '喀啦！敲開石頭，裡面全是紫色水晶！', '外表普通，裡面藏著寶藏。'],
-  citrine: ['bounce', '💰,✨', '黃水晶跳一跳，好運叮叮噹噹來了！', '商人之石提醒你：零用錢要記得存起來。'],
+  diamond: ['spin', '💎,🌈,✦', '鑽石高速旋轉，折射出耀眼的「{rainbow}」稜鏡光束！', '敲一敲——叮！全世界最硬的寶石，就像永不放棄的你。', '每一個切面都閃著光，今天要大放異彩喔！'],
+  pinkdiamond: ['beat', '💗,🌸,✦', '粉紅鑽輕輕跳動，飄出溫柔的櫻花粉光。', '既珍貴又堅強——它說你的笑容比寶石還亮！', '送你一顆粉紅小心心，今天也要開心喔。'],
+  blackdiamond: ['glow', '🌙,🖤,✦', '{darkMsg} 黑鑽石在暗夜裡更耀眼，怪盜最愛這個時刻！', '關掉燈，漆黑的表面竟映出神祕的銀色星芒。', '神祕又帥氣的夜色寶石，現在由你守護。'],
+  deepheart: ['float', '🌊,💙,🫧', '深海之心緩緩浮起，擴散出湛藍的海底波紋！', '仔細聽……好像傳來鯨魚唱歌與海浪的聲音。', '傳說中沉睡在深海的奇蹟，為你點亮了藍色光環。'],
+  redheart: ['beat', '❤️,💗,✨', '撲通、撲通——紅心石跟著你的心跳一起發亮！', '愛心能量滿格！記得給爸爸媽媽一個大抱抱喔。', '溫暖的紅光散開，傳遞出滿滿的幸福感。'],
+  aquamarine: ['roll', '🌊,💧,🫧', '海藍寶滾出清澈的水花，涼爽的海風吹過來了！', '航海家的護身符說：「祝你今天一帆風順！」', '水面映出藍天白雲，煩躁的心情都沖走了。'],
+  peridot: ['bounce', '🍃,☀️,✨', '橄欖石蹦蹦跳跳，活力滿滿地彈了起來！', '夏日的陽光能量充電完成，準備迎接挑戰！', '嫩綠色的光芒像剛發芽的小草，充滿希望。'],
+  garnet: ['shake', '🔥,♦,✦', '石榴石抖一抖，閃出像紅石榴籽一樣的火花！', '堅持到底的力量 ＋1！一點一滴都會開花結果。', '紅褐色的暖光照亮手心，勇氣滿滿。'],
+  opal: ['hue', '🌈,✦', '蛋白石切換成「{shiftColor}」的遊彩光澤！', '每次轉動角度，顏色都會變魔術一樣換新衣！', '再點一下，看看下一個夢幻遊彩會是什麼顏色！'],
+  tourmaline: ['flip', '🍉,💗,🍃', '翻面！一面粉紅、一面翠綠，簡直是迷你小西瓜！', '雙色碧璽提醒你：努力之餘別忘了多喝水喔！', '紅配綠閃閃發光，今天有雙倍好心情！'],
+  orangetopaz: ['float', '☀️,🍊,✨', '橙拓帕像夕陽一樣緩緩飄起，染紅了整片天空。', '黃昏的暖橘光澤，讓人覺得安心又溫暖。', '太陽下山前最美的顏色，都收藏在這裡了。'],
+  spinel: ['flip', '✦,👑', '尖晶石翻個身大喊：「嘿！我不是紅寶石，我是尖晶石！」', '英國王冠上也有我的同伴喔，超有自信的！', '被認錯也沒關係，獨一無二的自己最棒了。'],
+  tanzanite: ['spin', '💜,💙,✦', '坦桑石轉出一道藍紫雙色稜鏡光，美得像魔法！', '全世界只在吉力馬札羅山腳下找得到它，超級稀有！', '從不同角度看，一下是寶藍、一下是紫羅蘭！'],
+  amber: ['crack', '🍂,✨', '靠近琥珀仔細瞧……裡面竟然封存著「{amberIn}」！', '遠古的松脂把千萬年前的時光都保存下來了。', '溫暖的金黃色摸起來滑滑的，像握住了一小塊陽光。'],
+  jade: ['glow', '🍃,✨', '翡翠散出溫潤的碧綠光，摸起來冰冰涼涼好舒服。', '古代流傳的平安之石，祝你健康平安每一天！', '越常把玩越透亮，就像每天進步的你。'],
+  obsidian: ['shake', '🔥,🌋', '黑曜石轟隆震了一下，冒出火山的熾熱能量！', '火山熔岩冷卻誕生的守護石——壞運氣退散！', '黑亮的光澤裡藏著保護你的強大結界。'],
+  starsapphire: ['spin', '⭐,✦', '{darkMsg} 六芒星光在深藍寶石上旋轉了起來！', '這就是傳說中的「星彩效應」，像把星空鎖在裡面。', '對著星光藍寶眨眨眼，今晚的好運就歸你了！'],
+  starruby: ['twinkle', '🌟,✦', '{darkMsg} 鮮紅色的六道星芒閃耀奪目！', '對星光紅寶許個願吧：「{wishBless}」', '星芒一閃一閃，像夜空中最熱情的紅星。'],
+  cateye: ['blink', '👀,✨', '貓眼石突然眨了一下金色的豎瞳！喵～', '一道銳利的光線掃過——黑夜裡也什麼都逃不過它的眼睛！', '小貓守護神說：「要仔細觀察身邊的小線索喔！」'],
+  malachite: ['spin', '🍃,🦚,✦', '孔雀石轉一轉，綠色的波紋像孔雀開屏一樣展開！', '每一顆的花紋都是世界唯一，就像獨一無二的你。', '翠綠的羽毛光暈輕輕搖曳，好漂亮！'],
+  lapis: ['twinkle', '⭐,🌌', '{darkMsg} 深藍寶石裡的金色星點一顆顆亮起來了！', '這是一片可以放進口袋裡的星空，看見「{constellation}」了嗎？', '古埃及法老最愛的星空寶石，現在屬於你。'],
+  rosequartz: ['beat', '🌸,💗', '粉晶散發柔和的粉紅光暈，飄起浪漫花瓣。', '它溫柔地說：「今天辛苦了，要好好稱讚自己喔！」', '善意和溫暖會像漣漪一樣傳給身邊的每個人。'],
+  clearquartz: ['zoom', '🔍,🌈,✦', '白水晶射出一道透明稜鏡光，所有雜念都一掃而空！', '透過水晶看世界，連最難的謎題都變得好清楚！', '純淨無瑕的能量，幫你的大腦按下「清晰加速」鍵！'],
+  geode: ['crack', '💜,⛏,✦', '喀啦喀啦！敲開石頭，裡面竟然是「{geodeIn}」！', '外表看起來像普通石頭，裡面卻藏著驚人寶藏！', '再敲一下，聽聽水晶共振的清脆回音～'],
+  citrine: ['bounce', '💰,✨', '黃水晶叮叮噹噹跳起來，金幣般的幸運光芒四射！', '商人之石提醒你：把零用錢存起來，夢想會越來越大喔。', '暖金色的光芒帶來滿滿的財運和好點子！'],
   morganite: ['fly', '💨,☀️', '太陽能充電完成——滑板咻地衝出去了！', '比汽車還快！不過真的騎滑板要戴安全帽喔。'],
-  paraiba: ['glow', '⚡,✦', '霓虹藍光亮起來，好像有電流在跑！', '超稀有的光芒，被你找到了。'],
-  alexandrite: ['hue', '☀️,🌙', '白天是綠色……晚上變紫色！寶石界的魔術師。', '再點一次，看它又變了！'],
-  turquoise: ['float', '✦', '綠松石像一小片天空。', '古老的守護石，保護你平安。'],
-  coral: ['sway', '🐠,🌊', '珊瑚在海浪裡輕輕搖擺。', '小魚游過來打招呼了！'],
-  blackpearl: ['glow', '🌙,✦', '月光下，黑星泛出神祕的綠光。', '黑色之星，現在由你保管了。'],
-  goldpearl: ['roll', '✨', '金珍珠滾出一道金色的光。', '非常珍貴，就像你的每一份努力。'],
-  icecrystal: ['spin', '❄️', '冰晶石轉一轉，房間好像涼了一點。', '冰冰涼涼，頭腦冷靜下來了。'],
-  rainbowheart: ['hue', '🌈,💖', '彩虹之心換了好多顏色！', '七種顏色，代表七種好心情。'],
-  glowstone: ['glow', '✨', '夜光石亮起來了！它白天吸收了好多陽光。', '晚上關燈看看，它會更亮喔。'],
-  meteor: ['fall', '🌠', '咻——一顆流星劃過！快許願！', '流星石聽見你的願望了。'],
-  sunstone: ['spin', '☀️', '太陽石像小太陽一樣轉了起來。', '好溫暖！今天也要元氣滿滿。'],
-  aurora: ['hue', '🌈,✨', '極光在寶石裡流動，綠色、紫色、藍色……', '北極的夜空，被你收進口袋了。'],
-  thunder: ['shake', '⚡,💥', '轟隆！雷霆石裡的閃電亮了！', '力量全開！今天的任務一定沒問題。'],
-  seatear: ['fall', '💧,🌊', '一滴藍色的眼淚落下，變成了寶石。', '人魚說：謝謝你這麼努力。'],
-  moontear: ['moon', '🌕,❤️', '把潘朵拉舉到月光下……裡面透出紅色的光！', '這就是傳說中的寶石——怪盜基德一直在找它。'],
-  diamondring: ['spin', '💍,✦', '戒指轉一圈，鑽石閃了一下。', '約定好了：明天也要一起加油！'],
+  paraiba: ['glow', '⚡,💠,✦', '滋滋——帕拉伊巴放出霓虹藍電流，全場瞬間點亮！', '「寶石之王」的螢光藍，連在暗處都像在發電！', '超級稀有的閃電藍光，能量值直接破表！'],
+  alexandrite: ['hue', '☀️,🌙,✨', '變色石施展魔術！現在切換成「{alexMode}」！', '白天翠綠、夜晚紫紅——名副其實的寶石界魔術師！', '再點一次，看看它一秒切換日夜色彩的絕技！'],
+  turquoise: ['float', '☁️,✦', '綠松石像一片晴朗的天空輕輕漂浮起來。', '古老的旅人守護石：無論走到哪裡都保佑你平安！', '藍綠色裡帶著大地的紋路，清爽又療癒。'],
+  coral: ['sway', '🐠,🌊,🫧', '紅珊瑚在水中輕輕搖擺，小丑魚游出來打招呼了！', '泡泡咕嚕咕嚕往上冒，海底花園今天好熱鬧！', '大海送來的紅寶物，帶著海洋的祝福。'],
+  blackpearl: ['glow', '🌙,💚,✦', '{darkMsg} 「黑星」在月色下浮現出神祕的孔雀綠光暈！', '怪盜基德也曾盯上的「黑色之星」，現在交給你保管！', '深邃的珠光像極光一樣微微變色，好神祕。'],
+  goldpearl: ['roll', '✨,👑', '金珍珠滾過舞台，拖出一道閃亮亮的金色光帶！', '像小太陽般尊貴的金色光澤，代表你閃閃發光的努力。', '叮咚！這顆珍貴的金珍珠為你帶來滿分好運！'],
+  icecrystal: ['spin', '❄️,💎', '冰晶石旋轉起來，舞台結出一圈冰藍霜花，好涼快！', '呼～冷靜的冰晶能量讓你遇到難題也能沉著應對。', '六角雪花在空中飛舞，像來到冰雪奇緣的世界！'],
+  rainbowheart: ['hue', '🌈,💖,✨', '彩虹之心換上了「{shiftColor}」的光芒！', '七種顏色代表七種好心情——今天你想收集哪一種？', '再點一下，集滿彩虹的魔法光譜吧！'],
+  glowstone: ['glow', '✨,🌙', '{darkMsg} 夜光石釋放白天存好的陽光，亮得像小夜燈！', '就算關掉燈也不用怕黑，我會一直幫你照亮路。', '螢光綠與暖金交織，像一群小螢火蟲在跳舞！'],
+  meteor: ['fall', '🌠,✨', '咻——流星石劃破天際！快閉眼許願：「{wishBless}」', '來自宇宙遠方的星辰碎片，聽見你的心願了！', '星塵灑滿舞台，感覺奇蹟隨時都會發生。'],
+  sunstone: ['spin', '☀️,🔥,✨', '太陽石像小太陽一樣自轉，射出耀眼的金橘光束！', '裡面閃爍著金色的砂金光點，暖呼呼的超有元氣！', '早安能量注入！今天也要像太陽一樣燦爛喔。'],
+  aurora: ['hue', '🌈,🌌,✨', '極光石點亮夜空，流轉出「{shiftColor}」的北極光帶！', '綠、藍、紫的極光在掌心跳舞，太夢幻了！', '再點一次，欣賞北極圈下一幕絕美極光秀！'],
+  thunder: ['shake', '⚡,💥', '轟隆——！雷霆石劈出一道炫目閃電，全場震動！', '電力 10000 伏特！今天的任務保證一擊必殺！', '閃電火花滋滋作響，超級帥氣的力量覺醒了！'],
+  seatear: ['fall', '💧,🌊,🫧', '一滴晶瑩的藍色淚珠落下，激起溫柔的海水波紋。', '海洋精靈輕聲說：「謝謝你這麼溫柔又努力。」', '水滴狀的寶石映出閃亮波光，像大海的微笑。'],
+  moontear: ['moon', '🌕,❤️,✨', '{moonMsg} 潘朵拉在滿月光束下透出傳說中的鮮紅核心！', '「找到了……這就是永生之石『潘朵拉』！」', '怪盜基德一直在尋找的奇蹟寶石，此刻正對著月光發亮。'],
+  diamondring: ['spin', '💍,🌈,✦', '鑽石戒指轉出一道七彩稜鏡光，閃耀奪目！', '拉勾勾！今天的小約定：「{promise}」', '晶瑩剔透的鑽石見證你的每一個成長里程碑！'],
   rubyring: ['kick', '⚽,💥', '轉動開關……踢力增強！球飛出去了！', '好遠！超強的一球，只能用在對的地方喔。'],
-  sapphirependant: ['swing', '🌊', '藍寶石墜子輕輕搖擺，像海浪一樣。', '把一片海掛在胸前。'],
-  pearlnecklace: ['swing', '✦', '珍珠一顆一顆閃著光。', '一天一顆，串成美麗的項鍊。'],
-  butterfly: ['flutter', '🌸,✦', '蝴蝶胸針拍拍翅膀，好像要飛走了！', '抓住它！……它又停回來了。'],
-  clover: ['spin', '🍀', '四葉草轉一圈，幸運降臨！', '今天的幸運值：滿分！'],
-  starearring: ['twinkle', '⭐', '星星耳環一閃一閃。', '把夜空戴在身上了。'],
-  princesstiara: ['bounce', '👑,✨', '公主頭冠戴上了！', '公主殿下，今天的任務完成了嗎？'],
-  queentiara: ['glow', '👑,🌟', '黃金頭冠發出耀眼的光芒！', '女王陛下駕到！'],
+  sapphirependant: ['swing', '🌊,💙,✦', '藍寶石墜子像鐘擺般優雅搖晃，盪出海洋波紋！', '把整片蔚藍大海戴在胸前，隨時都能聽見浪聲。', '「{oceanMsg}」——墜子傳來了大海的悄悄話。'],
+  pearlnecklace: ['swing', '✨,🤍', '珍珠項鍊輕輕晃動，串起了第 {pearlNum} 顆閃亮珍珠！', '一天一顆努力的小珍珠，串成世界上最美的項鍊。', '柔和的珠光一顆接一顆亮起，氣質滿分！'],
+  butterfly: ['flutter', '🦋,🌸,✦', '蝴蝶胸針拍拍翅膀飛起來，停在「{btSpot}」上又飛回來！', '輕盈地繞了你一圈，灑下香香的花粉！', '抓到你啦～小蝴蝶開心停在胸前閃閃發亮。'],
+  clover: ['spin', '🍀,✨', '四葉草高速旋轉！今日幸運色「{luckyColor}」、幸運指數 {luckyScore}！', '四片葉子分別代表：希望、信心、愛，還有幸運！', '奇蹟幸運草加持，今天做什麼都會順順利利！'],
+  starearring: ['twinkle', '⭐,🌟,✨', '左右星星耳環交替閃爍，送出神祕摩斯密碼：「{morse}」！', '把兩顆最亮的星星掛在耳邊，走到哪裡都閃耀。', '叮鈴～星星耳環隨著你的笑聲一閃一閃！'],
+  princesstiara: ['bounce', '👑,✨,🎀', '公主頭冠優雅落下，戴在頭上閃出金色光環！', '今日賜予封號：「{royalTitle}」！', '公主殿下，今天的冒險任務都準備好了嗎？'],
+  queentiara: ['glow', '👑,🌟,💎', '黃金女王頭冠大放異彩，全場響起皇家慶典樂聲！', '女王陛下駕到！授予最高榮譽：「{royalTitle}」！', '最璀璨的王者冠冕，只有最努力的傳奇才配得上！'],
   scepter: ['wave', '✨,👑', '揮一揮權杖：「今天的作業，全部完成！」', '領導者要負責任，也要照顧大家。'],
   wand: ['shoot', '🃏,♠,♦', '咻咻咻！撲克牌射出去，全部命中！', '怪盜的招牌道具——又快又準。'],
   goldwatch: ['swing', '✨', '滴答滴答……黃金懷錶說：現在是 {time}。', '珍惜每一分鐘的人，才是真正的紳士。'],
@@ -2988,13 +3101,13 @@ var TPLAY = {
   candle: ['flicker', '✨', '燭光搖呀搖，照亮了書桌。', '吹一口氣……它還是亮著，就像你的決心。'],
   astrolabe: ['spin', '⭐,🌙', '星象儀轉動，天上的星座一個一個亮起。', '找到了！那是今晚最亮的星。'],
   shellbox: ['crack', '🐚,💧', '貝殼寶盒打開了，裡面躺著一顆小珍珠。', '海浪的聲音，從貝殼裡傳出來。'],
-  mermaidtear: ['float', '🌊,💙', '藍色珍珠浮起來，閃著大海的光。', '人魚說：勇敢的孩子，謝謝你。'],
+  mermaidtear: ['float', '🌊,💙,🫧', '藍色珍珠緩緩浮起，漾開夢幻的海底極光波紋！', '人魚公主輕聲說：「{oceanMsg}」', '傳說中人魚留下的奇蹟淚珠，守護最勇敢的你。'],
   phoenix: ['fire', '🔥,✨', '鳳凰之羽燃起火焰——又重生了！', '永不放棄，就像不死鳥一樣。'],
-  dragoneye: ['blink', '🐉', '龍之眼睜開了！好有威嚴！', '它在守護你，所以不用怕。'],
+  dragoneye: ['blink', '🐉,🔥,✨', '龍之眼猛然睜開！金色龍瞳掃視全場，霸氣十足！', '「有我在這裡守護，什麼困難都不用怕！」', '深邃的龍瞳閃出神祕火花，賜予你無敵勇氣！'],
   snowcrystal: ['bounce', '⚽', '足球彈呀彈——一記射門，GOAL！', '腰帶一按就變出來，名偵探的祕密武器。'],
   trophy: ['bounce', '🎉,🏆', '高高舉起獎盃！全場歡呼！', '頒給最努力的人——就是你！'],
   magicbook: ['flip', '📖,✨', '魔法書翻開了，上面寫著：「{tip}」', '魔術的祕密，要自己慢慢發現。'],
-  timegem: ['spin', '💙,🎂', '藍色生日轉一圈，閃出深藍色的光。', '名字裡有「生日」的寶石——祝每天都是好日子！'],
+  timegem: ['spin', '💙,🎂,✨', '藍色生日轉出璀璨星環——祝你每天都像過生日一樣快樂！', '怪盜基德也曾追尋的傳說藍鑽，此刻為你點亮許願蠟燭！', '許一個今天的願望：「{wishBless}」！'],
   b_conan: ['zoom', '🔍,✨', '柯南推了推眼鏡：「真相只有一個！」', '眼鏡閃了一下光——他想到答案了！', '「對了，這個案子有個奇怪的地方……」柯南皺起眉頭。', '柯南按下腰帶上的按鈕——足球彈出來了！', '「阿笠博士的發明，今天又派上用場了。」', '柯南對你眨眨眼：「今天的作業，也要漂亮破解喔！」'],
   b_kid: ['fly', '🃏,🌙', '「Ladies and gentlemen！」基德從徽章裡飛了出來！', '撲克牌一閃，基德不見了……又出現了！', '「Ladies and gentlemen，今晚的表演，正式開始！」', '基德變出一朵玫瑰，遞給了你。', '「保持撲克臉，這是怪盜的第一課。」', '月光下，白色披風一揚，基德消失在夜空中。'],
   b_shinichi: ['bounce', '⚽', '新一踢出一記漂亮的射門！', '「我是高中生偵探，工藤新一。」', '「推理這種東西，是不分輸贏的。」', '新一盯著球場：「下一次射門，一定會進！」', '「福爾摩斯說過：排除所有不可能，剩下的就是真相。」', '新一拿起電話：「小蘭，我很快就回去。」'],
@@ -3069,7 +3182,7 @@ var TPLAY = {
   b_camel: ['fly', '💨,🇺🇸', '卡邁爾開車咻——地追上去了！', '看起來兇兇的，其實很溫柔喔。', '卡邁爾：「赤井先生，交給我吧！」', 'FBI 的駕駛高手，登場！', '「茱蒂老師，請上車！」', '卡邁爾認真地點了點頭。'],
   b_iori2: ['zoom', '✨', '伊織無我：「一切都照紅葉大小姐的吩咐。」', '「和田進一」……唸快一點，是不是很像「我是新一」？', '伊織無我：「紅葉大小姐，車子準備好了。」', '「這題歌牌的答案是……」伊織沉著地說。', '伊織無我低頭行禮，動作一絲不苟。', '「以前的事，就不用提了。」'],
   b_chihaya: ['fly', '💨,✨', '千速騎著機車，咻——地衝過去了！', '「風之女神」登場！', '千速：「研二那個傢伙……」', '交通機動隊，出動！', '萩原千速帥氣地脫下安全帽。', '「騎車一定要戴安全帽喔！」'],
-  grandjewel: ['grand', '🌕,✨,💎,⭐', '月之大寶石發出滿月般的光芒——所有寶物都在為你歡呼！', '你收集了全部寶物，對你而言沒有不可能！']
+  grandjewel: ['grand', '🌕,✨,💎,⭐', '月之大寶石綻放滿月般的光輝——所有寶物都在為你歡呼！', '全場響起傳說交響樂，授予最高稱號：「{royalTitle}」！', '你收集了全部寶物，對你而言沒有不可能！']
 };
 var TP_WORD = {
   card: ['紅心 A', '黑桃 K', '方塊 7', '梅花 Q', '紅心 9', '黑桃 A', '方塊 J'],
@@ -3083,12 +3196,72 @@ var TP_WORD = {
   dir: ['北方', '東方', '南方', '西方', '書桌的方向', '冰箱的方向'],
   place: ['大阪城旁邊', '你的書桌下面', '鐘塔頂端', '海邊的燈塔'],
   fortune: ['明天會有一件開心的事', '你會交到一個好朋友', '下次考試會很順利', '你會發現一個新的興趣', '有人會稱讚你'],
-  tip: ['觀察力是最好的魔法', '練習一百次，就會變成魔術', '讓別人笑，是最棒的魔術', '專心，是讓時間變快的咒語']
+  tip: ['觀察力是最好的魔法', '練習一百次，就會變成魔術', '讓別人笑，是最棒的魔術', '專心，是讓時間變快的咒語'],
+  constellation: ['獵戶座', '北斗七星', '仙后座', '天馬座', '小熊座', '夏季大三角'],
+  rainbow: ['極光青藍', '夢幻紫羅蘭', '晨曦金紅', '星塵七彩', '月光銀白'],
+  natureTip: ['看看窗外綠色植物 20 秒吧', '深呼吸一口新鮮空氣', '今天也要像小樹一樣長高高', '保持好奇心去探索世界'],
+  dream: ['搭著滑翔翼在雲上飛', '跟柯南和基德一起尋寶', '發現一座糖果城堡', '在星空下野餐'],
+  amberIn: ['一片遠古的迷你蕨類葉子', '一隻三千萬年前的小甲蟲', '一顆封存古空氣的小氣泡', '一朵微小的遠古花瓣'],
+  geodeIn: ['閃亮亮的夢幻紫晶簇', '愛心形狀的祕密水晶洞', '發著星光的迷你晶柱群', '像銀河一樣的紫色結晶'],
+  wishBless: ['今天的煩惱通通消失', '下次解題思路超清晰', '每天都能開開心心笑出來', '勇敢跨出新的第一步'],
+  promise: ['今天也要認真又快樂', '每天都比昨天更勇敢一點', '好好照顧自己和家人', '不放棄任何一個小夢想'],
+  oceanMsg: ['順著海浪的節奏慢慢來就好', '深海裡藏著你的無限潛能', '勇敢向前航行，風會推著你走', '你的溫柔像大海一樣寬廣'],
+  btSpot: ['你的肩膀', '窗邊的小花', '書桌上的筆筒', '怪盜基德的禮帽邊緣'],
+  luckyColor: ['天空藍', '草莓粉', '向日葵黃', '薄荷綠', '星空紫', '奶油白'],
+  luckyScore: ['100 分', '99 分（超級幸運）', '破表 120 分', '滿分 ★★★★★'],
+  morse: ['··－· 你好棒！', '···－－－··· 呼叫偵探夥伴！', '·－·－ 今天會超順利！', '－－－ 滿滿好運降臨！'],
+  royalTitle: ['月光寶藏守護者', '星辰小偵探公主', '奇蹟鑽石小女王', '勇氣滿分小英雄', '快樂王國大統帥']
 };
-var TP_SND = { musicbox: 'melody', bell: 'ding', silverwatch: 'sweep', silvercoin: 'beep', goldcoin: 'ting', cards: 'whoosh', wand: 'whoosh',
-  hourglass: 'pew', whitefeather: 'poof', rubyring: 'pew', crown: 'fanfare', trophy: 'fanfare', chalice: 'fanfare', grandjewel: 'fanfare', goldfeather: 'beep', snowcrystal: 'ting' };
+var TP_STAGE = {
+  sapphire: 'crown', ruby: 'heat', emerald: 'petal', amethyst: 'crown', topaz: 'prism', pearl: 'ripple', moonstone: 'dark',
+  diamond: 'prism', pinkdiamond: 'petal', blackdiamond: 'dark', deepheart: 'ripple', redheart: 'petal', aquamarine: 'ripple',
+  peridot: 'petal', garnet: 'heat', opal: 'shift', tourmaline: 'petal', orangetopaz: 'heat', spinel: 'crown',
+  tanzanite: 'prism', amber: 'crack', jade: 'petal', obsidian: 'heat', starsapphire: 'dark', starruby: 'dark',
+  cateye: 'eye', malachite: 'petal', lapis: 'dark', rosequartz: 'petal', clearquartz: 'prism', geode: 'crack',
+  citrine: 'crown', paraiba: 'bolt', alexandrite: 'shift', turquoise: 'petal', coral: 'ripple', blackpearl: 'dark',
+  goldpearl: 'crown', icecrystal: 'frost', rainbowheart: 'shift', glowstone: 'dark', meteor: 'crown', sunstone: 'prism',
+  aurora: 'shift', thunder: 'bolt', seatear: 'ripple', moontear: 'moon', mermaidtear: 'ripple', dragoneye: 'eye',
+  timegem: 'crown', grandjewel: 'crown',
+  diamondring: 'prism', sapphirependant: 'ripple', pearlnecklace: 'crown', butterfly: 'petal', clover: 'petal',
+  starearring: 'crown', princesstiara: 'crown', queentiara: 'crown'
+};
+var TP_STATE = {};
+var SHIFT_PAL = {
+  alexandrite: [[0, '☀️ 白天模式（翠綠）'], [155, '🌙 夜晚模式（神祕紫）']],
+  opal: [[0, '乳白遊彩'], [55, '暖金火彩'], [130, '孔雀翠彩'], [215, '極光藍彩'], [295, '櫻花粉彩']],
+  rainbowheart: [[0, '熱情紅'], [45, '陽光橘'], [95, '森林綠'], [165, '海洋青'], [220, '星空藍'], [275, '夢幻紫'], [325, '甜心粉']],
+  aurora: [[0, '極光翠綠'], [85, '極地冰藍'], [175, '幻夜紫羅蘭'], [265, '玫瑰極光']]
+};
+var TP_SND = {
+  sapphire: 'sparkle', ruby: 'flame', emerald: 'flutter', amethyst: 'mystic', topaz: 'sparkle', pearl: 'water', moonstone: 'frost',
+  diamond: 'sparkle', pinkdiamond: 'heart', blackdiamond: 'mystic', deepheart: 'water', redheart: 'heart', aquamarine: 'water',
+  peridot: 'flutter', garnet: 'crack', opal: 'magic', tourmaline: 'flutter', orangetopaz: 'heart', spinel: 'ting',
+  tanzanite: 'sparkle', amber: 'crack', jade: 'flutter', obsidian: 'flame', starsapphire: 'wish', starruby: 'wish',
+  cateye: 'mystic', malachite: 'flutter', lapis: 'wish', rosequartz: 'heart', clearquartz: 'frost', geode: 'crack',
+  citrine: 'royal', paraiba: 'thunder', alexandrite: 'magic', turquoise: 'flutter', coral: 'water', blackpearl: 'mystic',
+  goldpearl: 'royal', icecrystal: 'frost', rainbowheart: 'magic', glowstone: 'mystic', meteor: 'wish', sunstone: 'flame',
+  aurora: 'magic', thunder: 'thunder', seatear: 'water', moontear: 'magic', mermaidtear: 'water', dragoneye: 'mystic',
+  timegem: 'royal', grandjewel: 'fanfare',
+  diamondring: 'royal', sapphirependant: 'water', pearlnecklace: 'heart', butterfly: 'flutter', clover: 'magic',
+  starearring: 'wish', princesstiara: 'royal', queentiara: 'fanfare',
+  musicbox: 'melody', bell: 'ding', silverwatch: 'sweep', silvercoin: 'beep', goldcoin: 'ting', cards: 'whoosh', wand: 'whoosh',
+  hourglass: 'pew', whitefeather: 'poof', rubyring: 'pew', crown: 'fanfare', trophy: 'fanfare', chalice: 'fanfare', goldfeather: 'beep', snowcrystal: 'ting'
+};
 var SND = {
   chime: [[1568, 0, 0.25], [2093, 0.08, 0.35]],
+  sparkle: [[1568, 0, 0.14], [2093, 0.07, 0.16], [2637, 0.14, 0.22], [3136, 0.21, 0.32]],
+  water: [[420, 0, 0.18, 'sine', 0.12, 920], [660, 0.12, 0.22, 'sine', 0.08, 1280]],
+  flame: [[260, 0, 0.26, 'sawtooth', 0.05, 520], [523, 0.08, 0.25, 'triangle', 0.09, 880]],
+  thunder: [[95, 0, 0.42, 'sawtooth', 0.09, 45], [1400, 0.05, 0.14, 'square', 0.05, 320], [980, 0.18, 0.12, 'square', 0.04, 240]],
+  frost: [[2349, 0, 0.16, 'sine', 0.09], [2793, 0.08, 0.18, 'sine', 0.09], [3520, 0.16, 0.32, 'sine', 0.08]],
+  magic: [[659, 0, 0.16], [880, 0.08, 0.16], [1175, 0.16, 0.18], [1568, 0.24, 0.22], [2093, 0.32, 0.38]],
+  mystic: [[392, 0, 0.35, 'sine', 0.09, 440], [587, 0.12, 0.42, 'triangle', 0.08], [880, 0.24, 0.45, 'sine', 0.06]],
+  crack: [[180, 0, 0.08, 'square', 0.08, 70], [1047, 0.09, 0.14], [1568, 0.16, 0.24]],
+  flutter: [[880, 0, 0.1, 'sine', 0.08, 1175], [1047, 0.09, 0.12, 'sine', 0.08, 1397], [1319, 0.18, 0.2, 'sine', 0.08]],
+  royal: [[523, 0, 0.14], [659, 0.1, 0.14], [784, 0.2, 0.16], [1047, 0.3, 0.38]],
+  wish: [[1760, 0, 0.22, 'sine', 0.08, 880], [2093, 0.14, 0.18], [2637, 0.24, 0.35]],
+  heart: [[523, 0, 0.14, 'sine', 0.11], [659, 0.14, 0.18, 'sine', 0.11], [784, 0.26, 0.28, 'sine', 0.09]],
+  chat: [[740, 0, 0.1, 'sine', 0.09], [988, 0.08, 0.16, 'sine', 0.09]],
   melody: [[1047, 0, 0.3], [1319, 0.25, 0.3], [1568, 0.5, 0.3], [1319, 0.75, 0.3], [1175, 1, 0.3], [1397, 1.25, 0.3], [1319, 1.5, 0.6]],
   ding: [[1760, 0, 0.9], [2637, 0, 0.5]],
   sweep: [[300, 0, 0.5, 'sawtooth', 0.04, 900]],
@@ -3097,8 +3270,9 @@ var SND = {
   pew: [[1500, 0, 0.25, 'square', 0.04, 200]],
   poof: [[200, 0, 0.4, 'triangle', 0.15, 60]],
   whoosh: [[600, 0, 0.3, 'sawtooth', 0.03, 1500]],
-  door: [[70, 0, 1.4, 'sawtooth', 0.06, 110], [140, 0.15, 1.0, 'triangle', 0.04, 90]],
-  fanfare: [[784, 0, 0.15], [1047, 0.15, 0.15], [1319, 0.3, 0.15], [1568, 0.45, 0.45]]
+  door: [[62, 0, 0.75, 'sawtooth', 0.06, 95], [124, 0.1, 0.6, 'triangle', 0.05, 82], [440, 0.56, 0.08, 'square', 0.05, 220]],
+  doorOpen: [[523, 0, 0.18], [659, 0.1, 0.2], [784, 0.2, 0.25], [1047, 0.32, 0.45], [1568, 0.42, 0.55]],
+  fanfare: [[784, 0, 0.15], [1047, 0.15, 0.15], [1319, 0.3, 0.15], [1568, 0.45, 0.55], [2093, 0.55, 0.6]]
 };
 function tsound(k) {
   unlockAudio();
@@ -3119,11 +3293,91 @@ function tsound(k) {
   } catch (e) {}
 }
 function tpick(a) { return a[Math.floor(Math.random() * a.length)]; }
-function tplayLine(t, k) {
+function tplayStage(box, art, t, count) {
+  var st = TP_STAGE[t.id], bg = $('tsbg');
+  if (!st || !box) return {};
+  var ctx = {}, stObj = TP_STATE[t.id] || (TP_STATE[t.id] = { dark: false, idx: 0 });
+  function addBg(cls, sty, ms) {
+    if (!bg) return;
+    var el = document.createElement('span');
+    el.className = cls;
+    if (sty) el.style.cssText = sty;
+    bg.appendChild(el);
+    setTimeout(function () { if (el.parentNode) el.parentNode.removeChild(el); }, ms || 1200);
+  }
+  if (st === 'dark') {
+    stObj.dark = !stObj.dark;
+    box.className = 'tbig play' + (stObj.dark ? ' st-dark' : '');
+    var fl = stObj.dark ? 'drop-shadow(0 0 18px ' + (t.a === '#ffffff' ? '#74c0fc' : t.a) + ') brightness(1.18)' : '';
+    art.style.webkitFilter = fl; art.style.filter = fl;
+    ctx.darkMsg = stObj.dark ? '🌙 關燈了！' : '☀️ 開燈了！';
+    addBg('ts-aura', 'background:radial-gradient(circle,' + t.a + ' 0%,rgba(255,255,255,0) 70%)', 1100);
+  } else if (st === 'moon') {
+    stObj.dark = !stObj.dark;
+    box.className = 'tbig play' + (stObj.dark ? ' st-moon' : '');
+    var mf = stObj.dark ? 'drop-shadow(0 0 22px #ff3b3b) saturate(1.5)' : '';
+    art.style.webkitFilter = mf; art.style.filter = mf;
+    ctx.moonMsg = stObj.dark ? '🌕 舉向滿月！' : '✨ 收回盒中，再點一次對著月光看！';
+    addBg('ts-beam', '', 950);
+    addBg('ts-aura', 'background:radial-gradient(circle,#ff4d4f 0%,rgba(255,77,79,0) 70%)', 1100);
+  } else if (st === 'shift') {
+    var pal = SHIFT_PAL[t.id] || SHIFT_PAL.opal;
+    stObj.idx = (stObj.idx + 1) % pal.length;
+    var deg = pal[stObj.idx][0], label = pal[stObj.idx][1];
+    var sf = deg ? 'hue-rotate(' + deg + 'deg) saturate(1.25)' : '';
+    art.style.webkitFilter = sf; art.style.filter = sf;
+    if (t.id === 'aurora') box.className = 'tbig play st-dark';
+    ctx.shiftColor = label; ctx.alexMode = label;
+    addBg('ts-beam', '', 950);
+  } else if (st === 'prism') {
+    addBg('ts-beam', '', 950);
+    setTimeout(function () { addBg('ts-beam', '', 950); }, 180);
+  } else if (st === 'ripple') {
+    for (var ri = 0; ri < 3; ri++) (function (ri) {
+      setTimeout(function () { addBg('ts-ring', 'border-color:' + (t.c === '#f8f9fa' ? '#74c0fc' : t.c), 1000); }, ri * 170);
+    })(ri);
+  } else if (st === 'bolt') {
+    box.className = 'tbig play st-bolt';
+    addBg('ts-flash', '', 600);
+    setTimeout(function () { if (box) box.className = 'tbig play'; }, 780);
+  } else if (st === 'frost') {
+    box.className = 'tbig play st-frost';
+    addBg('ts-aura', 'background:radial-gradient(circle,#74c0fc 0%,rgba(116,192,252,0) 70%)', 1100);
+  } else if (st === 'heat') {
+    box.className = 'tbig play st-heat';
+    addBg('ts-aura', 'background:radial-gradient(circle,#ff922b 0%,rgba(255,107,0,0) 70%)', 1100);
+    setTimeout(function () { if (box) box.className = 'tbig play'; }, 1050);
+  } else if (st === 'eye') {
+    box.className = 'tbig play st-dark';
+    addBg('ts-eye', '', 850);
+    setTimeout(function () { if (box) box.className = 'tbig play'; }, 1050);
+  } else if (st === 'crack') {
+    addBg('ts-aura', 'background:radial-gradient(circle,' + t.c + ' 0%,rgba(255,255,255,0) 70%)', 1100);
+  } else if (st === 'petal') {
+    addBg('ts-aura', 'background:radial-gradient(circle,' + t.a + ' 0%,rgba(255,255,255,0) 70%)', 1100);
+  } else if (st === 'crown') {
+    box.className = 'tbig play st-royal';
+    addBg('ts-beam', '', 950);
+    addBg('ts-aura', 'background:radial-gradient(circle,#ffd43b 0%,rgba(255,212,59,0) 70%)', 1100);
+    setTimeout(function () { if (box) box.className = 'tbig play'; }, 1050);
+  }
+  ctx.pearlNum = ((count || 1) % 24) + 1;
+  ctx.pct = 10 + ((count || 1) * 15) % 90;
+  return ctx;
+}
+function tplayLine(t, k, ctx) {
   var P = TPLAY[t.id] || ['pop', '✦', t.name + '閃了一下光芒！'], L = P.slice(2), line = L[k % L.length];
+  ctx = ctx || {};
   return line.replace(/\{(\w+)\}/g, function (m, w) {
+    if (ctx[w] !== undefined) return ctx[w];
     if (w === 'time') return hm(new Date());
     if (w === 'dist') return 10 + Math.floor(Math.random() * 50) * 10;
+    if (w === 'darkMsg') return '🌙 夜光亮起！';
+    if (w === 'moonMsg') return '🌕 對著月光！';
+    if (w === 'shiftColor') return '夢幻七彩';
+    if (w === 'alexMode') return '🌙 夜晚模式（神祕紫）';
+    if (w === 'pearlNum') return '1';
+    if (w === 'pct') return '25';
     return TP_WORD[w] ? tpick(TP_WORD[w]) : m;
   });
 }
@@ -3142,10 +3396,315 @@ function tplayFx(box, t, fx) {
     setTimeout(function () { if (e.parentNode) e.parentNode.removeChild(e); }, 1400);
   })(i);
 }
+
+/* ===== 人物互動對話（全 54 位角色，每人 3 個專屬雙向話題） ===== */
+var CHAR_CHAT = {
+  b_conan: ['嗨，小布丁！今天有什麼新線索想一起推理嗎？', [
+    ['🔍 請教推理祕訣', '柯南，怎麼才能像你一樣厲害？', '最重要的就是「仔細觀察」跟「不放過任何小細節」！寫功課也一樣喔。', '記住了！', '很好！你很有成為名偵探的天分呢！'],
+    ['🎩 聊怪盜基德', '你覺得怪盜基德下次會出現在哪裡？', '那個傢伙最愛出風頭了，一定會在滿月的高樓上！不過我一定會識破他的魔術。', '我也要幫忙找！', '好喔，有小布丁當助手，我們一定不會輸！'],
+    ['⚽ 一起踢足球', '等等要不要去踢足球？', '當然好！不過我得先把踢力增強鞋關掉，不然球會飛到外太空去哈哈！', '哈哈好期待！', '那就約好囉，任務完成馬上出發！']
+  ]],
+  b_kid: ['Ladies and gentlemen！今晚想看哪一場魔術表演呢？', [
+    ['🃏 變一個魔術', '基德大人，請變一個魔術給我看！', '看好了——咻！（撲克牌一翻，變出一朵發光的藍玫瑰送給你！）', '哇好厲害！', '呵呵，這點小魔術，只為最努力的你表演。'],
+    ['🌕 問潘朵拉', '你還在找傳說中的潘朵拉嗎？', '沒錯，對著月光會透出紅光的大寶石。等找到那一天，我會第一個讓你知道。', '祝你早日找到！', '謝謝你，小魔術師！我們一起加油。'],
+    ['🔍 聊柯南', '你跟名偵探柯南誰比較聰明？', '那個小偵探確實很棘手……不過逃跑的華麗程度，還是我略勝一籌喔！', '你們都很帥！', '哈哈，保持撲克臉……其實聽到誇獎我超開心的！']
+  ]],
+  b_shinichi: ['嗨！我是高中生偵探工藤新一，今天過得好嗎？', [
+    ['📖 聊福爾摩斯', '新一最喜歡福爾摩斯的哪句話？', '「排除所有不可能之後，剩下的就算再不可思議，也一定是真相！」', '好帥的一句話！', '遇到難題的時候，也可以試試看這個方法喔！'],
+    ['⚽ 聊足球射門', '你的足球是跟誰學的？', '我自己每天苦練出來的！因為踢足球可以訓練反應力，對推理也很有幫助。', '我也要每天練習！', '太棒了！每天進步一點點就會變超強。'],
+    ['💞 問小蘭', '你什麼時候要去找小蘭？', '咳咳……等手邊的案子解決，我一定會馬上回去見她的！別告訴她我剛才在這裡喔。', '幫你保密！', '謝啦，你真是個可靠的小夥伴！']
+  ]],
+  b_amuro: ['歡迎光臨波洛咖啡廳！今天想點什麼呢？', [
+    ['🥪 想吃三明治', '安室先生，你的三明治為什麼這麼好吃？', '祕訣是在火腿上刷一點點味噌美乃滋，再把吐司稍微蒸一下喔！', '下次我也想吃！', '沒問題！隨時來波洛咖啡廳，我現做一份給你。'],
+    ['🚗 聊白色跑車', '聽說你開車技術超強！', '安全駕駛最重要，但遇到緊急任務時，就得靠精準的操控保護大家了。', '真的太帥了！', '哈哈，等你長大考到駕照，也要當守規矩的好駕駛喔。'],
+    ['🤫 問公安祕密', '安室先生其實有三個名字對吧？', '噓——這是我們兩個人之間的小祕密喔。不管是哪個身分，我都會守護大家。', '我會保密的！', '太可靠了！今天的任務也要加油喔。']
+  ]],
+  b_ran: ['小布丁你好呀！今天有沒有乖乖吃飯、寫功課？', [
+    ['🥋 問空手道', '小蘭姊姊，空手道會不會很難學？', '一開始會累，但只要每天認真練習基本功，就能變得強壯又勇敢喔！', '我也想變勇敢！', '你已經很勇敢了！小蘭姊姊幫你打氣！'],
+    ['🍳 聊拿手料理', '小蘭姊姊最拿手的是什麼菜？', '我最拿手的是檸檬派和咖哩飯！下次大家一起來毛利偵探事務所吃吧。', '好想吃檸檬派！', '那說好了，我多烤一點給你帶回家喔！'],
+    ['📱 問新一', '新一最近有打電話給你嗎？', '那個傢伙老是忙著辦案……不過我知道他一定在某個地方保護著大家。', '他很快會回來的！', '謝謝你的安慰，聽到你這麼說我安心多了！']
+  ]],
+  b_kyogoku: ['你好，我是京極真。請問有什麼我可以幫忙的嗎？', [
+    ['💥 問 400 連勝', '京極先生竟然空手道 400 連勝，太強了！', '其實我只是從不偷懶，每天專心把每一次揮拳和踢擊都做到最好而已。', '好佩服你的毅力！', '你每天完成任務的毅力，也一點都不輸給我喔！'],
+    ['🎀 聊園子', '你跟園子感情好好喔！', '園子小姐總是這麼開朗溫柔……只要她有危險，無論多遠我都會立刻趕到。', '好浪漫喔！', '咳、咳……讓你見笑了，謝謝你的祝福。'],
+    ['🛡 問守護的意義', '為什麼你想變得這麼強？', '力量不是用來欺負別人的，而是用來守護身邊重要的人。', '說得真好！', '願你也能成為溫柔又堅強的人！']
+  ]],
+  b_scotch: ['你好呀，我是諸伏景光。要不要聽我彈一段貝斯？', [
+    ['🎸 聽彈貝斯', '景光哥哥，可以彈一首歌嗎？', '好喔，咚咚咚～這段低音旋律是不是讓人覺得很安心呢？', '好好聽喔！', '你喜歡就太好了，下次教你簡單的節奏！'],
+    ['🍳 聊做料理', '聽說你教過零做料理？', '哈哈對呀，以前我們常常一起做飯，他學得超快的，現在三明治做得比我還厲害呢。', '你們是超棒的夥伴！', '嗯，不管過了多久，我們永遠是最好的夥伴。'],
+    ['🌟 請你幫我加油', '我今天有點累，可以幫我打氣嗎？', '辛苦你了！累的時候就先休息五分鐘、深呼吸，慢慢來一定能完成。', '謝謝景光哥哥！', '不客氣，我會一直為你加油的！']
+  ]],
+  b_matsuda: ['喲！有什麼麻煩事需要拆彈專家幫忙嗎？', [
+    ['⚡ 問拆彈技術', '松田警官拆炸彈都不會緊張嗎？', '只要冷靜看清線路結構、手不要抖，什麼炸彈都難不倒我！', '太酷了吧！', '寫題目也一樣，先冷靜看懂題目就搞定了！'],
+    ['🕶 聊黑色墨鏡', '為什麼你老是戴著墨鏡？', '哈哈，一方面是酷，一方面是讓對手看不穿我在想什麼！', '我也想要一副！', '那等你完成今天的任務，就當作帥氣王牌的證明吧！'],
+    ['🏍 聊萩原研二', '你跟研二是從小認識的嗎？', '是啊，那個傢伙老是愛開玩笑，但關鍵時刻最值得信賴。', '感情真好！', '有好朋友在身邊，做事都會更有幹勁呢！']
+  ]],
+  b_hagiwara: ['嗨嗨～小布丁！今天心情怎麼樣呀？', [
+    ['🚗 聊開車兜風', '研二哥哥最喜歡去哪裡兜風？', '沿著海邊吹吹風最棒了！心情不好的時候看看大海就會變輕鬆。', '聽起來好舒服！', '累的時候也要記得看看窗外放鬆眼睛喔！'],
+    ['🔧 聊松田陣平', '松田是不是常常很急躁？', '哈哈被你發現了！他嘴上說麻煩，其實心裡比誰都溫柔呢。', '哈哈好可愛！', '下次見到他別告訴他我這樣說喔～'],
+    ['✨ 問放鬆祕訣', '緊張的時候要怎麼辦？', '跟著我一起：吸氣 1、2、3，吐氣～把肩膀放下來，是不是好多了？', '真的輕鬆多了！', '太好了！保持輕鬆的笑容，幸運就會跟著來！']
+  ]],
+  b_heiji: ['喲！我是大阪的名偵探服部平次，有什麼好玩的案子嗎？', [
+    ['⚾ 聊反戴帽子', '平次哥哥為什麼要轉帽子？', '只要把帽簷轉到前面，就代表我認真起來了——準備大顯身手！', '好帥的開關！', '你寫作業前也可以給自己一個「認真開關」喔！'],
+    ['⚔️ 問劍道比賽', '你的劍道跟推理哪個比較強？', '兩個都很強！不過劍道講究專注跟氣勢，對破案幫助超大。', '文武雙全耶！', '哈哈謝謝誇獎，關西偵探是不會輸的！'],
+    ['🥞 聊大阪美食', '去大阪最推薦吃什麼？', '當然是章魚燒和大阪燒！下次帶你跟和葉一起去吃個過癮！', '流口水了！', '說好了喔，到時候我請客！']
+  ]],
+  b_haibara: ['嗯？找我有什麼事嗎？我剛好做完一組實驗。', [
+    ['🧪 問科學實驗', '哀，你今天在研究什麼呢？', '在分析一種能讓人保持專注的小小配方……開玩笑的，其實是整理博士弄亂的試管。', '博士又弄爆了嗎？', '呵呵，你還真了解他呢。'],
+    ['🐱 聊可愛小動物', '聽說你很喜歡小貓和小狗？', '咳……毛茸茸的動物很療癒嘛。對著牠們說話，壓力都會消失。', '哀其實很溫柔！', '才、才沒有呢……不過謝謝你這麼說。'],
+    ['💪 請你幫我加油', '我等等要挑戰比較難的任務……', '冷靜分析、一步一步來，以你的實力絕對沒問題的。我相信你。', '有你加油我不怕了！', '很好，完成後再來跟我報告好消息吧。']
+  ]],
+  b_gin: ['……哼，小朋友，你不怕我嗎？', [
+    ['🚗 聊黑色保時捷', '你的黑色保時捷 356A 好特別！', '眼光不錯。那是經過仔細保養的經典古董車，從不讓我失望。', '好酷喔！', '記住，對待珍貴的東西就要像這樣細心。'],
+    ['🌙 問今晚行動', '你們今晚又要搞什麼大計畫嗎？', '這不是你該打聽的事……乖乖去寫完你的任務比較安全。', '好、我馬上去！', '哼，算你聰明。'],
+    ['🏃 先溜為妙', '那個……我突然想到我還有功課沒寫！', '快去吧。別在夜裡亂跑，柯南會替我盯著你的。', '掰掰！', '……真是有趣的小傢伙。']
+  ]],
+  b_vermouth: ['Oh, my little angel～今天想聊點什麼祕密呢？', [
+    ['🎭 問變裝絕活', '貝爾摩德的變裝怎麼這麼逼真？', '除了化妝，連說話的語氣和走路的姿勢都要完全變成那個人喔。', '簡直像魔法！', 'A secret makes a woman woman，這可是最高機密呢。'],
+    ['🏍 聊重型機車', '你騎機車的樣子超帥氣！', '在夜風裡奔馳的感覺很自由喔，不過一定要遵守安全規則。', '我長大也想學！', '呵呵，那現在就先當個最棒的小天使吧。'],
+    ['🌹 問神祕金句', '可以再說一次你的招牌台詞嗎？', '「A secret makes a woman woman.」——每個人都可以擁有屬於自己的閃亮小祕密。', '好有氣質喔！', '你今天的努力，就是最棒的祕密武器喔。']
+  ]],
+  b_sonoko: ['哈囉！本小姐鈴木園子登場啦！', [
+    ['🎩 聊基德大人', '園子姊姊有多喜歡基德大人？', '超～級～喜～歡！白色披風配上單片眼鏡，簡直是月光下的王子嘛！', '哈哈好興奮！', '下次基德發預告函，我們一起去現場看！'],
+    ['🥋 聊京極真', '那基德大人跟阿真你選誰？', '嗚哇！當然是阿真啦！他又老實又強，永遠都在保護我呢～', '好甜蜜喔！', '嘿嘿，別講得人家不好意思啦！'],
+    ['🍰 聊下午茶', '大小姐今天推薦什麼點心？', '草莓鮮奶油蛋糕配熱可可！完成所有任務後就犒賞自己吃點心吧！', '聽起來超棒！', '那現在就快衝刺完成任務吧！']
+  ]],
+  b_date: ['喲！我是班長伊達航，今天也充滿幹勁嗎？', [
+    ['🦷 問咬牙籤', '班長為什麼總咬著一根牙籤？', '哈哈，這是模仿以前認識的前輩啦，咬著它思考會特別冷靜！', '好有個人特色！', '不過小朋友可不要學著咬牙籤跑步喔，會危險的！'],
+    ['👮 問當班長祕訣', '怎麼才能像你一樣照顧好大家？', '多關心身邊的人、看到朋友需要幫忙就伸出援手，人人都能當好榜樣！', '我也要試試看！', '太棒了！班長給你一百個讚！'],
+    ['🚓 聊警校五人組', '警校的夥伴們平常都在幹嘛？', '松田跟降谷老是在比勝負，研二在旁邊打圓場，景光最溫柔，每天都超熱鬧！', '好想看看你們！', '有機會再說更多警校的趣事給你聽！']
+  ]],
+  b_agasa: ['喔呵呵呵！小布丁來啦，快來看看博士的新發明！', [
+    ['💡 問最新發明', '博士這次發明了什麼好東西？', '「自動整理書包機器人」！只要按一下按鈕……砰！（冒出五彩紙花）', '哈哈又爆炸了！', '失敗乃成功之母嘛，下一次一定會成功的！'],
+    ['❓ 玩冷笑話猜謎', '博士出一個猜謎給我猜吧！', '好喔！什麼動物最愛問「為什麼」？……答案是「豬（問豬→問珠→為什麼？）」不對，是「企鵝（奇問）」喔呵呵！', '哈哈好冷喔！', '哎呀，小哀每次也都是這個表情呢！'],
+    ['🍩 聊吃零食', '博士又偷偷吃甜點了嗎？', '噓！千萬不要告訴小哀！我只是補充一點點發明用的糖分啦！', '要記得吃健康喔！', '好好好，我等一下就去吃蔬菜沙拉！']
+  ]],
+  b_vodka: ['喂！你有沒有看到大哥往哪裡走了？', [
+    ['🕶 問墨鏡款式', '伏特加叔叔睡覺也戴著墨鏡嗎？', '當然不是啦！但出任務的時候戴墨鏡才夠有氣勢嘛。', '哈哈原來如此！', '別到處跟別人說喔！'],
+    ['🚗 問開車工作', '平常都是你幫琴酒開車嗎？', '沒錯！大哥的愛車我開得可穩了，絕對不會遲到一秒鐘！', '很守時耶！', '守時可是做任何事的基本功喔！'],
+    ['🧭 幫你找琴酒', '我剛才在圖鑑那邊看到琴酒喔！', '真的嗎？！謝啦小朋友，我得趕快跑去跟大哥會合！', '快去吧！', '大哥——等等我啊！']
+  ]],
+  b_akai: ['……你好。看來你今天的表現很不錯。', [
+    ['🎯 問專注力祕訣', '赤井先生怎麼能瞄準這麼遠的目標？', '呼吸要穩、心不要急，把注意力全部集中在眼前的一件事上。', '像寫作業一樣！', '沒錯。一次只做好一件事，就能百發百中。'],
+    ['🧢 聊針織帽', '為什麼你總是戴著黑色毛線帽？', '習慣了，這樣比較低調，也讓人不容易看穿我的表情。', '超有個性的！', '謝謝。你也很有自己的風格。'],
+    ['👨‍👩‍👧 問家人近況', '秀吉和真純最近好嗎？', '他們各自都很努力。雖然不能常常見面，但我一直在遠處守護著他們。', '你是很棒的哥哥！', '……謝謝你。你也要好好珍惜家人。']
+  ]],
+  b_hannin: ['嘿嘿嘿……沒想到竟然被你收集到我了！', [
+    ['🕵️ 問犯案破綻', '為什麼你每次都會被柯南抓到？', '嗚嗚……我明明策劃了超完美的密室，結果他推一下眼鏡就全部看穿了啦！', '因為柯南太強了！', '下次我決定改行去參加推理大賽好了！'],
+    ['🖤 問為什麼全身黑', '你為什麼總是黑漆漆的？', '這叫「神祕感」！在真相揭曉之前，我可是最搶戲的主角呢！', '哈哈很有趣！', '謝謝捧場，記得以後還是要當正義的好孩子喔！'],
+    ['🏃 抓到你了！', '真相只有一個——犯人就是你！', '哇啊！饒了我吧，我乖乖舉手投降！今天改幫你當加油啦啦隊！', '那就幫我加油吧！', '衝啊小布丁！今天的任務全部破解！']
+  ]],
+  b_kogoro: ['哇哈哈哈哈！有什麼疑難雜症，全交給名偵探毛利小五郎吧！', [
+    ['💤 問沉睡推理', '毛利叔叔，你破案的時候都在睡覺耶？', '胡說！那是我在閉目養神、進入超高深推理境界的獨門絕招！', '哈哈原來是這樣！', '哇哈哈，懂就好懂就好！'],
+    ['🎤 聊沖野洋子', '洋子小姐最近有新歌嗎？', '當然有！我可是頭號大粉絲，每首歌都會唱喔！', '叔叔好熱情！', '喜歡一件事就要全心投入，對吧！'],
+    ['🥋 問柔道絕技', '聽說叔叔的柔道超厲害？', '哼哼，想當年我的過肩摔可是全校第一！不過現在用來保護小蘭就夠了。', '其實很帥氣呢！', '哇哈哈，聽到這句話叔叔超開心的！']
+  ]],
+  b_eri: ['你好，我是律師妃英理。今天有好好規劃時間嗎？', [
+    ['⚖️ 問法庭不敗祕訣', '英理阿姨怎麼能一直贏得官司？', '靠的是事前的充分準備，還有冷靜整理每一個證據的習慣喔。', '好專業喔！', '你整理課表和任務的習慣，也跟大律師一樣棒！'],
+    ['🐱 聊愛貓五郎', '你的貓咪真的也叫「五郎」嗎？', '呵呵沒錯，牠比某位愛偷懶的大偵探乖多了，毛軟軟的好可愛。', '哈哈好有趣！', '下次帶你來事務所摸摸牠吧。'],
+    ['🍳 問拿手料理', '阿姨最近有練習做新料理嗎？', '嗯……我最近在看食譜書努力精進中喔，下次做小點心給你試吃？', '期待期待！', '哈哈，那我一定會照著食譜一步一步認真做的！']
+  ]],
+  b_kazuha: ['嗨～小布丁！我是從大阪來的遠山和葉喔！', [
+    ['🎀 問手工御守', '和葉姊姊的御守裡裝了什麼？', '裝著滿滿的祝福和幸運！只要帶在身邊，就好像有人一直在幫你加油。', '好溫暖喔！', '我也把祝福分給你，今天一定順順利利！'],
+    ['🥋 聊合氣道', '合氣道要怎麼練才會厲害？', '不用靠蠻力，而是順著對方的力氣巧妙化解，女生也能練得超強喔！', '好帥氣！', '以後有機會教你幾招防身小技巧！'],
+    ['🧢 聊服部平次', '平次是不是又亂跑不見了？', '對呀！那個大笨蛋一看到案子就忘記吃飯，真是讓人操心死了！', '你很關心他呢！', '才、才沒有呢，我們只是青梅竹馬啦！']
+  ]],
+  b_sera: ['哈囉！叫我真純就好，我們一起來玩推理吧！', [
+    ['🥋 問截拳道', '世良姊姊的截拳道好酷！', '這是跟我大哥學的！動作快、準、狠，一瞬間就能制服壞人！', '我也想學幾招！', '先從每天運動伸展開始，身體健康最強壯！'],
+    ['🏍 聊重機兜風', '你騎機車去辦案好帥喔！', '哈哈謝啦！騎車趕到現場的時候，感覺自己像電影主角一樣！', '超帥氣的！', '對了，乘車記得繫好安全帶、騎腳踏車戴安全帽喔！'],
+    ['🕵️ 聊柯南', '你是不是早就發現柯南很特別了？', '嘿嘿，他可是我遇過最厲害的魔法師喔……這件事先當我們的小祕密！', '好神秘喔！', '解開謎題的瞬間最過癮了，對吧！']
+  ]],
+  b_okiya: ['你好呀，剛好我燉了一鍋咖哩，要不要來一碗？', [
+    ['🍛 聊拿手咖哩', '沖矢哥哥最拿手的是咖哩嗎？', '沒錯，慢慢熬煮的咖哩和馬鈴薯燉肉，吃一口就能恢復滿滿體力喔。', '聞起來好香！', '那我幫你盛一大碗，吃飽才有力氣完成任務！'],
+    ['📚 聊工藤家書庫', '工藤家的推理小說你都看完了嗎？', '幾乎都翻過一遍了，讀書就像在腦海裡環遊世界一樣有趣。', '我也喜歡看書！', '太棒了！每天讀幾頁書，頭腦會越來越靈活。'],
+    ['👓 問眼鏡祕密', '為什麼你總是瞇著眼睛笑呢？', '呵呵，因為隨時保持從容微笑，大家才不會緊張呀。', '好溫柔喔！', '有需要幫忙的時候，隨時敲敲隔壁門找我喔。']
+  ]],
+  b_sato: ['警視廳搜查一課佐藤美和子！今天治安交給我吧！', [
+    ['🚗 聊帥氣警車', '佐藤警官開車追犯人超帥！', '為了保護市民的安全，我可練了一手超穩的過彎技術喔！', '警視廳之花太強了！', '哈哈謝謝你，我會繼續守護大家的笑容！'],
+    ['👮 聊高木警官', '高木警官最近表現怎麼樣？', '他雖然有時迷迷糊糊，但非常善良又拼命，是很可靠的夥伴喔！', '你們超配的！', '哎呀，小孩子家怎麼也跟著目暮警部起鬨啦～'],
+    ['💪 問正義信念', '當刑警最開心的事是什麼？', '看到大家安心笑出來的那一刻，再辛苦都值得了！', '好令人敬佩！', '你每天守信用完成任務，也很有正義感喔！']
+  ]],
+  b_genta: ['我是少年偵探團團長元太！今天要去哪裡探險？', [
+    ['🍚 聊鰻魚飯', '元太最喜歡吃什麼？', '當然是香噴噴的鰻魚飯！只要一想到鰻魚飯，我就能跑得比誰都快！', '我也餓了啦！', '那快把任務做完，我們一起吃頓大餐吧！'],
+    ['🔍 偵探團出動', '今天偵探團有什麼任務？', '今天的超級任務就是「幫小布丁把今日清單全部完成」！大家衝啊！', '收到！團長！', '很好！很有精神，給妳蓋個偵探團認證章！'],
+    ['💪 問團長祕訣', '當團長最重要的是什麼？', '要有勇氣衝在最前面，還要把好吃的分給大家……好吧，鰻魚飯分你一口！', '元太大方！', '嘿嘿，因為我們是最棒的偵探團夥伴嘛！']
+  ]],
+  b_mitsuhiko: ['你好！我是光彥，今天也查到好多有趣的科學知識喔！', [
+    ['📖 聽小知識', '光彥，分享一個有趣的小知識吧！', '你知道嗎？星星其實不會自己眨眼，是地球的大氣層讓星光看起來一閃一閃的！', '哇長知識了！', '對吧！多看書就能發現好多世界上的奧祕喔！'],
+    ['🔬 問推理筆記', '你平常都怎麼記線索的？', '我會把時間、地點和奇怪的地方條列寫下來，整理完答案就浮出來了！', '好有條理！', '寫功課前先列好順序，做起來也會超快喔！'],
+    ['🌸 聊偵探團夥伴', '偵探團裡你最佩服誰？', '柯南推理超強、灰原懂好多科學、步美很溫柔、元太超有活力，大家都超棒！', '光彥也很優秀！', '謝謝你！那我們一起繼續學習新知識吧！']
+  ]],
+  b_ayumi: ['嗨嗨～小布丁！今天我們一起去冒險好不好？', [
+    ['🌟 聊最喜歡的事', '步美平常最喜歡做什麼？', '最喜歡跟偵探團的大家一起去野餐、尋寶，還有畫可愛的圖畫！', '好開心喔！', '下次我們也一起畫一張大家的合照吧！'],
+    ['🎀 聊灰原哀', '你跟小哀感情好好喔！', '對呀！小哀平常酷酷的，其實超溫柔的，還會教我好多厲害的事呢！', '好棒的友誼！', '能交到這麼好的朋友，真的超級幸福！'],
+    ['💗 互相加油', '步美，我們一起幫彼此加油吧！', '好喔！小布丁一定是最棒的——加油加油加油！✨', '步美也加油！', '耶！我們約好今天都要開開心心的喔！']
+  ]],
+  b_takagi: ['啊、你好！我是高木涉，今天有什麼需要幫忙的嗎？', [
+    ['📝 聊警探筆記', '高木警官的筆記本寫得滿滿的耶！', '對呀，因為前輩教過我，把每個小細節都認真記下來就不會遺漏！', '好認真的警官！', '謝謝誇獎！只要肯努力，一定會越來越進步的！'],
+    ['💐 聊佐藤警官', '今天有準備驚喜給佐藤小姐嗎？', '咦、咦？！你怎麼知道……我只是想謝謝她平常這麼照顧我啦！', '祝你成功喔！', '謝、謝謝你幫我打氣！我會鼓起勇氣的！'],
+    ['🔍 聊柯南幫忙', '柯南又搶先破案了嗎？', '哈哈每次都是他給我們關鍵提示，有時候我還懷疑他其實是大人呢！', '哈哈噓——', '欸？怎麼笑得這麼神祕呀？']
+  ]],
+  b_yusaku: ['你好，小朋友。看來你對推理也很感興趣呢。', [
+    ['✍️ 問寫小說靈感', '工藤叔叔寫推理小說的靈感從哪來？', '來自日常生活裡細微的觀察，還有天馬行空的想像力喔！', '我也喜歡編故事！', '太棒了，說不定未來你也會成為大作家呢！'],
+    ['🧠 問解謎技巧', '遇到完全想不通的謎題怎麼辦？', '試著把問題「倒過來看」，換一個角度思考，常常就會豁然開朗。', '學到一招了！', '非常聰明，馬上就抓到重點了！'],
+    ['👨‍👩‍👦 聊新一小時候', '新一小時候也是這麼愛推理嗎？', '是啊，他從小就抱著福爾摩斯不放，常常跟我玩猜謎比賽呢。', '父子感情真好！', '家人一起學習和玩耍，是最珍貴的時光。']
+  ]],
+  b_yukiko: ['哈囉小可愛～我是工藤有希子喔！', [
+    ['🎭 問演技祕訣', '有希子阿姨以前是大明星耶！', '對呀！演戲的祕訣就是充滿自信、大大方方表現自己！', '好閃耀喔！', '你笑起來也跟大明星一樣耀眼呢！'],
+    ['💄 聊易容術', '你跟基德的爸爸是同一個師父嗎？', '沒錯～黑羽盜一先生教了我好多神奇的變裝術喔！', '太酷了吧！', '下次有空也教你幾個簡單的派對小魔術！'],
+    ['✈️ 聊環遊世界', '阿姨最喜歡哪個國家？', '每個地方都有好吃的美食和親切的人，等你長大也可以去看看世界喔！', '好想去旅行！', '現在就先從書本和寶物圖鑑展開世界之旅吧！']
+  ]],
+  b_jodie: ['Hello! 我是茱蒂老師，今天也要元氣滿滿喔！', [
+    ['🔤 學一句英文', '茱蒂老師，教我一句帥氣的英文！', '來跟我唸：「You can do it!」意思就是「你一定做得到！」', 'You can do it!', 'Awesome! 發音超標準，給你滿分！'],
+    ['🎮 聊電玩遊戲', '聽說老師很會玩街機遊戲？', 'Haha! 休假的時候玩一下遊戲超紓壓的，不過一定要先做完正事喔！', '我也是先做完任務！', 'Good job! 最喜歡自律的好孩子了！'],
+    ['🇺🇸 聊 FBI 工作', 'FBI 探員平常都在做什麼？', '跟夥伴合作收集情報、保護大家的安全，團隊合作最重要！', '辛苦你們了！', 'Thank you! 聽到你的鼓勵我更有力量了！']
+  ]],
+  b_james: ['哼，我是長野縣警的大和敢助。有案子就交給我吧！', [
+    ['🏔 聊長野山區', '長野的冬天是不是常常下大雪？', '沒錯，漫天白雪看起來很美，但走山路可要非常小心才行。', '要保重身體喔！', '哈哈，謝謝你提醒，我這條腿還硬朗得很！'],
+    ['🤝 聊高明和由衣', '你跟高明、由衣配合得好有默契！', '高明那傢伙老愛引經據典，由衣總是替我操心，但他們是最棒的戰友。', '最強三人組！', '哼，算你有眼光！'],
+    ['🦯 問勇敢的意義', '大和警部看起來好有氣勢！', '真正的勇氣不是不怕困難，而是就算受過傷，依然站起來向前走。', '好帥的一句話！', '記在心裡，遇到困難就別輕易認輸！']
+  ]],
+  b_iori: ['……你好。看到你的笑容，讓我想起水族館那天。', [
+    ['🎡 聊摩天輪與水族館', '庫拉索最喜歡水族館裡的什麼？', '發著七彩光芒的大摩天輪，還有和孩子們一起玩耍的那段時光。', '我們也是你的朋友！', '……謝謝你。那是我最珍貴的記憶。'],
+    ['🎯 一起玩飛鏢', '聽說你玩飛鏢百發百中！', '只要放鬆手腕、看準目標中心，咻一下就能正中紅心，我教你吧！', '哇正中紅心了！', '做得太棒了！就像少年偵探團一樣厲害。'],
+    ['🌈 問五色透明卡', '這五張彩色的卡片好漂亮喔！', '紅、藍、黃、綠、白……原本只是記號，但和大家相遇後，它們變成了溫暖的顏色。', '我也喜歡這些顏色！', '願這些色彩也能為你帶來滿滿的勇氣。']
+  ]],
+  b_megure: ['喔！我是警視廳目暮警部，今天一切平安無事嗎？', [
+    ['🎩 問棕色帽子', '警部為什麼一直戴著這頂帽子？', '這頂帽子背後有一段對我和太太來說非常重要的回憶喔。', '好珍貴的帽子！', '所以要好好珍惜對你重要的人和物品喔！'],
+    ['🕵️ 聊毛利老弟', '毛利叔叔今天又出現在案發現場了嗎？', '哎呀別提了，只要毛利老弟出現的地方就一定有案子，真是的哈哈！', '哈哈好巧喔！', '還好每次最後都能順利破案呢！'],
+    ['🚔 聊搜查一課', '高木和佐藤表現得好嗎？', '他們兩個都很認真負責，是我最引以為傲的部下喔！', '警部也是好長官！', '哈哈謝謝你，小布丁今天也要加油喔！']
+  ]],
+  b_chiba: ['嗨！我是千葉刑警，剛巡邏完肚子好餓喔～', [
+    ['🍙 聊最愛美食', '千葉刑警今天想吃什麼便當？', '炸豬排便當加兩個鮭魚飯糰……不行不行，最近要多吃青菜才健康！', '均衡飲食最棒！', '對對對，一起吃得營養又健康！'],
+    ['🎬 聊特攝片', '聽說你很喜歡看假面超人！', '沒錯！正義英雄變身打敗壞人的那一刻，不管幾歲看都超熱血的！', '我也喜歡看！', '太棒了，我們真是志同道合的好朋友！'],
+    ['💌 聊三池苗子', '苗子警官好像一直都很關心你喔！', '欸？！真的嗎？她從小就超級認真又可愛……我得趕快變帥一點才行！', '幫你加油喔！', '謝啦！我會加油的！']
+  ]],
+  b_kuroda: ['你好，我是詹姆斯·布拉克。很高興認識這麼優秀的孩子。', [
+    ['🦁 聊冷靜指揮', '詹姆斯長官怎麼都能保持這麼鎮定？', '越是緊急的時刻，領導者越要沉著冷靜，才能做出正確的判斷。', '很有大將之風！', '謝謝，你遇到考試或挑戰時也可以這樣深呼吸喔。'],
+    ['🇺🇸 聊 FBI 團隊', '赤井、茱蒂、卡邁爾都是你的部下嗎？', '是的，他們每個人都有自己最擅長的本領，合在一起就是最強的團隊。', '每個人都有專長！', '沒錯，找到自己的閃光點並發揮出來就是最棒的。'],
+    ['🍵 聊日常休閒', '長官放假時喜歡做什麼？', '泡一杯香濃的紅茶，讀讀書、散散步，享受平靜的時光。', '好優雅的生活！', '忙碌之餘也別忘了給自己留點放鬆時間喔。']
+  ]],
+  b_yumi: ['哈囉！交通部宮本由美報到～交通安全最重要喔！', [
+    ['🚦 問交通規則', '由美姊姊，過馬路要注意什麼？', '停、看、聽！就算綠燈也要先左右看看有沒有車，安全第一喔！', '我都會看左右！', '太棒了！頒給你一張「交通安全模範獎狀」！'],
+    ['♟ 聊羽田秀吉', '由美姊姊，秀吉其實是將棋名人耶！', '嘿嘿我現在知道了啦，平常看他傻傻的，下起棋來帥到發光呢！', '好幸福喔！', '等我休假就跟他去吃頓好吃的大餐！'],
+    ['🐶 聊愛犬小不點', '你養的狗狗最近好嗎？', '每天都活蹦亂跳的，跟我一樣精力充沛喔！', '好可愛喔！', '下次帶牠來公園跟你玩丟球！']
+  ]],
+  b_naeko: ['你好呀！我是交通部的三池苗子，今天出門也要注意安全喔！', [
+    ['🎀 聊雙馬尾造型', '苗子姊姊的雙馬尾好可愛！', '謝謝你！綁起來巡邏的時候比較清爽，看起來也更有精神對吧！', '元氣滿滿！', '你今天看起來也很有精神喔！'],
+    ['🚔 問巡邏趣事', '平常巡邏都做些什麼呢？', '提醒大家守規矩、幫忙迷路的小朋友找爸爸媽媽，超級有成就感！', '你好親切喔！', '有需要幫忙的時候，找路上的警察叔叔阿姨就對了！'],
+    ['💗 聊千葉刑警', '你有跟千葉哥哥說那個小時候的約定嗎？', '嘿嘿，雖然等了好久，但他終於想起來了！我真的好開心喔～', '恭喜苗子姊姊！', '謝謝你的祝福，希望你每天也像我一樣開心！']
+  ]],
+  b_kazami: ['你好，我是公安警察風見裕也。請問有什麼指示？', [
+    ['📋 聊工作筆記', '風見叔叔平常是不是超級忙？', '沒辦法，降谷先生的要求非常高……不過能跟他一起守護國家我很驕傲！', '辛苦風見叔叔了！', '謝謝你的體貼！聽你這麼說疲勞瞬間少一半！'],
+    ['🍜 聊偷閒美食', '忙完工作後你最想吃什麼？', '一碗熱呼呼的咖哩烏龍麵，再配上冰涼的麥茶，簡直人間美味！', '聽起來好好吃！', '努力完成任務後的點心，永遠是最好吃的！'],
+    ['🕶 問保密工作', '公安的工作聽起來好神秘！', '因為我們在幕後默默守護大家的日常，平靜的一天就是最好的獎賞。', '謝謝你們的守護！', '這是我們的職責！你也要好好過每一天喔。']
+  ]],
+  b_shukichi: ['你好呀！我是羽田秀吉，要不要來下一盤將棋？', [
+    ['♟ 問下棋祕訣', '太閣名人，下將棋怎麼才能贏？', '不要只看眼前這一步，試著想像「接下來三步會發生什麼事」喔！', '好聰明的想法！', '規劃每天的行程也是一樣的道理呢！'],
+    ['🧠 問記憶力', '聽說你過目不忘，是真的嗎？', '哈哈，把喜歡的事物放進腦海裡，就像珍藏寶物一樣，自然就記得住了。', '我也想記住好多知識！', '從你最感興趣的主題開始記，很快就會變記憶高手！'],
+    ['💕 聊由美小姐', '你最喜歡由美姊姊哪一點？', '她開朗又正義，每次看到她的笑容，我就覺得自己充滿了力量！', '好暖心喔！', '謝謝你聽我分享，祝你今天也笑口常開！']
+  ]],
+  b_chianti: ['哼，找我有什麼事？我現在正準備出發呢！', [
+    ['🦋 問蝴蝶刺青', '你左眼旁邊的鳳尾蝶好顯眼！', '這可是我的專屬標記，酷吧！走在路上誰都一眼認得出來。', '很有個性呢！', '哼，算你有點審美眼光！'],
+    ['🏎 聊帥氣跑車', '聽說你也喜歡開酷炫的車？', '那當然，速度感最棒了！不過小朋友要乖乖坐好安全座椅喔。', '哈哈意外地貼心！', '囉嗦！這是基本常識好嗎！'],
+    ['🎯 聊搭檔科恩', '科恩平常話都很少嗎？', '那傢伙老是沉默寡言，不過我們默契好得很，一個眼神就懂！', '很棒的默契！', '好了，我要走了，你別偷懶啊！']
+  ]],
+  b_akemi: ['哎呀，你好呀小朋友！我是帝丹小學的副導師若狹留美喔～', [
+    ['👓 問眼鏡和迷糊', '若狹老師怎麼老是跌倒？', '哎呀真是的，一不小心就撞到桌子了……不過該保護同學的時候我可不會迷糊喔！', '老師其實超強的！', '呵呵，這是我們的小祕密喔！'],
+    ['📚 聊上課趣事', '在帝丹小學當老師開心嗎？', '柯南和少年偵探團每天都活力滿滿，跟大家相處非常有趣呢！', '我也喜歡上學！', '保持喜歡學習的心情，每天都會有新發現喔！'],
+    ['♟ 問神祕將棋', '老師口袋裡好像有一枚將棋？', '……這是一枚非常珍貴的護身符，提醒我永遠不要忘記重要的事。', '老師加油！', '謝謝你，真是一個溫柔的孩子。']
+  ]],
+  b_kobayashi: ['各位同學早安！小林老師今天也要陪大家一起學習喔！', [
+    ['📖 聊偵探小說', '老師也喜歡看推理小說嗎？', '最喜歡江戶川亂步老師的作品了！每次看都緊張又興奮呢！', '老師好可愛！', '看課外書能讓想像力飛得更高喔！'],
+    ['🔍 聊少年偵探團', '老師是少年偵探團的顧問對吧？', '沒錯！大家去冒險可以，但一定要注意安全、不可以偷偷跑去危險的地方喔！', '知道囉老師！', '太棒了，最乖的小朋友給你一顆大星星！'],
+    ['🌸 聊白鳥警官', '白鳥警官送的櫻花書籤好漂亮！', '哎呀！你、你怎麼看到啦……那是我非常珍惜的寶物喔！', '祝老師幸福！', '謝謝小布丁，老師好開心喔！']
+  ]],
+  b_rena: ['各位觀眾大家好，這裡是主播水無怜奈。今天也為您播報好消息！', [
+    ['🎤 體驗當主播', '怜奈姊姊，怎麼才能像主播一樣講話清楚？', '挺直背、放慢一點速度、咬字清楚，再加上自信的微笑就完美了！', '我試試看！', '哇唸得超棒的，簡直像小小電視主播！'],
+    ['🕊 問祕密使命', '聽說你其實一直在暗中幫助正義的一方？', '噓……不管身處多困難的環境，只要心裡記得正義，就不會迷路。', '你好勇敢！', '謝謝你的鼓勵，這份力量我收下了。'],
+    ['📺 聊今日頭條', '今天的頭條新聞是什麼？', '「最新快報！小布丁今天表現超級優秀，獲得全場一致好評！」', '哈哈太開心了！', '感謝收看，我們下次新聞再見囉！']
+  ]],
+  b_mary: ['哼，別把我當普通小孩子看，叫我瑪麗就好。', [
+    ['🇬🇧 問英國生活', '瑪麗阿姨以前住在倫敦嗎？', '沒錯，倫敦的霧、大笨鐘和下午茶都很讓人懷念呢。', '好想去倫敦看看！', '好好學習外語和知識，未來就能自己去環遊世界！'],
+    ['🥋 問格鬥身手', '你變小了身手還是超強耶！', '身為探員，就算身體縮小了，機智與反應力也絕對不能退步！', '太佩服了！', '看來你也很有潛力，要繼續鍛鍊自己喔！'],
+    ['👨‍👩‍👧 聊三個孩子', '秀一、秀吉、真純都很像你呢！', '這三個孩子各有各的堅持……雖然讓我操心，但他們都是我的驕傲。', '好酷的一家人！', '謝謝你。你也一定讓爸爸媽媽非常驕傲。']
+  ]],
+  b_shiratori: ['你好，警視廳搜查一課的白鳥任三郎。', [
+    ['🌸 聊櫻花約定', '白鳥警官終於找到櫻花女孩了呢！', '是的，沒想到多年後還能和小林老師重逢，真是命運最美的安排。', '像童話故事一樣！', '所以永遠不要放棄美好的期待喔！'],
+    ['🏛 聊建築藝術', '聽說白鳥警官很懂建築和美食？', '工作之餘研究美麗的建築設計，能培養細膩的觀察力，對辦案很有幫助。', '好有品味喔！', '下次有空帶你認識世界各地的著名地標！'],
+    ['👮 聊正義職責', '警官平常最重視什麼？', '遵守約定、保護弱小，以及不放過任何一絲線索！', '我也要當守約定的人！', '說得好！非常欣賞你的決心！']
+  ]],
+  b_yui: ['你好呀，我是長野縣警的上原由衣！', [
+    ['🏔 聊長野風景', '長野的山林一定很漂亮吧？', '四季都很美喔！春天賞花、秋天滿山紅葉，空氣超級清新。', '好想去看看！', '有機會歡迎來長野玩，我當你的導遊！'],
+    ['🤝 聊大和警部', '你一直都在幫大和警部加油呢！', '敢助雖然嘴巴不饒人，但其實非常溫柔又可靠，我會一直支持他的！', '你們感情真好！', '謝謝你，有好夥伴並肩作戰真的讓人安心！'],
+    ['🚓 問女警日常', '當刑警會不會很辛苦？', '有時候會很累，但只要想到能保護大家的安全，就又充滿力氣了！', '由衣姊姊加油！', '謝謝小布丁，我們一起加油吧！']
+  ]],
+  b_takaaki: ['你好，我是諸伏高明。凡事皆有其理，今日有何疑問？', [
+    ['📜 聽一句古語', '高明先生，分享一句三國志名言吧！', '「非淡泊無以明志，非寧靜無以致遠。」意思是靜下心專注，就能走得很遠喔！', '好有智慧喔！', '你一點就通，真是聰慧過人！'],
+    ['🧠 問推理思路', '你怎麼總能比別人更快想出答案？', '不被表象迷惑，把所有條件整理清楚，真相自然水落石出。', '我也來試試看！', '非常好，期待你展現精彩的推理！'],
+    ['🎵 聊弟弟景光', '高明先生很想念景光吧？', '是的，我的弟弟溫柔又勇敢，他留下的信念，我會連他的份一起走下去。', '景光一定也很以你為榮！', '……謝謝你這句溫暖的話。']
+  ]],
+  b_korn: ['……你好。', [
+    ['🎯 問狙擊專注', '科恩叔叔怎麼能一直這麼安靜？', '……安靜，才能看清目標。不急躁，就會準確。', '原來如此！', '……嗯，做得不錯。'],
+    ['🎡 聊摩天輪', '你好像滿喜歡摩天輪的？', '……高處的風景，很安靜。旋轉一圈，心情會平靜。', '我也喜歡摩天輪！', '……不錯的選擇。'],
+    ['🕶 問墨鏡背後', '你其實很重視搭檔基安蒂吧？', '……夥伴，要互相掩護。你也是，要珍惜朋友。', '謝謝科恩叔叔！', '……加油。']
+  ]],
+  b_momiji: ['哎呀，你好呀～我是京都的大岡紅葉喔！', [
+    ['🃏 聊百人一首歌牌', '歌牌比賽聽起來超帥的！', '只要一聽到第一個音節，手就要比閃電更快把牌拍出去，靠的是敏銳的聽力喔！', '聽力好厲害！', '你平常專心聽講，聽力也一定能練得超強！'],
+    ['👘 聊京都文化', '京都有什麼好玩的地方？', '古老的神社、漂亮的楓葉，還有精緻的和菓子，處處都像畫一樣美喔！', '好想吃和菓子！', '下次請伊織準備最美味的抹茶點心招待你！'],
+    ['💞 聊平次君', '紅葉姊姊跟和葉還在比賽嗎？', '勝負還沒分出來呢！不過無論歌牌還是努力，我都不會輕易認輸的！', '很有鬥志耶！', '就是要有這股自信才對嘛！']
+  ]],
+  b_camel: ['你好！我是 FBI 的卡邁爾，別看我長得高大，其實我很好相處喔！', [
+    ['🚗 問極限駕駛', '卡邁爾叔叔開車技術連赤井都稱讚！', '哈哈謝啦！靠的是冷靜看清路況，還有絕對不慌張的穩定心態！', '好可靠的司機！', '以後有緊急任務，隨時叫我出車支援！'],
+    ['💪 聊外表與內心', '大家第一次看到你會不會嚇一跳？', '常常耶，哈哈！不過熟了之後大家都說我是溫柔的大個子！', '不能只看外表！', '說得太對了！一顆善良的心才是最重要的。'],
+    ['🤝 聊 FBI 夥伴', '跟赤井先生和茱蒂老師合作好玩嗎？', '非常開心！雖然有時我會出點小差錯，但大家總是彼此扶持，超棒的！', '犯錯改過就會更強！', '沒錯，我們一起成為更厲害的人吧！']
+  ]],
+  b_iori2: ['您好，我是大岡家的管家伊織無我，隨時為您效勞。', [
+    ['🎩 問管家禮儀', '當一位完美的管家要會做什麼？', '要細心觀察主人的需要、把行程整理得井井有條，並且隨時保持優雅從容。', '好厲害的本領！', '您每天把自己的任務安排得這麼好，也極有管家風範呢！'],
+    ['🍵 聊泡茶技巧', '伊織先生最拿手的是什麼茶？', '京都宇治的玉露煎茶，水溫剛剛好時，喝起來清香又回甘。', '感覺好放鬆！', '讀書讀累了，喝杯溫開水或熱茶歇口氣最棒了。'],
+    ['🤫 問「和田進一」', '為什麼你之前化名「和田進一」？', '呵呵，那是工作上的一點小趣味……您也發現唸起來很像「我是新一」了嗎？', '發現了！超好笑！', '您的觀察力果然非同凡響！']
+  ]],
+  b_chihaya: ['嗨！我是神奈川縣警交通機動隊的萩原千速，叫我千速姊姊就好！', [
+    ['🏍 聊「風之女神」', '大家叫你「風之女神」好帥喔！', '騎著白馬機車迎風奔馳、守護道路安全，這就是我的驕傲！', '簡直是女英雄！', '哈哈謝謝你，不過騎腳踏車一樣要記得戴安全帽喔！'],
+    ['👦 聊弟弟研二', '千速姊姊很疼愛弟弟研二吧？', '那個調皮的弟弟以前總讓我擔心，但他是個很了不起的英雄。', '研二哥哥很帥氣！', '嗯！我會連著他的那份笑容，一起帥氣地奔跑下去！'],
+    ['⚡ 問勇敢秘訣', '遇到危險怎麼能像你一樣毫不猶豫？', '因為身後有想保護的人！只要心裡想著「一定要幫忙」，勇氣就會湧上來！', '太酷了千速姊姊！', '小布丁也要帶著滿滿勇氣，衝破今天的每一關喔！']
+  ]]
+};
+var CHAT_CUR = null;
+function charChatHtml(id) {
+  var C = CHAR_CHAT[id], t = TR_BY[id];
+  if (!C || !t) return '';
+  var seen = (S.chatSeen && S.chatSeen[id]) ? S.chatSeen[id] : {};
+  var doneN = 0, i;
+  for (i = 0; i < C[1].length; i++) if (seen[i]) doneN++;
+  var ava = BADGE_IMG[id] ? '<img class="cchat-ava" src="' + BADGE_IMG[id] + '" alt="">' : '';
+  var log = '<div class="cchat-msg">' + ava + '<div class="cchat-bub">' + esc(C[0]) + '</div></div>';
+  var opts = '';
+  if (CHAT_CUR && CHAT_CUR.id === id) {
+    var tp = C[1][CHAT_CUR.idx];
+    log += '<div class="cchat-msg me"><div class="cchat-bub">' + esc(tp[1]) + '</div></div>';
+    log += '<div class="cchat-msg">' + ava + '<div class="cchat-bub">' + esc(tp[2]) + '</div></div>';
+    if (CHAT_CUR.step >= 2) {
+      log += '<div class="cchat-msg me"><div class="cchat-bub">' + esc(tp[3]) + '</div></div>';
+      log += '<div class="cchat-msg">' + ava + '<div class="cchat-bub">' + esc(tp[4]) + '</div></div>';
+    } else {
+      opts += '<span class="cchat-btn follow" data-act="charReply" data-arg="' + id + ':' + CHAT_CUR.idx + '">💬 ' + esc(tp[3]) + '</span>';
+    }
+  }
+  for (i = 0; i < C[1].length; i++) {
+    var active = CHAT_CUR && CHAT_CUR.id === id && CHAT_CUR.idx === i && CHAT_CUR.step < 2;
+    if (active) continue;
+    opts += '<span class="cchat-btn' + (seen[i] ? ' done' : '') + '" data-act="charChat" data-arg="' + id + ':' + i + '">' + (seen[i] ? '✓ ' : '') + esc(C[1][i][0]) + '</span>';
+  }
+  return '<div class="cchat" id="cchat">' +
+    '<div class="cchat-h"><b>💬 跟 ' + esc(t.name) + ' 互動對話</b><span class="cchat-prog">已聊過 ' + doneN + ' / ' + C[1].length + '</span></div>' +
+    '<div class="cchat-log">' + log + '</div><div class="cchat-opts">' + opts + '</div></div>';
+}
 function newCount() { var n = 0, o = S.gemNew || {}; for (var k in o) if (o.hasOwnProperty(k) && owned(k)) n++; return n; }
 function isNewGem(id) { return !!(S.gemNew && S.gemNew[id]); }
 function openTreasure(id) {
   var t = TR_BY[id];
+  CHAT_CUR = null;
   if (isNewGem(id)) { delete S.gemNew[id]; saveS(); renderTasks(); }
   openOv(function () {
     var g = gotOf(id), has = g && g.n > 0, h = '<div class="ovh"><span class="x" data-act="catalog">← 收藏區</span><h2></h2><span class="x" data-act="close">關閉</span></div>';
@@ -3153,12 +3712,13 @@ function openTreasure(id) {
       h += '<div class="tdetail"><div class="pbig' + (has ? '' : ' lock') + '"' + (has ? ' data-act="poster" data-arg="' + id + ':0"' : '') + '><img src="' + posterUrl(id) + '" alt=""></div>' +
         (has ? '<div class="tact">🔍 點海報可以放大觀賞' + (MOVIE_SCENES[+id.slice(2)] ? '，左右滑動看 ' + MOVIE_SCENES[+id.slice(2)] + ' 張名場面' : '') + '</div>' : '');
     } else {
-      h += '<div class="tdetail"><div class="tbig' + (has ? ' play' : '') + '" id="tbig"' + (has ? ' data-act="tplay" data-arg="' + id + '"' : '') + '><span class="tart" id="tart">' + gemSvg(t, 130, !has) + '</span></div>' +
+      h += '<div class="tdetail"><div class="tbig' + (has ? ' play' : '') + '" id="tbig"' + (has ? ' data-act="tplay" data-arg="' + id + '"' : '') + '><span class="ts-bg" id="tsbg"></span><span class="tart" id="tart">' + gemSvg(t, 130, !has) + '</span></div>' +
         (has ? '<div class="tact" id="tact">👆 點一下寶物，看看會發生什麼事' + (S.tplay && S.tplay[id] ? '（已經玩了 ' + S.tplay[id] + ' 次）' : '') + '</div>' : '');
     }
     h += '<div class="tno">No.' + ('00' + t.no).slice(-3) + '・' + t.cat + '</div>' +
       '<div class="tname">' + (has ? t.name : '？？？') + '</div><div class="trare">' + rarityTag(t.r) + '</div>' +
       '<div class="tintro">' + (has ? esc(t.intro) : '還沒有取得這件寶物。<br>取得方式：' + esc(gemHint(t))) + '</div>';
+    if (has && CHAR_CHAT[id]) h += charChatHtml(id);
     if (has) {
       h += '<div class="tlog"><div><b>第一次取得</b>' + fmtTs(g.first) + '</div><div><b>最近一次</b>' + fmtTs(g.log[g.log.length - 1]) + '</div>' +
         '<div><b>累計取得</b>' + g.n + ' 次</div><div class="tlist"><b>最近紀錄</b>';
@@ -4447,29 +5007,59 @@ function showDoor(gem, first) {
   DOORQ.push({ gem: gem, first: first });
   if (!DOOR) nextDoor();
 }
+function doorCls(s) { var r = DOOR && DOOR.gem ? DOOR.gem.r : 1; return s + (r >= 5 ? ' r5' : (r === 4 ? ' r4' : '')); }
+function doorMotes(rc) {
+  var box = $('dmotes'); if (!box) return;
+  box.innerHTML = '';
+  var syms = ['✦', '✨', '⭐', '✧'], n = DOOR && DOOR.gem && DOOR.gem.r >= 4 ? 22 : 14;
+  for (var i = 0; i < n; i++) (function (i) {
+    var m = document.createElement('span'), ang = (i / n) * Math.PI * 2 + Math.random() * 0.4, dist = 120 + Math.random() * 160;
+    m.className = 'dmote';
+    m.textContent = syms[i % syms.length];
+    m.style.color = i % 3 === 0 ? rc : '#fff3bf';
+    m.style.fontSize = (13 + Math.floor(Math.random() * 12)) + 'px';
+    box.appendChild(m);
+    setTimeout(function () {
+      m.style.opacity = '1';
+      var tr = 'translate(' + Math.round(Math.cos(ang) * dist) + 'px,' + Math.round(Math.sin(ang) * dist - 35) + 'px) scale(1.25)';
+      m.style.webkitTransform = tr; m.style.transform = tr;
+    }, 60 + i * 35);
+    setTimeout(function () { m.style.opacity = '0'; }, 950 + i * 35);
+  })(i);
+}
 function nextDoor() {
   var it = DOORQ.shift(), el = $('door');
   if (!it) { DOOR = null; el.className = ''; if ($('rpg').style.display === 'block') rpgArm(); return; }
   DOOR = it;
   clearTimeout(RPG.timer);
   var g = it.gem, rc = RARITY[g.r][1];
+  var bm = $('dbeams');
+  if (bm && !bm.firstChild) {
+    var bh = '';
+    for (var bi = 0; bi < 8; bi++) bh += '<span class="dbeam" style="-webkit-transform:rotate(' + (bi * 45) + 'deg);transform:rotate(' + (bi * 45) + 'deg)"></span>';
+    bm.innerHTML = bh;
+  }
+  if ($('dmotes')) $('dmotes').innerHTML = '';
   $('dgem').innerHTML = '<div class="dray" style="background:radial-gradient(circle, ' + rc + ' 0%, rgba(255,255,255,0) 70%)"></div>' + gemSvg(g, 200);
   $('dcard').innerHTML = (it.first ? '<div class="dnew">✨ 新寶物！</div>' : '') + '<div class="dname">' + esc(g.name) + '</div><div class="drare">' + rarityTag(g.r) + '</div>' +
     '<div class="dintro">' + esc(g.intro) + '</div><span class="dbtn" data-act="doorClose">✨ 收下寶物</span>';
-  el.className = 'on';
+  el.className = '';
+  void el.offsetWidth;
+  el.className = doorCls('on');
   doorFit();
   if (S.gemNew && S.gemNew[g.id]) { delete S.gemNew[g.id]; saveS(); }
   tsound('door');
   clearTimeout(DOOR.t1); clearTimeout(DOOR.t2);
-  DOOR.t1 = setTimeout(doorOpen, 900);
+  DOOR.t1 = setTimeout(doorOpen, 780);
 }
 function doorOpen() {
   if (!DOOR || $('door').className.indexOf('open') >= 0) return;
   clearTimeout(DOOR.t1);
-  $('door').className = 'on open';
-  tsound(DOOR.gem.r >= 4 ? 'fanfare' : 'ting');
+  $('door').className = doorCls('on open');
+  doorMotes(RARITY[DOOR.gem.r][1]);
+  tsound(DOOR.gem.r >= 4 ? 'fanfare' : 'doorOpen');
   if (DOOR.gem.r >= 4) celebrate(false);
-  DOOR.t2 = setTimeout(function () { if (DOOR) $('door').className = 'on open show'; }, 1300);
+  DOOR.t2 = setTimeout(function () { if (DOOR) $('door').className = doorCls('on open show'); }, 1150);
 }
 /* ===== 禮盒：寶物先裝在禮盒裡，拆開才知道是什麼（盒子顏色代表稀有度） ===== */
 var GIFT_STYLE = { 1: ['#c8a27a', '#e03131', '牛皮紙禮盒'], 2: ['#51cf66', '#ffffff', '綠色禮盒'], 3: ['#339af0', '#ffd43b', '藍色禮盒'],
@@ -4756,7 +5346,7 @@ function cloudPack() {
   o.cards = S.cards || [];
   for (i = 0; i < CLOUD_FLAGS.length; i++) if (S[CLOUD_FLAGS[i]]) o[CLOUD_FLAGS[i]] = S[CLOUD_FLAGS[i]];
   for (i = 0; i < CLOUD_NEWER.length; i++) if (S[CLOUD_NEWER[i]] !== undefined) o[CLOUD_NEWER[i]] = S[CLOUD_NEWER[i]];
-  o.tplay = S.tplay || {}; o.coupons = S.coupons || []; o.week = S.week; o.fday = S.fday; o.mkSince = S.mkSince;
+  o.tplay = S.tplay || {}; o.chatSeen = S.chatSeen || {}; o.coupons = S.coupons || []; o.week = S.week; o.fday = S.fday; o.mkSince = S.mkSince;
   for (i = 0; i < CLOUD_MAX.length; i++) o[CLOUD_MAX[i]] = Number(S[CLOUD_MAX[i]]) || 0;
   o.letters = (S.letters || []).slice(-15);
   return o;
@@ -4787,6 +5377,11 @@ function cloudMerge(r) {
   for (i = 0; i < CLOUD_MAX.length; i++) if ((Number(r[CLOUD_MAX[i]]) || 0) > (Number(S[CLOUD_MAX[i]]) || 0)) S[CLOUD_MAX[i]] = Number(r[CLOUD_MAX[i]]);
   if (!S.tplay) S.tplay = {};
   for (k in (r.tplay || {})) if (r.tplay.hasOwnProperty(k) && (r.tplay[k] || 0) > (S.tplay[k] || 0)) S.tplay[k] = r.tplay[k];
+  if (!S.chatSeen) S.chatSeen = {};
+  for (k in (r.chatSeen || {})) if (r.chatSeen.hasOwnProperty(k)) {
+    if (!S.chatSeen[k]) S.chatSeen[k] = {};
+    for (var ck in r.chatSeen[k]) if (r.chatSeen[k].hasOwnProperty(ck)) S.chatSeen[k][ck] = 1;
+  }
   var cp = S.coupons || [], ids = {};
   for (i = 0; i < cp.length; i++) ids[cp[i].id] = cp[i];
   for (i = 0; i < (r.coupons || []).length; i++) { var c = r.coupons[i]; if (!ids[c.id]) cp.push(c); else if (c.used) { ids[c.id].used = true; ids[c.id].usedTs = c.usedTs; } }
@@ -5786,8 +6381,8 @@ var ACTS = {
     refreshOv(); renderAll();
     kidSay('swapDone', t.name, { r: { gem: dr.gem, first: dr.first, cnt: dr.cnt, line: '🔁 用 ' + SWAP_N + ' 個「' + t.name + '」換到的禮盒！' }, c: [['thanks', '謝謝基德']] });
   },
-  doorClose: function () { var d = DOOR; if (!d) return; if ($('door').className.indexOf('show') < 0) { doorOpen(); $('door').className = 'on open show'; return; } nextDoor(); },
-  doorTap: function () { if (!DOOR) return; if ($('door').className.indexOf('open') < 0) doorOpen(); else if ($('door').className.indexOf('show') < 0) $('door').className = 'on open show'; },
+  doorClose: function () { var d = DOOR; if (!d) return; if ($('door').className.indexOf('show') < 0) { doorOpen(); $('door').className = doorCls('on open show'); return; } nextDoor(); },
+  doorTap: function () { if (!DOOR) return; if ($('door').className.indexOf('open') < 0) doorOpen(); else if ($('door').className.indexOf('show') < 0) $('door').className = doorCls('on open show'); },
   unwrap: function (id) {
     var G = GIFTS[id], el = $(id);
     if (!G || !el || G.busy || G.open) return;
@@ -5810,12 +6405,45 @@ var ACTS = {
     if (!S.tplay) S.tplay = {};
     S.tplay[id] = (S.tplay[id] || 0) + 1;
     saveS();
+    var ctx = tplayStage(box, art, t, S.tplay[id]);
     art.className = 'tart';
     void art.offsetWidth;                                  // 重新觸發動畫
     art.className = 'tart tp-' + P[0];
     tplayFx(box, t, P[1] || '✦');
     tsound(TP_SND[id] || 'chime');
-    if (cap) cap.textContent = tplayLine(t, S.tplay[id] - 1);
+    if (cap) cap.textContent = tplayLine(t, S.tplay[id] - 1, ctx);
+  },
+  charChat: function (arg) {
+    var p = String(arg).split(':'), id = p[0], idx = +p[1] || 0, C = CHAR_CHAT[id], t = TR_BY[id];
+    if (!C || !t || !C[1][idx]) return;
+    CHAT_CUR = { id: id, idx: idx, step: 1 };
+    if (!S.chatSeen) S.chatSeen = {};
+    if (!S.chatSeen[id]) S.chatSeen[id] = {};
+    S.chatSeen[id][idx] = 1;
+    saveS();
+    var box = $('cchat');
+    if (box) box.outerHTML = charChatHtml(id);
+    var P = TPLAY[id] || ['bounce', '✨'], art = $('tart'), tbig = $('tbig');
+    if (art && tbig) {
+      art.className = 'tart'; void art.offsetWidth;
+      art.className = 'tart tp-' + P[0];
+      tplayFx(tbig, t, P[1] || '✨');
+    }
+    tsound('chat');
+  },
+  charReply: function (arg) {
+    var p = String(arg).split(':'), id = p[0], idx = +p[1] || 0, C = CHAR_CHAT[id], t = TR_BY[id];
+    if (!C || !t || !C[1][idx]) return;
+    CHAT_CUR = { id: id, idx: idx, step: 2 };
+    var box = $('cchat');
+    if (box) box.outerHTML = charChatHtml(id);
+    var art = $('tart'), tbig = $('tbig');
+    if (art && tbig) {
+      art.className = 'tart'; void art.offsetWidth;
+      art.className = 'tart tp-bounce';
+      tplayFx(tbig, t, '✨,💗');
+    }
+    tsound('sparkle');
   },
   flipCard: function () {
     var w = $('ykwrap');
