@@ -1438,7 +1438,7 @@ var API_URL = 'https://script.google.com/macros/s/AKfycbxY-7ZoZfDN-pRjV-p0rnsqRY
 var API_KEY = 'change-me-1234';
 /* ======================================== */
 
-var APP_VERSION = '1123-v60';   // 每次更新都改這個，用來確認 iPad 載入的是新版
+var APP_VERSION = '1123-v61';   // 每次更新都改這個，用來確認 iPad 載入的是新版
 var WD = '日一二三四五六';
 var SPEND_CATS = ['零食', '文具', '玩具', '捐款', '其他'];
 var INCOME_CATS = ['零用錢', '紅包', '獎勵', '其他'];
@@ -6692,7 +6692,23 @@ function openWrite() {
   });
 }
 /* 家長：寫信給小布丁（可以排定時間，偷偷藏起來） */
-var PM = { title: '', body: '', from: PARENT_SIGNS[0], logo: '', when: 'now', date: '', time: '06:30' };
+var PM = { title: '', body: '', from: S.pmFrom || PARENT_SIGNS[0], custom: S.pmCustom || '', logo: S.pmLogo || '', when: 'now', date: '', time: '06:30' };
+function pmLogoKey() { return PM.logo || (MOM_SIGNS[PM.from] ? 'lady' : 'hat'); }
+function logoLabel(k) {
+  for (var i = 0; i < SIGN_LOGOS.length; i++) if (SIGN_LOGOS[i][0] === k) return SIGN_LOGOS[i][1];
+  return TR_BY[k] ? TR_BY[k].name : '';
+}
+function pmSignName() {                                   // 實際寫在信上的署名
+  if (PM.from === '__logo') return logoLabel(pmLogoKey());
+  if (PM.from === '__custom') return String(PM.custom || '').replace(/^\s+|\s+$/g, '');
+  return PM.from;
+}
+function pmGrab() {                                       // 重畫畫面前先把正在打的字存起來
+  var ta = document.querySelector('[data-pm=body]'), ti = document.querySelector('[data-pm=title]'), cu = document.querySelector('[data-pm=custom]');
+  if (ta) PM.body = ta.value;
+  if (ti) PM.title = ti.value;
+  if (cu) PM.custom = cu.value;
+}
 function pmAt() {
   var d = new Date(), t;
   if (PM.when === 'now') return nowStamp();
@@ -6714,9 +6730,14 @@ function openMailAdmin() {
       '<label><span>標題</span><input data-pm="title" value="' + esc(PM.title) + '" placeholder="例如：預告函、給最棒的你"></label>' +
       '<label class="tall"><span>內容</span><textarea class="wrbox" data-pm="body" placeholder="可以用怪盜基德的口吻，例如：今晚，我們將前來收下你最燦爛的笑容。">' + esc(PM.body) + '</textarea></label>' +
       '<label><span>署名</span><select data-pm="from">';
+    var cur = pmLogoKey(), lg = SIGN_LOGOS.slice(0);
+    h += '<option value="__logo"' + (PM.from === '__logo' ? ' selected' : '') + '>🔗 跟 logo 一樣的名字（' + esc(logoLabel(cur)) + '）</option>';
     for (i = 0; i < PARENT_SIGNS.length; i++) h += '<option' + (PM.from === PARENT_SIGNS[i] ? ' selected' : '') + '>' + PARENT_SIGNS[i] + '</option>';
-    h += '</select></label><div class="ovsub" style="margin-top:2px">署名旁邊的 logo（點一下選擇）</div><div class="logopick">';
-    var cur = PM.logo || (MOM_SIGNS[PM.from] ? 'lady' : 'hat'), lg = SIGN_LOGOS.slice(0);
+    h += '<option value="__custom"' + (PM.from === '__custom' ? ' selected' : '') + '>✏️ 自訂署名…</option>';
+    h += '</select></label>';
+    if (PM.from === '__custom') h += '<label><span>自訂署名</span><input data-pm="custom" maxlength="16" value="' + esc(PM.custom) + '" placeholder="例如：最愛你的爸爸"></label>';
+    h += '<div class="pend" style="text-align:left;margin:2px 0 6px;font-size:15px">信末會寫：<img src="' + logoSrc(cur) + '" alt="" style="width:28px;height:28px;vertical-align:middle;border-radius:4px"> <b>' + esc(pmSignName() || '（請輸入署名）') + '</b></div>';
+    h += '<div class="ovsub" style="margin-top:2px">署名旁邊的 logo（點一下選擇）</div><div class="logopick">';
     for (i = 0; i < TR.length; i++) if (TR[i].shape === 'badge') lg.push([TR[i].id, TR[i].name]);
     for (i = 0; i < lg.length; i++) h += '<span class="lp' + (cur === lg[i][0] ? ' sel' : '') + '" data-act="pmLogo" data-arg="' + lg[i][0] + '"><img src="' + logoSrc(lg[i][0]) + '" alt=""><small>' + lg[i][1] + '</small></span>';
     h += '</div>';
@@ -7166,9 +7187,7 @@ var ACTS = {
   pmRead: function (id) { var L = findLetter(id); if (L && L.status !== '已讀') { L.status = '已讀'; lsSet(K('pp_cache'), C); addEvent({ kind: 'mailRead', mid: id }); } openLetter(id, 'mailAdmin'); },
   pmView: function (id) { openLetter(id, 'mailAdmin'); },
   pmLogo: function (k) {
-    var ta = document.querySelector('[data-pm=body]'), ti = document.querySelector('[data-pm=title]');
-    if (ta) PM.body = ta.value;
-    if (ti) PM.title = ti.value;
+    pmGrab();
     PM.logo = k; refreshOv();
   },
   pmDel: function (id) {
@@ -7180,18 +7199,18 @@ var ACTS = {
     refreshOv();
   },
   pmSend: function () {
-    var ta = document.querySelector('[data-pm=body]'), ti = document.querySelector('[data-pm=title]');
-    if (ta) PM.body = ta.value;
-    if (ti) PM.title = ti.value;
-    var body = String(PM.body).replace(/^\s+|\s+$/g, ''), at = pmAt();
+    pmGrab();
+    var body = String(PM.body).replace(/^\s+|\s+$/g, ''), at = pmAt(), sign = pmSignName();
     if (!body) { toast('請寫信的內容'); return; }
+    if (!sign) { toast('請輸入自訂署名'); return; }
     if (!at) { toast('請選擇日期和時間'); return; }
-    var rec = { id: uid(), at: at, from: PM.from, logo: PM.logo || (MOM_SIGNS[PM.from] ? 'lady' : 'hat'), to: 'kid', title: PM.title || '預告函', body: body, status: '未讀' };
+    S.pmFrom = PM.from; S.pmCustom = PM.custom; S.pmLogo = PM.logo; saveS();
+    var rec = { id: uid(), at: at, from: sign, logo: pmLogoKey(), to: 'kid', title: PM.title || '預告函', body: body, status: '未讀' };
     if (!C.mail) C.mail = [];
     C.mail.push(rec);
     lsSet(K('pp_cache'), C);
     addEvent({ kind: 'mail', id: rec.id, at: rec.at, from: rec.from, logo: rec.logo, to: 'kid', title: rec.title, body: rec.body });
-    PM = { title: '', body: '', from: PM.from, logo: PM.logo, when: 'now', date: '', time: '06:30' };
+    PM = { title: '', body: '', from: PM.from, custom: PM.custom, logo: PM.logo, when: 'now', date: '', time: '06:30' };
     toast(at > nowStamp() ? '已經藏好了！' + at.slice(5).replace('-', '/') + ' 會出現在信箱' : '已經送到信箱了！');
     refreshOv();
   },
@@ -8035,7 +8054,7 @@ function formSync(e) {
   if (el && el.getAttribute && el.getAttribute('data-score') !== null) { SCORE.v[el.getAttribute('data-score')] = el.value; scoreRefresh(); return; }
   if (el && el.getAttribute && el.getAttribute('data-qz')) { QF[el.getAttribute('data-qz')] = el.value; quizPreview(); return; }
   if (el && el.getAttribute && el.getAttribute('data-wr')) { WR[el.getAttribute('data-wr')] = el.value; return; }
-  if (el && el.getAttribute && el.getAttribute('data-pm')) { PM[el.getAttribute('data-pm')] = el.value; if (el.tagName === 'SELECT' && e.type === 'change') refreshOv(); return; }
+  if (el && el.getAttribute && el.getAttribute('data-pm')) { PM[el.getAttribute('data-pm')] = el.value; if (el.tagName === 'SELECT' && e.type === 'change') { pmGrab(); refreshOv(); } return; }
   var mf = el && el.getAttribute && el.getAttribute('data-mf');
   if (mf) {
     var tm = /^tier([SR])_(\d+)$/.exec(mf);
