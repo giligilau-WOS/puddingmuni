@@ -1276,6 +1276,9 @@
   .dio-btn.on { background: #1c3d8f; color: #fff; border-color: #1c3d8f; }
   .dio-btn.snap { background: #ffd43b; color: #0b1d51; border-color: #e67700; font-size: 15px; padding: 9px 18px; }
   .dio-btn.sm { padding: 6px 10px; font-size: 13px; border-radius: 10px; }
+  .tcell .tsp { font-style: normal; display: block; margin-top: 2px; font-size: 13px; font-weight: bold; color: #1971c2; }
+  .tcell .tsp.no { color: #adb5bd; }
+  .tcell.tsno { opacity: 0.6; }
   .dio-wrap { display: flex; gap: 14px; -webkit-box-align: start; -webkit-align-items: flex-start; align-items: flex-start; }
   body.L-tall .dio-wrap > div, body.L-narrow .dio-wrap > div { width: 100%; }
   .dio-left { flex: 7; min-width: 0; display: flex; flex-direction: column; gap: 8px; }
@@ -1438,7 +1441,7 @@ var API_URL = 'https://script.google.com/macros/s/AKfycbxY-7ZoZfDN-pRjV-p0rnsqRY
 var API_KEY = 'change-me-1234';
 /* ======================================== */
 
-var APP_VERSION = '1123-v61';   // 每次更新都改這個，用來確認 iPad 載入的是新版
+var APP_VERSION = '1125-v62';   // 每次更新都改這個，用來確認 iPad 載入的是新版
 var WD = '日一二三四五六';
 var SPEND_CATS = ['零食', '文具', '玩具', '捐款', '其他'];
 var INCOME_CATS = ['零用錢', '紅包', '獎勵', '其他'];
@@ -3385,6 +3388,36 @@ function swapDrop(r, not) {
   var from = fresh.length ? fresh : any;
   return from[Math.floor(Math.random() * from.length)];
 }
+/* ===== 寶物商店：用寶石直接買還沒收集到的寶物（家長可調價格、可關閉） ===== */
+var TSHOP_DEF = { 1: 3, 2: 5, 3: 8, 4: 12, 5: 20 }, TSF = { f: '全部' };
+function tshopCfg() {
+  var c = S.tshop && typeof S.tshop === 'object' ? S.tshop : {}, p = {}, r;
+  for (r = 1; r <= 5; r++) p[r] = Number(c.p && c.p[r]) > 0 ? Number(c.p[r]) : TSHOP_DEF[r];
+  return { on: c.on !== false, p: p };
+}
+function tshopPrice(t) { return tshopCfg().p[t.r]; }
+function tshopOk(t) { return t.id !== 'grandjewel' && !FIXED_SRC[t.id] && !owned(t.id); }   // 固定來源的寶物要靠原本的方法拿
+function tshopHtml() {
+  var have = starTotal(), cfg = tshopCfg(), list = [], i, t, left = 0;
+  for (i = 0; i < TR.length; i++) if (tshopOk(TR[i])) { left++; t = TR[i]; if (TSF.f.charAt(0) === 'R' ? t.r === +TSF.f.slice(1) : (TSF.f === '全部' || (TSF.f === '買得起' ? have >= cfg.p[t.r] : t.cat === TSF.f))) list.push(t); }
+  list.sort(function (a, b) { return a.r - b.r || a.no - b.no; });
+  var h = '<div class="phint" style="margin:0 0 6px">想要哪一件就買哪一件！這裡只賣<b>還沒收集到</b>的寶物，買到的一定是新的。你現在有 <b>' + SYM() + ' ' + have + '</b></div>';
+  h += '<div class="rrow">';
+  for (i = 5; i >= 1; i--) h += '<span class="rsum' + (TSF.f === 'R' + i ? ' sel' : '') + '" data-act="tsCat" data-arg="R' + i + '" style="border-color:' + RARITY[i][1] + ';color:' + RARITY[i][1] + '">' + new Array(i + 1).join('★') + '<b>' + SYM() + ' ' + cfg.p[i] + '</b></span>';
+  h += '</div><div class="cats">';
+  var cs = ['全部', '買得起'].concat(CATS.slice(1));
+  for (i = 0; i < cs.length; i++) h += '<span class="cat' + (TSF.f === cs[i] ? ' sel' : '') + '" data-act="tsCat" data-arg="' + cs[i] + '">' + cs[i] + '</span>';
+  h += '</div>';
+  if (!left) return h + '<div class="empty">🎉 能買的寶物全部都收集到了！你真是超級收藏家！</div>';
+  if (!list.length) return h + '<div class="empty">這一類沒有可以買的寶物了</div>';
+  h += '<div class="tgrid">';
+  for (i = 0; i < list.length; i++) {
+    t = list[i]; var pr = cfg.p[t.r], ok = have >= pr;
+    h += '<div class="tcell r' + t.r + (ok ? '' : ' tsno') + '" data-act="tsBuy" data-arg="' + t.id + '"><small>No.' + ('00' + t.no).slice(-3) + '</small>' + gemSvg(t, 42, false) +
+      '<b>' + t.name + '</b><em class="tsp' + (ok ? '' : ' no') + '">' + SYM() + ' ' + pr + '</em></div>';
+  }
+  return h + '</div><div class="pend">共有 ' + left + ' 件還沒收集的寶物可以買。月之大寶石、月光石、撲克牌、皇冠要用原本的方法拿到喔！</div>';
+}
 function swapHtml() {
   var h = '<div class="phint" style="margin:0 0 6px">重複的寶物可以拿來交換！多出來的 ' + SWAP_N + ' 個一樣的寶物，換 1 個<b>同等級</b>的禮盒（會優先換到還沒收集的）。自己一定會留 1 個。</div>', list = [];
   for (var i = 0; i < TR.length; i++) if (owned(TR[i].id) > 1 && TR[i].id !== 'grandjewel') list.push(TR[i]);
@@ -3405,7 +3438,8 @@ function collectTabs() {
     '<span class="ctab' + (CTAB === 'card' ? ' sel' : '') + '" data-act="ctab" data-arg="card">📜 預告函 ' + cardCount() + '/366</span>' +
     '<span class="ctab' + (CTAB === 'set' ? ' sel' : '') + '" data-act="ctab" data-arg="set">🎖 系列 ' + setsDone() + '/' + SETS.length + '</span>' +
     '<span class="ctab' + (CTAB === 'ach' ? ' sel' : '') + '" data-act="ctab" data-arg="ach">🏅 成就 ' + achCount() + '/' + ACH.length + '</span>' +
-    '<span class="ctab' + (CTAB === 'swap' ? ' sel' : '') + '" data-act="ctab" data-arg="swap">🔁 交換所</span></div>';
+    '<span class="ctab' + (CTAB === 'swap' ? ' sel' : '') + '" data-act="ctab" data-arg="swap">🔁 交換所</span>' +
+    (tshopCfg().on ? '<span class="ctab' + (CTAB === 'tshop' ? ' sel' : '') + '" data-act="ctab" data-arg="tshop">' + SYM() + ' 寶物商店</span>' : '') + '</div>';
 }
 function cardCount() { var c = S.cards || [], got = {}, n = 0; for (var i = 0; i < c.length; i++) if (!got[c[i].slice(5)]) { got[c[i].slice(5)] = 1; n++; } return n; }
 function openCollect(tab) {
@@ -3415,7 +3449,8 @@ function openCollect(tab) {
       (CTAB === 'diorama' ? dioramaHtml() :
       (CTAB === 'set' ? setsHtml() :
       (CTAB === 'swap' ? swapHtml() :
-      (CTAB === 'ach' ? achHtml() : calendarHtml())))));
+      (CTAB === 'tshop' ? tshopHtml() :
+      (CTAB === 'ach' ? achHtml() : calendarHtml()))))));
   }, 'ov-wide');
 }
 function openCatalog() { openCollect('gem'); }
@@ -5422,7 +5457,14 @@ function openShopAdmin() {
     var h = '<div class="ovh"><span class="x" data-act="parentBack">← 家長特區</span><h2>🛍 商店管理</h2><span class="x" data-act="close">關閉</span></div><div class="cats">', i;
     var cats = SHOP_CATS.slice(2, 8);
     for (i = 0; i < cats.length; i++) h += '<span class="cat' + (SADM.f === cats[i] ? ' sel' : '') + '" data-act="sadmCat" data-arg="' + cats[i] + '">' + cats[i] + '</span>';
-    h += '</div>';
+    h += '<span class="cat' + (SADM.f === 'tshop' ? ' sel' : '') + '" data-act="sadmCat" data-arg="tshop">💎 寶物商店</span></div>';
+    if (SADM.f === 'tshop') {
+      var tc = tshopCfg();
+      h += '<div class="ptrow"><span class="pn"><span class="sicon">🛍</span>開放寶物商店（收藏區的分頁）</span><span class="sw' + (tc.on ? ' on' : '') + '" data-act="tsAdmOn"><i></i></span></div>';
+      for (i = 5; i >= 1; i--) h += '<div class="ptrow"><span class="pn"><span class="sicon" style="color:' + RARITY[i][1] + '">' + new Array(i + 1).join('★') + '</span>' + RARITY[i][0] + '寶物</span>' +
+        '<span class="rbtn" data-act="tsAdmP" data-arg="' + i + '|-1">－</span><b style="min-width:64px;text-align:center;display:inline-block">' + SYM() + ' ' + tc.p[i] + '</b><span class="rbtn" data-act="tsAdmP" data-arg="' + i + '|1">＋</span></div>';
+      return h + '<div class="okbtn graybtn" data-act="tsAdmReset" style="margin-top:8px">恢復預設價格</div><div class="pend" style="margin-top:6px">寶物商店只賣還沒收集到的寶物，買到的一定是新的。價格存在這台 iPad 上，也會跟著收藏雲端備份。</div>';
+    }
     var list = prodAll(true);
     for (i = 0; i < list.length; i++) {
       var q = list[i];
@@ -5954,6 +5996,7 @@ var KID_LINES = {
   riddleWin: ["推理成功！預告函的謎題被你破解了，這是給名偵探的獎勵。", "答對了！連怪盜基德都要佩服你的推理力。", "漂亮！謎題破解，加碼寶石和禮盒送給你。", "BINGO！你的頭腦比我的魔術還靈活！"],
   setFull: ["你集滿「{x}」系列了！快去收藏區的「系列」領取獎勵吧！", "BINGO！「{x}」全員到齊——系列獎勵等你來領！", "了不起，「{x}」收集完成了！別忘了去領獎勵喔。"],
   setDone: ["「{x}」系列收集完成！這是給收藏家的特別獎勵。", "全員到齊！「{x}」的獎勵送給你。", "收集達人誕生！「{x}」系列完成。"],
+  tshopDone: ["成交！「{x}」是你的了，快打開禮盒看看。", "眼光真好！「{x}」已經包好，等你拆開。", "怪盜商店感謝光臨——「{x}」請收下！"],
   swapDone: ["交換成功！「{x}」變成了一個新的禮盒，快拆開看看。", "魔術交換——三個「{x}」，變成一個神祕禮盒！", "好主意！重複的寶物也能變出驚喜。"],
   wishAdd: ["「{x}」投進許願池了！我已經偷偷告訴爸爸媽媽了。", "好棒的願望！「{x}」，我們一起努力把它變成真的吧。", "許願成功！接下來就看爸爸媽媽怎麼說囉。"],
   wishOk: ["好消息！爸爸媽媽答應「{x}」的願望了！快去許願池看看要存多少。", "叮咚！「{x}」的願望被答應了，開始存錢吧！"],
@@ -6347,8 +6390,8 @@ function viaPost(params, cb) {
 }
 /* ===== 收藏雲端備份：寶物、預告函等本機紀錄存到試算表，換裝置也看得到 ===== */
 var CLOUD_FLAGS = ['setDone', 'setTold', 'mkSkip', 'mkDone', 'cardQ', 'spGot', 'spBonusGot', 'mailTold', 'mailRead', 'wishTold', 'routes', 'ach', 'achTold'];
-var CLOUD_MAX = ['focusTotal', 'limitWins', 'swapCount', 'mailSent'];
-var CLOUD_NEWER = ['showcase', 'wishPin', 'route', 'lastStamp', 'gemNew', 'allDrop', 'diorama'];
+var CLOUD_MAX = ['focusTotal', 'limitWins', 'swapCount', 'mailSent', 'tshopCount'];
+var CLOUD_NEWER = ['showcase', 'wishPin', 'route', 'lastStamp', 'gemNew', 'allDrop', 'diorama', 'tshop'];
 function cloudPack() {
   var o = { v: 1, chg: S.chg || 0, got: {} }, i, k;
   for (k in (S.got || {})) if (S.got.hasOwnProperty(k)) { var g = S.got[k]; o.got[k] = { n: g.n, first: g.first, log: (g.log || []).slice(-5) }; }
@@ -7578,6 +7621,27 @@ var ACTS = {
     refreshOv();
     kidSay('setDone', st[1], { r: { n: st[4], gem: dr.gem, first: dr.first, cnt: dr.cnt, line: '🎖 「' + st[1] + '」系列收集完成！' }, c: [['thanks', '謝謝基德']] });
   },
+  tsCat: function (c) { TSF.f = c; refreshOv(); },
+  tsBuy: function (id) {
+    var t = TR_BY[id];
+    if (!t || !tshopCfg().on) return;
+    if (!tshopOk(t)) { toast('這件寶物已經收集到了'); refreshOv(); return; }
+    var pr = tshopPrice(t), have = starTotal();
+    if (have < pr) { toast('還差 ' + SYM() + ' ' + (pr - have) + ' 喔，再加油！'); return; }
+    if (!confirm('要用 ' + SYM() + ' ' + pr + ' 買「' + t.name + '」（' + new Array(t.r + 1).join('★') + '）嗎？\n買了之後寶石就會扣掉喔！')) return;
+    starEvent(-pr, '寶物商店：' + t.name, 'tshop', 'TSHOP|' + id);
+    S.tshopCount = (Number(S.tshopCount) || 0) + 1;
+    var dr = dropInfo(t);
+    saveS(); refreshOv(); renderAll();
+    kidSay('tshopDone', t.name, { r: { gem: dr.gem, first: dr.first, cnt: dr.cnt, line: '🛍 用 ' + SYM() + ' ' + pr + ' 買到的寶物！' }, c: [['thanks', '謝謝基德']] });
+  },
+  tsAdmP: function (a) {
+    var x = String(a).split('|'), r = +x[0], c = tshopCfg(), v = c.p[r] + (+x[1]);
+    if (v < 1) v = 1; if (v > 200) v = 200;
+    c.p[r] = v; S.tshop = c; saveS(); refreshOv();
+  },
+  tsAdmOn: function () { var c = tshopCfg(); c.on = !c.on; S.tshop = c; saveS(); refreshOv(); toast(c.on ? '寶物商店已開放' : '寶物商店已關閉'); },
+  tsAdmReset: function () { S.tshop = { on: tshopCfg().on, p: { 1: TSHOP_DEF[1], 2: TSHOP_DEF[2], 3: TSHOP_DEF[3], 4: TSHOP_DEF[4], 5: TSHOP_DEF[5] } }; saveS(); refreshOv(); },
   swap: function (id) {
     var t = TR_BY[id];
     if (!t || !canSwap(t)) return;
